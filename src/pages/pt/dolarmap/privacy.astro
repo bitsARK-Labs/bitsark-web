@@ -1,0 +1,444 @@
+---
+import Base from '@layouts/Base.astro';
+import { useTranslations } from '@i18n/index';
+
+const t = useTranslations('pt-BR');
+const title = t('privacy.title');
+const description = t('privacy.description');
+const lastUpdated = t('privacy.lastUpdated');
+
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/dolarmap/privacy/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/dolarmap/privacy/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/dolarmap/privacy/' },
+];
+---
+
+<Base
+  title={title}
+  description={description}
+  lang="pt-BR"
+  canonical="https://bitsark.com/pt/dolarmap/privacy/"
+  alternates={alternates}
+  noindex={true}
+>
+  <main class="legal-page">
+    <div class="legal-container">
+      <header class="legal-header">
+        <h1>{t('privacy.header')}</h1>
+        <p class="legal-meta">
+          <strong>DolarMap</strong> · {t('privacy.meta')}: {lastUpdated}
+        </p>
+      </header>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.intro.title')}</h2>
+        <p>{t('privacy.sections.intro.p1')}</p>
+        <p>{t('privacy.sections.intro.p2')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>2. Controlador de Dados</h2>
+        <p>
+          O controlador dos dados pessoais coletados pelo DolarMap é a
+          <strong>Tecnologia Atual Serviços LTDA</strong> (CNPJ 51.334.748/0001-61), uma empresa brasileira.
+          Para exercer seus direitos ou obter esclarecimentos, entre em contato conosco pelo e-mail
+          <a href="mailto:support@bitsark.com">support@bitsark.com</a>.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>3. Quais Dados Coletamos</h2>
+        <p>
+          O DolarMap foi projetado com o princípio da minimização de dados: coletamos apenas o
+          estritamente necessário para o funcionamento do serviço.
+        </p>
+
+        <h3>3.1 Identificador de Dispositivo (UUID)</h3>
+        <p>
+          Ao utilizar o aplicativo pela primeira vez, geramos automaticamente um UUID (Universally Unique
+          Identifier) para o seu dispositivo. Este identificador é anônimo - não está vinculado ao seu nome,
+          e-mail ou qualquer outra informação de identificação pessoal. Ele é usado para:
+        </p>
+        <ul>
+          <li>Associar seus alertas de preço ao seu dispositivo, sem exigir cadastro.</li>
+          <li>Autenticar requisições à API do DolarMap.</li>
+        </ul>
+
+        <h3>3.2 Identificador Firebase (UID)</h3>
+        <p>
+          O UUID local é registrado no Firebase Authentication para gerar um token de autenticação seguro.
+          O UID do Firebase é armazenado em nosso banco de dados como a chave para os seus alertas.
+          Este identificador é gerado automaticamente e não revela sua identidade.
+        </p>
+
+        <h3>3.3 Token FCM (Notificações Push)</h3>
+        <p>
+          Para enviar alertas de preço para o seu dispositivo, utilizamos o Firebase Cloud Messaging (FCM).
+          O FCM fornece um token específico para o seu dispositivo, que armazenamos associado aos seus alertas. Este token:
+        </p>
+        <ul>
+          <li>Identifica o dispositivo para fins de entrega de notificação, mas não identifica você pessoalmente.</li>
+          <li>É atualizado automaticamente pelo sistema operacional e sincronizado com nosso servidor.</li>
+          <li>É removido do nosso banco de dados quando os alertas associados são excluídos ou quando o token é invalidado pelo sistema.</li>
+        </ul>
+
+        <h3>3.4 Dados de Alerta Configurados pelo Usuário</h3>
+        <p>Quando você cria um alerta, armazenamos:</p>
+        <ul>
+          <li>O ativo monitorado (ex: "USDT/BRL na Binance").</li>
+          <li>O preço alvo e a condição definida (ex: "abaixo de R$ 5,20").</li>
+          <li>As configurações do alerta: modo (compra/venda/arb), recorrência, status (ativo/pausado).</li>
+          <li>A data e hora de criação.</li>
+        </ul>
+        <p>
+          Esses dados são de sua autoria e são utilizados exclusivamente para disparar as notificações
+          conforme você configurou.
+        </p>
+
+        <h3>3.5 Sign in with Google (Opcional)</h3>
+        <p>
+          Se você optar pelo "Sign in with Google", o Firebase Authentication recebe seu Google UID (um
+          identificador opaco gerado pelo Google, não o seu e-mail ou nome). Armazenamos apenas esse UID para
+          migrar seus alertas do UUID temporário para uma conta permanente. Não armazenamos seu
+          e-mail, nome, foto de perfil ou qualquer outro dado do seu perfil Google.
+        </p>
+
+        <h3>3.6 SDKs de Terceiros</h3>
+        <p>
+          O DolarMap integra os seguintes SDKs de terceiros que podem processar dados do dispositivo conforme
+          descrito nesta política:
+        </p>
+        <ul>
+          <li><strong>Firebase Authentication</strong> (Google LLC) – autenticação anônima e baseada em Google.</li>
+          <li><strong>Firebase Cloud Messaging</strong> (Google LLC) – entrega de notificações push.</li>
+        </ul>
+        <p>
+          Nenhum outro SDK de análise de terceiros, publicidade ou relatório de erros está integrado ao
+          aplicativo.
+        </p>
+
+        <h3>3.7 Dados que NÃO Coletamos</h3>
+        <p>O DolarMap não coleta:</p>
+        <ul>
+          <li>Nome, e-mail, CPF, número de telefone ou qualquer dado de identificação pessoal direta.</li>
+          <li>Localização geográfica.</li>
+          <li>Dados biométricos.</li>
+          <li>Histórico de navegação ou comportamento fora do aplicativo.</li>
+          <li>Dados financeiros, bancários ou de cartão de crédito.</li>
+          <li>Contatos, fotos ou outros dados do dispositivo.</li>
+        </ul>
+
+        <h3>3.8 Preferências do App</h3>
+        <p>
+          Armazenamos suas preferências de exibição (modo escuro, casas decimais, modo padrão) localmente no
+          seu dispositivo. Essas preferências não são enviadas aos nossos servidores nem vinculadas à sua identidade.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>4. Como Usamos os Dados</h2>
+        <p>Os dados coletados são utilizados exclusivamente para:</p>
+        <ul>
+          <li>Associar alertas de preço ao dispositivo ou conta do usuário.</li>
+          <li>Enviar notificações push quando as condições de alerta forem atingidas.</li>
+          <li>Manter uma sessão autenticada segura.</li>
+          <li>
+            Melhorar o desempenho e a estabilidade do serviço (dados técnicos e de uso agregados, sem identificação individual).
+          </li>
+        </ul>
+        <p>
+          Não utilizamos dados pessoais para publicidade, profiling (perfilamento) ou qualquer finalidade alheia à
+          operação do próprio serviço.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>5. Base Legal (LGPD)</h2>
+        <p>
+          O tratamento de dados pelo DolarMap baseia-se nas seguintes fundamentações legais previstas no
+          Art. 7º da LGPD:
+        </p>
+        <ul>
+          <li>
+            <strong>Execução de contrato ou procedimentos preliminares (Art. 7º, V):</strong>
+            necessário para fornecer as funcionalidades solicitadas pelo usuário, como alertas e notificações.
+          </li>
+          <li>
+            <strong>Legítimo interesse (Art. 7º, IX):</strong> para geração do UUID e autenticação anônima, que
+            permitem o uso do aplicativo sem cadastro obrigatório, respeitando a privacidade do usuário.
+          </li>
+          <li>
+            <strong>Consentimento (Art. 7º, I):</strong> para o Sign in with Google, que é explicitamente
+            voluntário.
+          </li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>6. Compartilhamento de Dados</h2>
+        <p>
+          Não vendemos, alugamos ou comercializamos dados pessoais dos usuários. Os dados são compartilhados apenas com os
+          seguintes provedores de infraestrutura, estritamente necessários para o funcionamento do serviço:
+        </p>
+
+        <h3>6.1 Google Firebase (Authentication e Cloud Messaging)</h3>
+        <p>
+          Utilizamos o Firebase Authentication para autenticação segura e o Firebase Cloud Messaging para
+          envio de notificações push. O Google recebe o UUID/UID e o token FCM dos dispositivos.
+          O Google possui política de privacidade própria, disponível em
+          <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">
+            firebase.google.com/support/privacy
+          </a>.
+        </p>
+
+        <h3>6.2 Servidor Próprio (TimescaleDB/PostgreSQL)</h3>
+        <p>
+          Os alertas e tokens são armazenados em nosso próprio banco de dados, hospedado em servidor dedicado. Não
+          compartilhamos estes dados com terceiros além do Firebase conforme descrito acima.
+        </p>
+
+        <h3>6.3 Divulgação Legal</h3>
+        <p>
+          Podemos divulgar dados se exigido por lei, ordem judicial ou autoridade competente, na medida do
+          estritamente necessário para cumprir a obrigação legal.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>7. Retenção de Dados</h2>
+        <p>Retemos seus dados pelo tempo necessário para a prestação do serviço:</p>
+        <ul>
+          <li>
+            <strong>Alertas e tokens FCM:</strong> armazenados enquanto os alertas existirem. Ao excluir um
+            alerta, os dados associados são removidos.
+          </li>
+          <li>
+            <strong>Dados brutos de cotação de mercado:</strong> retidos por 30 dias e excluídos automaticamente.
+          </li>
+          <li>
+            <strong>Dados analíticos agregados</strong> (sem identificação individual): retidos
+            indefinidamente para análise histórica de câmbio.
+          </li>
+          <li>
+            <strong>UUID e Firebase UID:</strong> mantidos enquanto o usuário estiver ativo. Para
+            proteger sua privacidade, desativamos alertas automaticamente após 6 meses de inatividade
+            (contas anônimas) ou 12 meses (contas Google). Todos os dados associados ao identificador são removidos definitivamente após 7 ou 13 meses de inatividade, respectivamente.
+          </li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>8. Segurança</h2>
+        <p>Adotamos as seguintes medidas técnicas para proteger os dados:</p>
+        <ul>
+          <li>Comunicação entre o aplicativo e o servidor via HTTPS (TLS).</li>
+          <li>Autenticação baseada em tokens assinados pelo Firebase.</li>
+          <li>Banco de dados em servidor privado, sem exposição direta à internet.</li>
+          <li>
+            Tokens FCM são invalidados automaticamente quando expiram ou são reportados como inválidos
+            pelo Google.
+          </li>
+        </ul>
+        <p>
+          Nenhum sistema é 100% seguro. Caso ocorra um incidente de segurança que afete dados pessoais,
+          notificaremos os usuários afetados conforme exigido pela LGPD.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>9. Seus Direitos (LGPD – Art. 18)</h2>
+        <p>
+          Como titular de dados pessoais, você possui os seguintes direitos, que podem ser exercidos através do
+          e-mail de contato do desenvolvedor:
+        </p>
+        <ul>
+          <li><strong>Confirmação e acesso:</strong> saber quais dados temos sobre você e obter uma cópia.</li>
+          <li><strong>Correção:</strong> solicitar a correção de dados incompletos ou incorretos.</li>
+          <li>
+            <strong>Anonimização ou exclusão:</strong> solicitar que seus dados desnecessários ou tratados em
+            desconformidade com a lei sejam anonimizados ou excluídos.
+          </li>
+          <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado e legível.</li>
+          <li>
+            <strong>Revogação do consentimento:</strong> onde o tratamento for baseado em consentimento, você pode
+            revogá-lo a qualquer momento.
+          </li>
+          <li>
+            <strong>Oposição:</strong> opor-se ao tratamento realizado com base no legítimo interesse.
+          </li>
+        </ul>
+        <p>
+          Para dados de alertas, você pode exercer esses direitos diretamente no app, excluindo ou editando
+          seus alertas. Para remoção definitiva de conta e dados, utilize a opção <em>"Excluir minha conta"</em>
+          nas Configurações.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>10. Cookies e Rastreamento</h2>
+        <p>
+          O DolarMap é um aplicativo móvel nativo e não utiliza cookies. Não há rastreamento comportamental,
+          pixels de publicidade ou SDKs de analytics de terceiros integrados ao aplicativo.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>11. Transferência Internacional de Dados</h2>
+        <p>
+          O Firebase Authentication e o Firebase Cloud Messaging são serviços do Google, cujos servidores
+          podem estar localizados fora do Brasil. Esta transferência é realizada com base nas
+          salvaguardas adequadas previstas no Art. 33 da LGPD, sendo o Google um provedor com políticas
+          de privacidade compatíveis com padrões internacionais reconhecidos.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>12. Menores</h2>
+        <p>
+          O aplicativo não é direcionado especificamente a crianças ou adolescentes menores de 13 anos. Não
+          coletamos intencionalmente dados de menores. Caso um responsável identifique que um menor sob sua
+          guarda forneceu dados ao aplicativo, entre em contato para que os dados sejam excluídos imediatamente.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>13. Alterações nesta Política</h2>
+        <p>
+          Esta Política pode ser atualizada periodicamente. Alterações significativas serão comunicadas via
+          aviso no app antes de entrarem em vigor. O uso continuado após a comunicação implica na
+          aceitação da nova versão. A versão atual está sempre disponível na tela de
+          <em>"Política de Privacidade"</em> do aplicativo.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>14. Contato e Encarregado de Proteção de Dados (DPO)</h2>
+        <p>
+          O DolarMap é operado pela Tecnologia Atual Serviços LTDA, que segue padrões de mercado em
+          privacidade e segurança. Para qualquer dúvida sobre privacidade, entre em contato via
+          e-mail em <a href="mailto:support@bitsark.com">support@bitsark.com</a>.
+        </p>
+        <p>Responderemos às solicitações em até 15 dias úteis, conforme previsto pela LGPD.</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>15. Resumo de Privacidade da App Store</h2>
+        <p>
+          O resumo a seguir é fornecido em alinhamento com os requisitos de divulgação de privacidade da
+          Apple App Store e Google Play Store.
+        </p>
+
+        <h3>Dados Não Vinculados a Você</h3>
+        <p>
+          Os seguintes dados podem ser coletados, mas não estão vinculados à sua identidade:
+        </p>
+        <ul>
+          <li><strong>Identificadores:</strong> UUID anônimo do dispositivo e UID do Firebase, usados exclusivamente para associar seus alertas ao seu dispositivo.</li>
+          <li><strong>Dados de Uso:</strong> Dados agregados e anonimizados de desempenho do serviço (sem identificação individual).</li>
+        </ul>
+
+        <h3>Dados Vinculados a Você (Apenas Google Sign-In)</h3>
+        <p>
+          Se você opcionalmente fizer login com o Google, os seguintes dados serão vinculados à sua conta:
+        </p>
+        <ul>
+          <li><strong>Identificadores:</strong> Google UID (identificador opaco - não seu e-mail ou nome), usado para restaurar seus alertas em outros dispositivos.</li>
+          <li><strong>Conteúdo do Usuário:</strong> Seus alertas de preço configurados (ativo, preço alvo, condições).</li>
+        </ul>
+
+        <h3>Dados Não Coletados</h3>
+        <p>
+          O DolarMap não coleta dados usados para rastrear você em apps ou sites de outras empresas, e
+          não utiliza dados para fins de publicidade ou profiling.
+        </p>
+
+        <p>
+          Para solicitar a exclusão da sua conta e de todos os dados associados, acesse nossa
+          <a href="/pt/dolarmap/support#account-deletion">página de Suporte</a> ou utilize a opção
+          <em>"Excluir minha conta"</em> nas Configurações do app.
+        </p>
+      </section>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .legal-page {
+    padding: 3rem 1.5rem 5rem;
+    background-color: var(--color-bg);
+    color: var(--color-text-muted);
+    min-height: 100vh;
+  }
+
+  .legal-container {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .legal-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+  }
+
+  .legal-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-faint);
+  }
+
+  .legal-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .legal-section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+    padding-top: 0.5rem;
+  }
+
+  .legal-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.5rem;
+    color: var(--color-text);
+  }
+
+  .legal-section p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-section ul {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .legal-section ul li {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .legal-section a:hover {
+    opacity: 0.8;
+  }
+</style>

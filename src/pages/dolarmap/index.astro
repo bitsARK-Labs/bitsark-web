@@ -1,0 +1,821 @@
+﻿---
+import Base from '@layouts/Base.astro';
+import '@styles/pages/dolarmap.css';
+import { useTranslations } from '@i18n/ui';
+
+// ── Config & Localization ──────────────────────────────────────────────────
+const lang = 'en';
+const t = useTranslations(lang);
+
+const imgBase = `/images/dolarmap/${lang}`;
+
+// Internal links - resolved per language (avoid using label strings as hrefs).
+const exchangesHref = '/exchanges/';
+const privacyHref   = '/dolarmap/privacy/';
+
+/**
+ * Video hero - OPTIONAL.
+ * Drop a 6–12s muted loop (.mp4 + .webm) at /public/videos/dolarmap-hero.mp4
+ * and /public/videos/dolarmap-hero.webm to enable autoplay video instead of
+ * the static phone mockup. The page degrades gracefully if absent - the
+ * <video> element's poster fallback covers the gap.
+ */
+const heroVideoMp4   = '/videos/dolarmap-hero.mp4';
+const heroVideoWebm  = '/videos/dolarmap-hero.webm';
+const heroVideoPoster = `${imgBase}/screen-home-buy.png`;
+
+// ── Schema.org ─────────────────────────────────────────────────────────────
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "@id": "https://bitsark.com/dolarmap#app",
+  "name": "DolarMap", // Product name, not translated
+  "url": lang === 'en' ? "https://bitsark.com/dolarmap/" : "https://bitsark.com/pt/dolarmap/",
+  "description": t.dolarmap.meta.description,
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Android",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
+  "author": { "@id": "https://bitsark.com/#organization" },
+  "publisher": { "@id": "https://bitsark.com/#organization" }
+};
+
+// ── Feature spec - drives the alternating feature reel ─────────────────────
+const features = [
+  {
+    id: 'buy',
+    eyebrow: t.dolarmap.features.buy.eyebrow,
+    title: t.dolarmap.features.buy.title,
+    body: t.dolarmap.features.buy.body,
+    image: `${imgBase}/screen-home-buy.png`,
+    alt: t.dolarmap.features.buy.alt,
+    chips: t.dolarmap.features.buy.chips,
+    floatA: { ...t.dolarmap.features.buy.floatA, tone: 'success' },
+    floatB: { ...t.dolarmap.features.buy.floatB, tone: 'success' },
+  },
+  {
+    id: 'sell',
+    eyebrow: t.dolarmap.features.sell.eyebrow,
+    title: t.dolarmap.features.sell.title,
+    body: t.dolarmap.features.sell.body,
+    image: `${imgBase}/screen-home-sell.png`,
+    alt: t.dolarmap.features.sell.alt,
+    chips: t.dolarmap.features.sell.chips,
+    floatA: { ...t.dolarmap.features.sell.floatA, tone: 'accent' },
+    floatB: { ...t.dolarmap.features.sell.floatB, tone: 'success' },
+  },
+  {
+    id: 'arbitrage',
+    eyebrow: t.dolarmap.features.arbitrage.eyebrow,
+    title: t.dolarmap.features.arbitrage.title,
+    body: t.dolarmap.features.arbitrage.body,
+    image: `${imgBase}/screen-home-arbitrage.png`,
+    alt: t.dolarmap.features.arbitrage.alt,
+    chips: t.dolarmap.features.arbitrage.chips,
+    floatA: { ...t.dolarmap.features.arbitrage.floatA, tone: 'accent' },
+    floatB: { ...t.dolarmap.features.arbitrage.floatB, tone: 'neutral' },
+  },
+  {
+    id: 'alerts',
+    eyebrow: t.dolarmap.features.alerts.eyebrow,
+    title: t.dolarmap.features.alerts.title,
+    body: t.dolarmap.features.alerts.body,
+    image: `${imgBase}/screen-alerts.png`,
+    alt: t.dolarmap.features.alerts.alt,
+    chips: t.dolarmap.features.alerts.chips,
+    floatA: { ...t.dolarmap.features.alerts.floatA, tone: 'success' },
+    floatB: { ...t.dolarmap.features.alerts.floatB, tone: 'success' },
+  },
+  {
+    id: 'ranking',
+    eyebrow: t.dolarmap.features.ranking.eyebrow,
+    title: t.dolarmap.features.ranking.title,
+    body: t.dolarmap.features.ranking.body,
+    image: `${imgBase}/screen-ranking.png`,
+    alt: t.dolarmap.features.ranking.alt,
+    chips: t.dolarmap.features.ranking.chips,
+    floatA: { ...t.dolarmap.features.ranking.floatA, tone: 'success' },
+    floatB: { ...t.dolarmap.features.ranking.floatB, tone: 'neutral' },
+  },
+];
+
+// ── Pipeline steps ─────────────────────────────────────────────────────────
+const pipeline = [
+  {
+    n: '01',
+    title: t.dolarmap.pipeline.step1.title,
+    body: t.dolarmap.pipeline.step1.body,
+    glyph: 'globe',
+  },
+  {
+    n: '02',
+    title: t.dolarmap.pipeline.step2.title,
+    body: t.dolarmap.pipeline.step2.body,
+    glyph: 'pulse',
+  },
+  {
+    n: '03',
+    title: t.dolarmap.pipeline.step3.title,
+    body: t.dolarmap.pipeline.step3.body,
+    glyph: 'grid',
+  },
+  {
+    n: '04',
+    title: t.dolarmap.pipeline.step4.title,
+    body: t.dolarmap.pipeline.step4.body,
+    glyph: 'bell',
+  },
+];
+
+// ── Exchanges ─────────────────────────────────────────────────────────────
+const exchanges = {
+  international: ['Binance', 'OKX', 'KuCoin', 'Bybit', 'Bitget', 'MEXC'],
+  brazilian:     ['Mercado Bitcoin', 'Foxbit', 'Bitso', 'NovaDAX', 'BitPreço', 'BrasilBitcoin', 'Coinext'],
+};
+
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/dolarmap/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/dolarmap/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/dolarmap/' }
+];
+---
+
+<Base
+  title={t.dolarmap.meta.title}
+  description={t.dolarmap.meta.description}
+  lang={lang}
+  ogImage="https://bitsark.com/og/dolarmap.png"
+  schema={schema}
+  alternates={alternates}
+>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     HERO - monumental, mockup-driven
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-hero" id="top" aria-labelledby="dm-hero-title">
+  <div class="dm-hero__atmos" aria-hidden="true">
+    <div class="dm-hero__halo"></div>
+    <div class="dm-hero__grid"></div>
+    <div class="dm-hero__noise"></div>
+  </div>
+
+  <div class="container dm-hero__container">
+
+    <!-- Live status pill - sole announcement above the headline -->
+    <div class="dm-hero__topbar fade-up">
+      <div class="dm-livepill" role="status" aria-live="polite">
+        <span class="dm-livepill__dot" aria-hidden="true"></span>
+        <span class="dm-livepill__txt">{t.dolarmap.hero.livePill}</span>
+      </div>
+    </div>
+
+    <div class="dm-hero__layout">
+
+      <!-- LEFT - copy column -->
+      <div class="dm-hero__copy">
+        <p class="eyebrow fade-up" style="animation-delay:.05s">
+          <span class="eyebrow__bracket">[</span>
+          {t.dolarmap.hero.eyebrow}
+          <span class="eyebrow__bracket">]</span>
+        </p>
+
+        <h1 id="dm-hero-title" class="dm-hero__headline fade-up" style="animation-delay:.15s">
+          <Fragment set:html={t.dolarmap.hero.headline} />
+        </h1>
+
+        <p class="dm-hero__lede fade-up" style="animation-delay:.25s">
+          <Fragment set:html={t.dolarmap.hero.lede} />
+        </p>
+
+        <div class="dm-hero__actions fade-up" style="animation-delay:.35s">
+          <a href="#" class="dm-cta dm-cta--primary" aria-label={t.dolarmap.hero.ctaPrimaryLabel}>
+            <svg width="22" height="22" viewBox="0 0 512 512" aria-hidden="true">
+              <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z" fill="#EA4335"/>
+              <path d="M47 0C34 6.8 25.3 19.2 25.3 35V477c0 15.8 8.7 28.2 21.7 35l242.3-242L47 0z" fill="#4285F4"/>
+              <path d="M425.2 225.6l-58.3-33.5-65.4 64.1 65.4 64.1 59.1-34c16.8-9.8 16.8-33.1-.8-60.7z" fill="#FBBC05"/>
+              <path d="M47 477c0 15.8 8.7 28.2 21.7 35l242.3-242-63.8-63.8L47 477z" fill="#34A853"/>
+            </svg>
+            <span class="dm-cta__txt">
+              <span class="dm-cta__small">{t.dolarmap.hero.ctaPrimarySmall}</span>
+              <span class="dm-cta__big">{t.dolarmap.hero.ctaPrimaryBig}</span>
+            </span>
+          </a>
+
+          <a href="#how-it-works" class="dm-cta dm-cta--ghost" aria-label={t.dolarmap.hero.ctaSecondary}>
+            {t.dolarmap.hero.ctaSecondary}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+          </a>
+        </div>
+
+        <ul class="dm-hero__trust fade-up" style="animation-delay:.45s" aria-label="App guarantees">
+          <li><span class="dm-tick" aria-hidden="true">✓</span> {t.dolarmap.hero.trustFree}</li>
+          <li><span class="dm-tick" aria-hidden="true">✓</span> {t.dolarmap.hero.trustSignup}</li>
+          <li><span class="dm-tick" aria-hidden="true">✓</span> {t.dolarmap.hero.trustAds}</li>
+          <li><span class="dm-tick" aria-hidden="true">✓</span> {t.dolarmap.hero.trustLgpd}</li>
+        </ul>
+      </div>
+
+      <!-- RIGHT - device + floating ticker -->
+      <div class="dm-hero__stage fade-up" style="animation-delay:.2s">
+
+        <!-- The phone -->
+        <div class="dm-device" aria-hidden="true">
+          <div class="dm-device__notch"></div>
+          <div class="dm-device__screen">
+            <!--
+              Auto-uses /videos/dolarmap-hero.* when present.
+              Falls back to a static poster (screen-home-buy.png).
+              Browsers download the poster first, then the video metadata -
+              keeps LCP healthy even with a hero video.
+            -->
+            <video
+              class="dm-device__video"
+              poster={heroVideoPoster}
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-label="DolarMap app loop preview"
+            >
+              <source src={heroVideoWebm} type="video/webm" />
+              <source src={heroVideoMp4} type="video/mp4" />
+            </video>
+          </div>
+          <div class="dm-device__reflect"></div>
+        </div>
+
+        <!-- Floating UI card #1 - best rate -->
+        <div class="dm-float dm-float--best">
+          <div class="dm-float__head">
+            <span class="dm-float__tag">{t.dolarmap.hero.floatBestBuyTag}</span>
+            <span class="dm-float__pulse" aria-hidden="true"></span>
+          </div>
+          <div class="dm-float__price">R$&nbsp;4.99</div>
+          <div class="dm-float__row">
+            <span class="dm-float__exch">{t.dolarmap.hero.floatBestBuyExch}</span>
+          </div>
+        </div>
+
+        <!-- Floating UI card #2 - alert -->
+        <div class="dm-float dm-float--alert">
+          <div class="dm-float__body">
+            <span class="dm-float__title">
+              <span class="dm-float__icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+              </span>
+              {t.dolarmap.hero.floatAlertTitle}
+            </span>
+            <span class="dm-float__sub">{t.dolarmap.hero.floatAlertSub}</span>
+          </div>
+        </div>
+
+        <!-- Floating UI card #3 - ptax reference -->
+        <div class="dm-float dm-float--ref">
+          <span class="dm-float__refLabel">{t.dolarmap.hero.floatRefLabel}</span>
+          <span class="dm-float__refPrice">R$ 5.07</span>
+          <span class="dm-float__refMeta">{t.dolarmap.hero.floatRefMeta}</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Scroll cue -->
+    <div class="dm-hero__cue" aria-hidden="true">
+      <span class="dm-hero__cueLabel">{t.dolarmap.hero.scrollCueLabel}</span>
+      <span class="dm-hero__cueLine"></span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     STATS STRIP - terminal-style metrics ribbon
+═══════════════════════════════════════════════════════════════════════════ -->
+<aside class="dm-strip" aria-label="Key metrics">
+  <div class="container">
+    <ol class="dm-strip__row fade-up">
+      <li class="dm-strip__cell">
+        <span class="dm-strip__n">13<span class="dm-strip__plus">+</span></span>
+        <span class="dm-strip__lbl">{t.dolarmap.strip.exchanges}</span>
+      </li>
+      <li class="dm-strip__cell">
+        <span class="dm-strip__n">2<span class="dm-strip__unit">min</span></span>
+        <span class="dm-strip__lbl">{t.dolarmap.strip.refresh}</span>
+      </li>
+      <li class="dm-strip__cell">
+        <span class="dm-strip__n">~5<span class="dm-strip__unit">%</span></span>
+        <span class="dm-strip__lbl">{t.dolarmap.strip.spread}</span>
+      </li>
+      <li class="dm-strip__cell">
+        <span class="dm-strip__n">&lt;2<span class="dm-strip__unit">s</span></span>
+        <span class="dm-strip__lbl">{t.dolarmap.strip.latency}</span>
+      </li>
+      <li class="dm-strip__cell">
+        <span class="dm-strip__n">100<span class="dm-strip__unit">%</span></span>
+        <span class="dm-strip__lbl">{t.dolarmap.strip.free}</span>
+      </li>
+    </ol>
+  </div>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PROOF - editorial headline + real metrics
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-proof" id="proof" aria-labelledby="dm-proof-title">
+  <div class="container">
+
+    <header class="dm-proof__head fade-up">
+      <p class="eyebrow eyebrow--center">{t.dolarmap.proof.eyebrow}</p>
+      <h2 id="dm-proof-title" class="dm-proof__title">
+        <Fragment set:html={t.dolarmap.proof.title} />
+      </h2>
+      <p class="dm-proof__sub">
+        <Fragment set:html={t.dolarmap.proof.sub} />
+      </p>
+    </header>
+
+    <div class="dm-proof__board fade-up">
+      <article class="dm-metric dm-metric--feature">
+        <div class="dm-metric__valueWrap">
+          <span class="dm-metric__sign">+</span>
+          <span class="dm-metric__value">{t.dolarmap.proof.metric1.value}</span>
+          <span class="dm-metric__unit">%</span>
+        </div>
+        <div class="dm-metric__label">{t.dolarmap.proof.metric1.label}</div>
+        <div class="dm-metric__meta">{t.dolarmap.proof.metric1.meta}</div>
+        <div class="dm-metric__bar"><span style="--w:96%"></span></div>
+      </article>
+
+      <article class="dm-metric">
+        <div class="dm-metric__valueWrap">
+          <span class="dm-metric__value">{t.dolarmap.proof.metric2.value}</span>
+          <span class="dm-metric__unit">h</span>
+        </div>
+        <div class="dm-metric__label">{t.dolarmap.proof.metric2.label}</div>
+        <div class="dm-metric__meta">{t.dolarmap.proof.metric2.meta}</div>
+        <div class="dm-metric__bar"><span style="--w:45%"></span></div>
+      </article>
+
+      <article class="dm-metric">
+        <div class="dm-metric__valueWrap">
+          <span class="dm-metric__sign dm-metric__sign--neg">−</span>
+          <span class="dm-metric__value">{t.dolarmap.proof.metric3.value}</span>
+          <span class="dm-metric__unit">%</span>
+        </div>
+        <div class="dm-metric__label">{t.dolarmap.proof.metric3.label}</div>
+        <div class="dm-metric__meta">{t.dolarmap.proof.metric3.meta}</div>
+        <div class="dm-metric__bar"><span style="--w:32%"></span></div>
+      </article>
+
+      <article class="dm-metric">
+        <div class="dm-metric__valueWrap">
+          <span class="dm-metric__value">{t.dolarmap.proof.metric4.value}</span>
+        </div>
+        <div class="dm-metric__label">{t.dolarmap.proof.metric4.label}</div>
+        <div class="dm-metric__meta">{t.dolarmap.proof.metric4.meta}</div>
+        <div class="dm-metric__bar"><span style="--w:58%"></span></div>
+      </article>
+    </div>
+
+    <p class="dm-proof__kicker fade-up">
+      <Fragment set:html={t.dolarmap.proof.kicker} />
+    </p>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PROBLEM - terminal manifesto
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-problem" id="problem">
+  <div class="container">
+    <header class="dm-section-head fade-up">
+      <p class="eyebrow eyebrow--center">{t.dolarmap.problem.eyebrow}</p>
+      <h2 class="dm-section-title"><Fragment set:html={t.dolarmap.problem.title} /></h2>
+    </header>
+
+    <div class="dm-problem__grid">
+      <article class="dm-problem__card fade-up">
+        <span class="dm-problem__n" aria-hidden="true">P1</span>
+        <h3>{t.dolarmap.problem.p1.title}</h3>
+        <p>{t.dolarmap.problem.p1.body}</p>
+      </article>
+
+      <article class="dm-problem__card fade-up">
+        <span class="dm-problem__n" aria-hidden="true">P2</span>
+        <h3>{t.dolarmap.problem.p2.title}</h3>
+        <p>{t.dolarmap.problem.p2.body}</p>
+      </article>
+
+      <article class="dm-problem__card fade-up">
+        <span class="dm-problem__n" aria-hidden="true">P3</span>
+        <h3>{t.dolarmap.problem.p3.title}</h3>
+        <p>{t.dolarmap.problem.p3.body}</p>
+      </article>
+
+      <article class="dm-problem__card fade-up">
+        <span class="dm-problem__n" aria-hidden="true">P4</span>
+        <h3>{t.dolarmap.problem.p4.title}</h3>
+        <p>{t.dolarmap.problem.p4.body}</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     FEATURES REEL - alternating mockup showcase
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-reel" id="features" aria-label="Core features">
+
+  {features.map((f, i) => (
+    <div class={`dm-cell ${i % 2 === 0 ? 'dm-cell--right' : 'dm-cell--left'} ${i === 0 ? 'dm-cell--first' : ''}`} id={f.id}>
+      <div class="container">
+        <div class="dm-cell__inner">
+
+          <div class="dm-cell__copy fade-up">
+            <p class="eyebrow">
+              <span class="eyebrow__bracket">[</span>
+              {f.eyebrow}
+              <span class="eyebrow__bracket">]</span>
+            </p>
+            <h2 class="dm-cell__title" set:html={f.title} />
+            <p class="dm-cell__body">{f.body}</p>
+
+            <ul class="dm-cell__chips" aria-label={`${f.eyebrow} highlights`}>
+              {f.chips.map(c => <li><span class="dm-cell__dot" aria-hidden="true"></span>{c}</li>)}
+            </ul>
+          </div>
+
+          <div class="dm-cell__stage fade-up">
+            <div class="dm-cell__halo" aria-hidden="true"></div>
+            <div class="dm-cell__phone" aria-hidden="true">
+              <div class="dm-cell__phone-notch"></div>
+              <img
+                src={f.image}
+                alt={f.alt}
+                class="dm-cell__screen"
+                width="280"
+                height="560"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+
+            <div class={`dm-cell__chip dm-cell__chip--a dm-cell__chip--${f.floatA.tone}`} aria-hidden="true">
+              <span class="dm-cell__chip-lbl">{f.floatA.label}</span>
+              <span class="dm-cell__chip-val">{f.floatA.value}</span>
+              <span class="dm-cell__chip-meta">{f.floatA.meta}</span>
+            </div>
+
+            <div class={`dm-cell__chip dm-cell__chip--b dm-cell__chip--${f.floatB.tone}`} aria-hidden="true">
+              <span class="dm-cell__chip-lbl">{f.floatB.label}</span>
+              <span class="dm-cell__chip-val">{f.floatB.value}</span>
+              <span class="dm-cell__chip-meta">{f.floatB.meta}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  ))}
+
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PIPELINE - how it works (4 steps with connector rail)
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-pipeline" id="how-it-works">
+  <div class="container">
+
+    <header class="dm-section-head fade-up">
+      <p class="eyebrow eyebrow--center">{t.dolarmap.pipeline.eyebrow}</p>
+      <h2 class="dm-section-title"><Fragment set:html={t.dolarmap.pipeline.title} /></h2>
+      <p class="dm-section-sub">{t.dolarmap.pipeline.sub}</p>
+    </header>
+
+    <ol class="dm-pipeline__rail fade-up" aria-label="How it works">
+      {pipeline.map((s, i) => (
+        <li class="dm-pipeline__node" style={`--i:${i}`}>
+          <div class="dm-pipeline__node-head">
+            <span class="dm-pipeline__num">{s.n}</span>
+            <span class="dm-pipeline__glyph" aria-hidden="true">
+              {s.glyph === 'globe' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              )}
+              {s.glyph === 'pulse' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              )}
+              {s.glyph === 'grid' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+              )}
+              {s.glyph === 'bell' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              )}
+            </span>
+          </div>
+          <h3 class="dm-pipeline__title">{s.title}</h3>
+          <p class="dm-pipeline__body">{s.body}</p>
+        </li>
+      ))}
+    </ol>
+
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     EXCHANGES MONITORED
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-exch" id="exchanges">
+  <div class="container">
+
+    <header class="dm-section-head fade-up">
+      <p class="eyebrow eyebrow--center">{t.dolarmap.coverage.eyebrow}</p>
+      <h2 class="dm-section-title">{t.dolarmap.coverage.title}</h2>
+      <p class="dm-section-sub">{t.dolarmap.coverage.sub}</p>
+    </header>
+
+    <div class="dm-exch__board fade-up">
+
+      <div class="dm-exch__col">
+        <header class="dm-exch__colHead">
+          <span class="dm-exch__colTag">{t.dolarmap.coverage.intl}</span>
+          <span class="dm-exch__colCount">06</span>
+        </header>
+        <ul class="dm-exch__list">
+          {exchanges.international.map(name => <li><span class="dm-exch__bullet" aria-hidden="true">◇</span>{name}</li>)}
+        </ul>
+      </div>
+
+      <div class="dm-exch__col">
+        <header class="dm-exch__colHead">
+          <span class="dm-exch__colTag">{t.dolarmap.coverage.br}</span>
+          <span class="dm-exch__colCount">07</span>
+        </header>
+        <ul class="dm-exch__list">
+          {exchanges.brazilian.map(name => <li><span class="dm-exch__bullet" aria-hidden="true">◇</span>{name}</li>)}
+        </ul>
+      </div>
+
+      <div class="dm-exch__col dm-exch__col--official">
+        <header class="dm-exch__colHead">
+          <span class="dm-exch__colTag dm-exch__colTag--official">{t.dolarmap.coverage.ref}</span>
+          <span class="dm-exch__colCount">01</span>
+        </header>
+        <ul class="dm-exch__list">
+          <li><span class="dm-exch__bullet dm-exch__bullet--official" aria-hidden="true">★</span>{t.dolarmap.coverage.bankRate}</li>
+        </ul>
+        <p class="dm-exch__note">{t.dolarmap.coverage.note}</p>
+      </div>
+
+    </div>
+
+    <p class="dm-exch__cta fade-up">
+      {t.dolarmap.coverage.cta}
+      <a href={exchangesHref} class="dm-link">{t.dolarmap.coverage.ctaLink}</a>
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     PRIVACY - LGPD ledger
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-priv" id="privacy">
+  <div class="container">
+
+    <header class="dm-section-head fade-up">
+      <p class="eyebrow eyebrow--center">{t.dolarmap.privacy_ledger.eyebrow}</p>
+      <h2 class="dm-section-title">{t.dolarmap.privacy_ledger.title}</h2>
+      <p class="dm-section-sub">{t.dolarmap.privacy_ledger.sub}</p>
+    </header>
+
+    <div class="dm-priv__board fade-up">
+      <article class="dm-priv__row">
+        <span class="dm-priv__chk" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <div class="dm-priv__rowBody">
+          <strong>{t.dolarmap.privacy_ledger.row1.title}</strong>
+          <p>{t.dolarmap.privacy_ledger.row1.body}</p>
+        </div>
+        <code class="dm-priv__field">device.uuid</code>
+      </article>
+
+      <article class="dm-priv__row">
+        <span class="dm-priv__chk" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <div class="dm-priv__rowBody">
+          <strong>{t.dolarmap.privacy_ledger.row2.title}</strong>
+          <p>{t.dolarmap.privacy_ledger.row2.body}</p>
+        </div>
+        <code class="dm-priv__field">push.token</code>
+      </article>
+
+      <article class="dm-priv__row">
+        <span class="dm-priv__chk" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <div class="dm-priv__rowBody">
+          <strong>{t.dolarmap.privacy_ledger.row3.title}</strong>
+          <p>{t.dolarmap.privacy_ledger.row3.body}</p>
+        </div>
+        <code class="dm-priv__field">firebase.uid</code>
+      </article>
+
+      <article class="dm-priv__row dm-priv__row--neg">
+        <span class="dm-priv__chk dm-priv__chk--neg" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </span>
+        <div class="dm-priv__rowBody">
+          <strong>{t.dolarmap.privacy_ledger.row4.title}</strong>
+          <p>{t.dolarmap.privacy_ledger.row4.body}</p>
+        </div>
+        <code class="dm-priv__field">ads.disabled</code>
+      </article>
+    </div>
+
+    <p class="dm-priv__cta fade-up">
+      <a href={privacyHref} class="dm-link">{t.dolarmap.privacy_ledger.cta}</a>
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     FAQ
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-faq" id="faq">
+  <div class="container dm-faq__wrap">
+
+    <header class="dm-section-head fade-up">
+      <p class="eyebrow eyebrow--center">{t.dolarmap.faq_section.eyebrow}</p>
+      <h2 class="dm-section-title">{t.dolarmap.faq_section.title}</h2>
+    </header>
+
+    <div class="dm-faq__list fade-up">
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q1.q}</summary>
+        <div class="dm-faq__a">
+          <p>{t.dolarmap.faq_section.q1.a}</p>
+        </div>
+      </details>
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q2.q}</summary>
+        <div class="dm-faq__a">
+          <p>{t.dolarmap.faq_section.q2.a}</p>
+        </div>
+      </details>
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q3.q}</summary>
+        <div class="dm-faq__a">
+          <p>{t.dolarmap.faq_section.q3.a}</p>
+        </div>
+      </details>
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q4.q}</summary>
+        <div class="dm-faq__a">
+          <p>{t.dolarmap.faq_section.q4.a}</p>
+        </div>
+      </details>
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q5.q}</summary>
+        <div class="dm-faq__a">
+          <p>{t.dolarmap.faq_section.q5.a}</p>
+        </div>
+      </details>
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q6.q}</summary>
+        <div class="dm-faq__a">
+          <p><Fragment set:html={t.dolarmap.faq_section.q6.a} /></p>
+        </div>
+      </details>
+
+      <details class="dm-faq__item">
+        <summary>{t.dolarmap.faq_section.q7.q}</summary>
+        <div class="dm-faq__a">
+          <p><Fragment set:html={t.dolarmap.faq_section.q7.a} /></p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     FINAL CTA - closing manifesto
+═══════════════════════════════════════════════════════════════════════════ -->
+<section class="dm-final" id="download">
+  <div class="dm-final__atmos" aria-hidden="true">
+    <div class="dm-final__halo"></div>
+    <div class="dm-final__grid"></div>
+  </div>
+
+  <div class="container">
+    <div class="dm-final__inner fade-up">
+
+      <p class="dm-final__pill">
+        <span class="dm-final__pillDot" aria-hidden="true"></span>
+        {t.dolarmap.final.pill}
+      </p>
+
+      <h2 class="dm-final__title">
+        <Fragment set:html={t.dolarmap.final.title} />
+      </h2>
+
+      <p class="dm-final__sub">
+        {t.dolarmap.final.sub}
+      </p>
+
+      <div class="dm-final__actions">
+        <a href="#" class="dm-cta dm-cta--primary dm-cta--lg" aria-label={t.dolarmap.hero.ctaPrimaryLabel}>
+          <svg width="26" height="26" viewBox="0 0 512 512" aria-hidden="true">
+            <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z" fill="#EA4335"/>
+            <path d="M47 0C34 6.8 25.3 19.2 25.3 35V477c0 15.8 8.7 28.2 21.7 35l242.3-242L47 0z" fill="#4285F4"/>
+            <path d="M425.2 225.6l-58.3-33.5-65.4 64.1 65.4 64.1 59.1-34c16.8-9.8 16.8-33.1-.8-60.7z" fill="#FBBC05"/>
+            <path d="M47 477c0 15.8 8.7 28.2 21.7 35l242.3-242-63.8-63.8L47 477z" fill="#34A853"/>
+          </svg>
+          <span class="dm-cta__txt">
+            <span class="dm-cta__small">{t.dolarmap.final.ctaPrimarySmall}</span>
+            <span class="dm-cta__big">{t.dolarmap.final.ctaPrimaryBig}</span>
+          </span>
+        </a>
+
+        <a href="https://github.com/bitsARK-Labs/bitsARK-web" class="dm-cta dm-cta--ghost" target="_blank" rel="noopener noreferrer">
+          {t.dolarmap.final.ctaGithub}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17L17 7M7 7h10v10"/>
+          </svg>
+        </a>
+      </div>
+
+      <p class="dm-final__note">{t.dolarmap.final.note}</p>
+
+    </div>
+  </div>
+</section>
+
+</Base>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SCRIPTS - scroll reveal + video resilience
+═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+  // ── Fade-up via IntersectionObserver ─────────────────────────────────
+  const els = document.querySelectorAll<HTMLElement>('.fade-up');
+  if ('IntersectionObserver' in window && els.length) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+    els.forEach((el) => io.observe(el));
+  } else {
+    els.forEach((el) => el.classList.add('is-visible'));
+  }
+
+  // ── Hero video: hide gracefully if source 404s ──────────────────────
+  // If both <source> elements fail (e.g. file not uploaded yet) the browser
+  // shows nothing and falls back to the poster image - which is exactly
+  // what we want. No JS needed unless we want to remove the element.
+  const heroVideo = document.querySelector<HTMLVideoElement>('.dm-device__video');
+  if (heroVideo) {
+    heroVideo.addEventListener('error', () => {
+      // When all sources fail, swap to a static poster image to avoid the
+      // broken-video icon on certain Android browsers.
+      const poster = heroVideo.getAttribute('poster');
+      if (poster) {
+        const img = document.createElement('img');
+        img.src = poster;
+        img.alt = '';
+        img.className = 'dm-device__video';
+        heroVideo.replaceWith(img);
+      }
+    }, true);
+  }
+</script>

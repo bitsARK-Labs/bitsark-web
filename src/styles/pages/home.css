@@ -1,0 +1,1140 @@
+  .hero {
+    padding-top: clamp(4rem, 10vw, 8rem);
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(var(--color-primary-rgb), 0.07) 0%,
+      rgba(var(--color-primary-rgb), 0.02) 50%,
+      transparent 75%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-glow-2 {
+    position: absolute;
+    bottom: -5%;
+    left: 30%;
+    width: 500px;
+    height: 300px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(var(--color-primary-rgb), 0.04) 0%,
+      transparent 70%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(var(--color-primary-rgb), 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse 80% 80% at center, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 80% at center, black 40%, transparent 100%);
+  }
+
+  .hero__inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .eyebrow--centered {
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 1.2rem + 3.5vw, 3.2rem);
+    max-width: 720px;
+    margin-inline: auto;
+    margin-top: 1rem;
+    line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .hero__title-accent {
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero__subtitle {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    margin-top: 1.25rem;
+    max-width: 600px;
+    margin-inline: auto;
+    line-height: 1.7;
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .hero__stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+    row-gap: 1.5rem;
+  }
+
+  .hero__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding-inline: 2rem;
+  }
+
+  .hero__stat-divider {
+    width: 1px;
+    height: 2rem;
+    background: var(--color-border);
+  }
+
+  @media (max-width: 600px) {
+    .hero__stat-divider { display: none; }
+    .hero__stat         { padding-inline: 1rem; }
+  }
+
+  .hero__stat-value {
+    font-size: clamp(1.5rem, 2vw, 2rem);
+    font-weight: 700;
+    color: var(--color-text);
+    font-family: var(--font-mono);
+    line-height: 1;
+  }
+
+  .hero__stat-value--accent { color: var(--color-primary); }
+
+  .hero__stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: var(--font-mono);
+  }
+
+  /*
+    Hero stat meta - microcopy adicional sob o label.
+    Carrega proof points como "3-month build" / "2-day API" sem
+    competir visualmente com o valor numérico (eyebrow visual fica menor).
+  */
+  .hero__stat-meta {
+    font-size: 0.62rem;
+    color: var(--color-text-faint);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    margin-top: 0.25rem;
+    opacity: 0.7;
+    text-transform: none;
+  }
+
+  /* ── Founder Band ───────────────────────────────────────────
+     Asymmetric: foto-esquerda, conteúdo-flex, ações-direita.
+     Dashed border + mono font deliberadamente carregam estética
+     de "data row" / terminal - contrasta com cards rounded das
+     seções vizinhas, criando ritmo visual.
+  */
+  .founder-band {
+    border-top: 1px dashed var(--color-border);
+    border-bottom: 1px dashed var(--color-border);
+    background:
+      linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(var(--color-primary-rgb), 0.025) 50%,
+        transparent 100%
+      );
+    padding-block: 1.4rem;
+    margin-top: -1px; /* sobrepõe a borda do hero */
+  }
+
+  .founder-band__inner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .founder-band__photo-link {
+    position: relative;
+    flex-shrink: 0;
+    display: inline-block;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: transform var(--transition);
+  }
+  .founder-band__photo-link:hover  { transform: scale(1.04);}
+  .founder-band__photo-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+  }
+
+  .founder-band__photo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    filter: grayscale(.3);
+    border: 2px solid var(--color-border);
+    box-shadow: 0 0 0 4px var(--color-surface);
+    transition: border-color var(--transition);
+    position: relative;
+    z-index: 1;
+  }
+  .founder-band__photo-link:hover .founder-band__photo {
+    border-color: var(--color-primary);filter: grayscale(0);
+  }
+
+  .founder-band__photo-glow {
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle,
+      rgba(var(--color-primary-rgb), 0.25) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+    z-index: 0;
+  }
+  .founder-band__photo-link:hover .founder-band__photo-glow { opacity: 1; }
+
+  .founder-band__content {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .founder-band__line1 {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .founder-band__name  { color: var(--color-text); }
+  .founder-band__dash  { margin-inline: 0.5rem; color: var(--color-text-faint); }
+  .founder-band__role  { color: var(--color-text-muted); font-weight: 500; }
+
+  .founder-band__line2 {
+    font-size: var(--text-xs);
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+  }
+  .founder-band__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--color-success);
+    font-weight: 600;
+  }
+  .founder-band__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-success);
+    box-shadow: 0 0 0 2px rgba(var(--color-success-rgb), 0.22);
+    animation: founder-pulse 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    flex-shrink: 0;
+  }
+  @keyframes founder-pulse {
+    0%, 100% {
+      opacity: 1;
+      box-shadow: 0 0 0 2px rgba(var(--color-success-rgb), 0.22);
+    }
+    50% {
+      opacity: 0.65;
+      box-shadow: 0 0 0 6px rgba(var(--color-success-rgb), 0.06);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .founder-band__status-dot { animation: none; }
+  }
+  .founder-band__sep            { color: var(--color-text-faint); opacity: 0.5; }
+  .founder-band__status-detail  { color: var(--color-text-faint); }
+
+  .founder-band__actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .founder-band__link {
+    font-size: var(--text-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    transition:
+      color var(--transition),
+      border-color var(--transition),
+      background var(--transition);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .founder-band__link:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary-border);
+    background: var(--color-primary-highlight);
+  }
+  .founder-band__link--primary {
+    color: var(--color-primary);
+    border-color: var(--color-primary-border);
+    background: var(--color-primary-highlight);
+  }
+  .founder-band__link--primary:hover {
+    background: rgba(var(--color-primary-rgb), 0.14);
+  }
+
+  @media (max-width: 640px) {
+    .founder-band__inner {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .founder-band__actions {
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    .founder-band__link {
+      flex: 1;
+      justify-content: center;
+    }
+  }
+
+   /* ── CTA Strip Hiring callout ──
+     Cartão com tag flutuante "Hiring?" no topo. Estética: bordered
+     card com gradient sutil - destaca-se da prosa em cta-strip__about
+     que continua abaixo como tagline soft.
+  */
+  .cta-strip__hiring {
+    margin-top: 2.5rem;
+    margin-inline: auto;
+    padding: 1.5rem 1.75rem 1.25rem;
+    background: linear-gradient(
+      180deg,
+      rgba(var(--color-primary-rgb), 0.07) 0%,
+      rgba(var(--color-primary-rgb), 0.02) 100%
+    );
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    max-width: 560px;
+    position: relative;
+  }
+  .cta-strip__hiring-tag {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-sm);
+    padding: 0.25em 0.7em;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .cta-strip__hiring-body {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+    margin: 0.25rem 0 0.5rem;
+    text-align: center;
+    max-width: 480px;
+  }
+  .cta-strip__hiring-link {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-primary-border);
+    padding-bottom: 1px;
+    transition: color var(--transition), border-color var(--transition);
+  }
+  .cta-strip__hiring-link:hover {
+    color: var(--color-text);
+    border-color: var(--color-primary);
+  }
+  @media (max-width: 540px) {
+    .cta-strip__hiring {
+      padding: 1.5rem 1.25rem 1.1rem;
+      margin-inline: 1rem;
+    }
+  }
+
+  /*
+    ── Exchanges card marquee strip ──
+    Full-width bottom-strip below the card-body. Sits on its own row,
+    capped height, fade-mask both ends. 0.55 idle opacity rises to 1
+    on card hover - signals "live data" without competing with CTA.
+  */
+  .product-card__marquee-strip {
+    margin-top: 1rem;
+    margin-inline: calc(var(--space-5) * -1);
+    margin-bottom: calc(var(--space-5) * -1);
+    padding-block: 0.55rem;
+    background: linear-gradient(
+      180deg,
+      rgba(var(--card-accent-rgb, var(--color-primary-rgb)), 0.02) 0%,
+      transparent 100%
+    );
+    opacity: 0.6;
+    transition: opacity 280ms var(--transition);
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+  }
+  .product-card--exchanges:hover .product-card__marquee-strip {
+    opacity: 1;
+  }
+
+  /* ── Section title ──────────────────────────────────────── */
+  .section__title {
+    display: table;
+    margin-inline: auto;
+    position: relative;
+    text-align: center;
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.25rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 3.5rem;
+    color: var(--color-text);
+  }
+
+  .section__title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+    opacity: 0.6;
+  }
+
+  /* ── Products grid ──────────────────────────────────────── */
+  .products-grid--two {
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  /*
+    ── Products grid - Bento ──
+    DolarMap (first child) becomes a hero spanning the full 3-column width.
+    API + Exchanges + Stablecoins sit below in equal 1fr columns.
+    On mobile (≤760px) everything stacks into a single column.
+  */
+  .products-grid--four {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .products-grid--four > .product-card--hero {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: 760px) {
+    .products-grid--four { grid-template-columns: 1fr; }
+    .products-grid--four > .product-card--hero { grid-column: auto; }
+  }
+
+  @media (max-width: 580px) {
+    .products-grid--two {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /*
+    ── Base product card ──
+    Each variant exposes its own --card-accent-rgb so aurora, spotlight,
+    hover border + glow, and KPI divider all tint to the product color
+    without per-variant duplication.
+  */
+  .product-card {
+    --card-accent-rgb: var(--color-primary-rgb);
+
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, var(--color-surface) 0%, rgba(22, 23, 25, 0.88) 100%);
+    backdrop-filter: blur(10px);
+    transition:
+      transform 280ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 220ms ease,
+      box-shadow 220ms ease;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  /* Stretched link - expands the primary link to cover the entire card */
+  .product-card__primary-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+  }
+
+  /* Secondary links (CTAs, extra buttons) sit above the stretched link */
+  .product-card__secondary-link {
+    position: relative;
+    z-index: 1;
+  }
+
+  .product-card--dolarmap    { --card-accent-rgb: var(--color-primary-rgb); }
+  .product-card--api         { --card-accent-rgb: var(--color-warning-rgb); }
+  .product-card--exchanges   { --card-accent-rgb: 148, 155, 166; } /* matches --color-text-muted #949ba6 */
+  .product-card--stablecoins { --card-accent-rgb: var(--color-success-rgb); }
+
+  .product-card:hover {
+    transform: translateY(-4px) scale(1.005);
+    border-color: rgba(var(--card-accent-rgb), 0.32);
+    box-shadow:
+      0 18px 40px -12px rgba(0, 0, 0, 0.55),
+      0 0 0 1px rgba(var(--card-accent-rgb), 0.18),
+      0 0 60px -10px rgba(var(--card-accent-rgb), 0.22);
+  }
+
+  /* Keyboard-focus mirrors hover for parity (decorations + lift) */
+  .product-card:focus-within {
+    border-color: rgba(var(--card-accent-rgb), 0.32);
+  }
+
+  /*
+    ── Aurora corner glow ──
+    Tinted radial gradient bleeding from the top-right corner. Sits at z-0
+    behind the card-body. Brightens + scales on hover/focus.
+  */
+  .product-card__aurora {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(
+      circle,
+      rgba(var(--card-accent-rgb), 0.26) 0%,
+      rgba(var(--card-accent-rgb), 0.10) 40%,
+      transparent 70%
+    );
+    opacity: 0.40;
+    pointer-events: none;
+    filter: blur(8px);
+    transition: opacity 320ms ease, transform 320ms ease;
+    z-index: 0;
+  }
+  .product-card:hover .product-card__aurora,
+  .product-card:focus-within .product-card__aurora {
+    opacity: 0.78;
+    transform: scale(1.12);
+  }
+
+  /*
+    ── Grain noise overlay ──
+    SVG fractalNoise data-URI, mix-blend overlay at very low opacity.
+    Adds tactile texture without being visible at normal viewing distance.
+  */
+  .product-card__grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' stitchTiles='stitch' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  /*
+    ── Cursor spotlight ──
+    Radial gradient following --mx/--my CSS vars set via inline JS.
+    Opacity transitions on hover; position is direct (smoothness from
+    pointermove sampling rate, not CSS easing).
+  */
+  .product-card__spotlight {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 240px at var(--mx, 50%) var(--my, 50%),
+      rgba(var(--card-accent-rgb), 0.16) 0%,
+      rgba(var(--card-accent-rgb), 0.05) 30%,
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 220ms ease;
+    z-index: 1;
+  }
+  .product-card:hover .product-card__spotlight,
+  .product-card:focus-within .product-card__spotlight {
+    opacity: 1;
+  }
+
+  /* card-body sits above all decorative layers */
+  .product-card .card-body {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Header: icon + type badge ── */
+  .product-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .product-card__icon {
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+
+  .product-card--dolarmap   .product-card__icon { color: var(--color-primary); }
+  .product-card--api        .product-card__icon { color: var(--color-warning); }
+  .product-card--exchanges  .product-card__icon { color: var(--color-text-muted); }
+  .product-card--stablecoins .product-card__icon { color: var(--color-success); }
+
+  .product-card__type {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 0.1em 0.8em;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+  }
+
+  .product-card--dolarmap   .product-card__type {
+    background: var(--color-primary-highlight);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-border);
+  }
+  .product-card--api        .product-card__type {
+    background: rgba(var(--color-warning-rgb), 0.10);
+    color: var(--color-warning);
+    border: 1px solid rgba(var(--color-warning-rgb), 0.22);
+  }
+  .product-card--exchanges  .product-card__type {
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+  }
+  .product-card--stablecoins .product-card__type {
+    background: rgba(var(--color-success-rgb), 0.10);
+    color: var(--color-success);
+    border: 1px solid rgba(var(--color-success-rgb), 0.22);
+  }
+
+  /* Wordmark color for API card (uses warning palette) */
+  .nav__product-block__name--api { color: var(--color-warning); }
+
+  /*
+    ── KPI block ──
+    Replaces the descriptive paragraph. Two-or-three numeric "trophies"
+    that convey accomplishment in a glance. First KPI of each card uses
+    the product accent color; subsequent KPIs use --color-text. Numerals
+    are mono with tabular-nums to avoid layout shift during count-up.
+  */
+  .product-card__kpis {
+    display: flex;
+    align-items: stretch;
+    gap: 1.5rem;
+    margin: 0 0 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .kpi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .kpi__num {
+    font-family: var(--font-mono);
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--color-text);
+    margin: 0;
+    min-height: 1.05em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi__label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  /* Accent color on the first KPI of each card */
+  .product-card--dolarmap    .kpi:first-of-type .kpi__num { color: var(--color-primary); }
+  .product-card--api         .kpi:first-of-type .kpi__num { color: var(--color-warning); }
+  .product-card--exchanges   .kpi:first-of-type .kpi__num { color: var(--color-text); }
+  
+
+  .kpi__divider {
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(var(--card-accent-rgb), 0.30) 50%,
+      transparent 100%
+    );
+    flex-shrink: 0;
+  }
+
+  .product-card__tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    align-items: center;
+  }
+
+  /* margin-top: auto pushes CTAs to the bottom of the flex column */
+  .product-card__cta-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+  }
+
+  /* ── Wordmarks ── */
+  .product-card__dm-logo,
+  .product-card__logo-wrap {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .product-card .nav__product-block,
+  .product-card__dm-logo-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    min-height: 24px;
+    font-size: inherit;
+    font-weight: inherit;
+    margin-top: 0;
+  }
+
+  .dm-logo-svg {
+    width: 148px;
+    height: auto;
+    display: block;
+    transition: filter 320ms ease, transform 320ms ease;
+  }
+  .product-card--hero:hover .dm-logo-svg {
+    filter: drop-shadow(0 6px 18px rgba(var(--color-primary-rgb), 0.35));
+    transform: translateY(-1px);
+  }
+
+  .product-card__app-badge {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-sm);
+    padding: 0.15em 0.5em;
+    background: var(--color-primary-highlight);
+  }
+
+  /* Wordmark sizing in cards */
+  .product-card .nav__product-block__name {
+    font-size: 1.6rem;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+  }
+
+  .product-card .nav__product-block__sub {
+    font-size: 1rem;
+  }
+
+  .nav__product-block__name--primary { color: var(--color-primary); }
+  .nav__product-block__name--success { color: var(--color-success); }
+  .nav__product-block__sub--faint    { color: var(--color-text-faint); }
+
+  /*
+    ── Hero card layout (DolarMap, full-width bento row 1) ──
+    Two-column grid inside card-body: wordmark left, KPIs right, with
+    header spanning the top and tags + CTA spanning the bottom.
+    Aurora is enlarged and a secondary glow blooms from the bottom-left
+    for editorial balance.
+  */
+  .product-card--hero .card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+    grid-template-areas:
+      "header   header"
+      "wordmark kpis"
+      "lede     kpis"
+      "tags     cta";
+    column-gap: 2.5rem;
+    row-gap: 0;
+    align-items: start;
+  }
+  .product-card--hero .product-card__header      { grid-area: header; margin-bottom: 0; padding-bottom: 1.25rem; }
+  .product-card--hero .product-card__dm-logo-row { grid-area: wordmark; margin-bottom: 0; padding-bottom: 0.75rem; align-self: end; }
+  .product-card--hero .product-card__kpis        { grid-area: kpis; margin-bottom: 0; align-self: center; }
+  .product-card--hero .product-card__lede        { grid-area: lede; align-self: start; }
+  .product-card--hero .product-card__tags        { grid-area: tags; margin-bottom: 0; align-self: end; padding-top: 1.25rem; }
+  .product-card--hero .product-card__cta-group   { grid-area: cta; margin-top: 0; justify-self: end; align-self: end; padding-top: 1.25rem; }
+
+  /*
+    ── Hero lede - DolarMap product description ──
+    Editorial pull-quote sitting between the wordmark/KPIs row and the
+    tags/CTA row. Spans the full card width, separated by a subtle accent
+    rule on the left that pulses like a terminal cursor. Inline <em> tags
+    inside the copy are rendered in mono to highlight key terms
+    (BRL/USD, stablecoins, alertas) - same signature treatment used
+    elsewhere on the site.
+  */
+  .product-card__lede {
+    position: relative;
+    margin: 0;
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    max-width: none;
+    font-family: var(--font-sans);
+    font-size: clamp(0.98rem, 0.88rem + 0.45vw, 1.12rem);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    color: var(--color-text-muted);
+    text-wrap: balance;
+  }
+  .product-card__lede::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.35rem;
+    bottom: 0.35rem;
+    width: 1px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, transparent 0%, rgba(var(--card-accent-rgb), 0.35) 25%, rgba(var(--card-accent-rgb), 0.45) 50%, rgba(var(--card-accent-rgb), 0.35) 75%, transparent 100%);
+    box-shadow: 0 0 12px rgba(var(--card-accent-rgb), 0.45);
+    animation: dm-lede-breathe 3.6s ease-in-out infinite;
+    transform-origin: center;
+  }
+  .product-card__lede em {
+    font-family: var(--font-mono);
+    font-style: normal;
+    font-weight: 500;
+    font-size: 0.92em;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+    padding: 0.05em 0.2em;
+    background: linear-gradient(
+      180deg,
+      transparent 60%,
+      rgba(var(--card-accent-rgb), 0.14) 60%,
+      rgba(var(--card-accent-rgb), 0.14) 100%
+    );
+    border-radius: 2px;
+    transition: background 240ms ease, color 240ms ease;
+  }
+  .product-card--hero:hover .product-card__lede em,
+  .product-card--hero:focus-within .product-card__lede em {
+    background: linear-gradient(
+      180deg,
+      transparent 55%,
+      rgba(var(--card-accent-rgb), 0.22) 55%,
+      rgba(var(--card-accent-rgb), 0.22) 100%
+    );
+    color: var(--color-text);
+  }
+
+  @keyframes dm-lede-breathe {
+    0%, 100% { opacity: 0.65; transform: scaleY(0.96); }
+    50%      { opacity: 1;    transform: scaleY(1);    }
+  }
+
+  /* Hero: bigger KPI numerals; tighter gap because there are 3 of them */
+  .product-card--hero .kpi__num {
+    font-size: clamp(1.8rem, 1.2rem + 2.2vw, 2.4rem);
+  }
+  .product-card--hero .product-card__kpis {
+    gap: 1.75rem;
+  }
+
+  /* Hero: stronger aurora + secondary bottom-left bloom in --color-accent (gold) */
+  .product-card--hero .product-card__aurora {
+    width: 360px;
+    height: 360px;
+    top: -100px;
+    right: -100px;
+    opacity: 0.48;
+  }
+  .product-card--hero::before {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    left: -60px;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(
+      circle,
+      rgba(52, 232, 223, 0.1) 0%,
+      transparent 65%
+    );
+    filter: blur(16px);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: opacity 320ms ease;
+    z-index: 0;
+  }
+  .product-card--hero:hover::before,
+  .product-card--hero:focus-within::before { opacity: 1; }
+
+  @media (max-width: 760px) {
+    .product-card--hero .card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .product-card--hero .product-card__header { margin-bottom: 0; }
+    .product-card--hero .product-card__dm-logo-row,
+    .product-card--hero .product-card__kpis,
+    .product-card--hero .product-card__lede,
+    .product-card--hero .product-card__tags { margin-bottom: 0; }
+    .product-card--hero .product-card__cta-group { justify-self: start; align-self: start; }
+    .product-card--hero .product-card__lede {
+      font-size: 0.98rem;
+      padding-left: 1rem;
+    }
+  }
+
+  /* ── prefers-reduced-motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .product-card,
+    .product-card__aurora,
+    .product-card__spotlight,
+    .product-card__marquee-strip,
+    .dm-logo-svg,
+    .product-card--hero::before {
+      transition: none !important;
+    }
+    .product-card:hover {
+      transform: none;
+    }
+    .product-card:hover .product-card__aurora,
+    .product-card:focus-within .product-card__aurora {
+      transform: none;
+    }
+    .product-card__lede::before {
+      animation: none;
+      opacity: 0.8;
+    }
+  }
+
+  /* ── Reasons / Principles grid ── */
+  .reasons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .reasons-grid { grid-template-columns: 1fr; }
+  }
+
+  .reason-card {
+    padding: 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+    transition: border-color var(--transition);
+  }
+
+  .reason-card:hover {
+    border-color: var(--color-primary-border);
+  }
+
+  .reason-card__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--color-primary-highlight);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .reason-card__title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 0.5rem;
+  }
+
+  .reason-card p {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+
+  .reason-card__proof {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed var(--color-border);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+    letter-spacing: 0.02em;
+    opacity: 0.85;
+  }
+
+  /* ── Principles atmosphere (subtle halo) ── */
+  #principles {
+    position: relative;
+    isolation: isolate;
+  }
+  #principles::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 50%, rgba(var(--color-primary-rgb), 0.045) 0%, transparent 70%),
+      linear-gradient(180deg, transparent 0%, rgba(var(--color-primary-rgb), 0.05) 50%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* ── CTA Strip ── */
+  .cta-strip {
+    padding-block: clamp(3rem, 6vw, 5rem);
+    text-align: center;
+    background: linear-gradient(
+      180deg,
+      var(--color-surface) 0%,
+      rgba(var(--color-primary-rgb), 0.04) 50%,
+      var(--color-surface) 100%
+    );
+    border-top: 1px solid var(--color-border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-strip__terminal {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-primary);
+    opacity: 0.55;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .cta-strip__title {
+    font-size: var(--text-xl);
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+  }
+
+  .cta-strip__sub {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    max-width: 480px;
+    margin-inline: auto;
+    margin-bottom: 2rem;
+  }
+
+  .cta-strip__actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .cta-strip__about {
+    margin-top: 2rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-faint);
+  }
+
+  .cta-strip__about a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    transition: color var(--transition), border-color var(--transition);
+  }
+
+  .cta-strip__about a:hover {
+    color: var(--color-primary);
+    border-color: var(--color-primary-border);
+  }

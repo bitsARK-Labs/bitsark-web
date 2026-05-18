@@ -1,0 +1,238 @@
+---
+import Base from '@layouts/Base.astro';
+import { useTranslations } from '@i18n/ui';
+
+const lang = "en";
+const t = useTranslations(lang);
+
+const title = t.terms.title;
+const description = t.terms.description;
+const lastUpdated = new Intl.DateTimeFormat(lang, { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(t.privacy.lastUpdatedISO));
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/dolarmap/terms/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/dolarmap/terms/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/dolarmap/terms/' },
+];
+---
+
+<Base
+  title={title}
+  description={description}
+  lang={lang}
+  canonical="https://bitsark.com/dolarmap/terms/"
+  alternates={alternates}
+  noindex={true}
+>
+  <main class="section legal-page">
+    <div class="legal-container">
+      <header class="legal-header">
+        <p class="eyebrow">DolarMap</p>
+        <h1>{t.terms.header}</h1>
+        <p class="legal-meta">
+          {t.terms.lastUpdatedPrefix}: {lastUpdated}
+        </p>
+      </header>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.aboutUs.title}</h2>
+        <p set:html={t.terms.sections.aboutUs.p1}></p>
+        <p set:html={t.terms.sections.aboutUs.p2}></p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.whatDolarMapDoes.title}</h2>
+        <p>{t.terms.sections.whatDolarMapDoes.p1}</p>
+        <ul>
+          <li>{t.terms.sections.whatDolarMapDoes.li1}</li>
+          <li>{t.terms.sections.whatDolarMapDoes.li2}</li>
+          <li>{t.terms.sections.whatDolarMapDoes.li3}</li>
+          <li>{t.terms.sections.whatDolarMapDoes.li4}</li>
+          <li>{t.terms.sections.whatDolarMapDoes.li5}</li>
+          <li>{t.terms.sections.whatDolarMapDoes.li6}</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.informationalNature.title}</h2>
+        <p>{t.terms.sections.informationalNature.p1}</p>
+        <ul>
+          <li>{t.terms.sections.informationalNature.li1}</li>
+          <li>{t.terms.sections.informationalNature.li2}</li>
+          <li>{t.terms.sections.informationalNature.li3}</li>
+          <li>{t.terms.sections.informationalNature.li4}</li>
+        </ul>
+        <p>{t.terms.sections.informationalNature.p2}</p>
+        <p>{t.terms.sections.informationalNature.p3}</p>
+        <p set:html={t.terms.sections.informationalNature.p4}></p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.dataSources.title}</h2>
+        <p>{t.terms.sections.dataSources.p1}</p>
+        <ul>
+          <li><strong set:html={t.terms.sections.dataSources.li1}></strong></li>
+          <li><strong set:html={t.terms.sections.dataSources.li2}></strong></li>
+          <li><strong set:html={t.terms.sections.dataSources.li3}></strong></li>
+        </ul>
+        <p>{t.terms.sections.dataSources.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.dataAvailability.title}</h2>
+        <p>{t.terms.sections.dataAvailability.p1}</p>
+        <ul>
+          <li>{t.terms.sections.dataAvailability.li1}</li>
+          <li>{t.terms.sections.dataAvailability.li2}</li>
+          <li>{t.terms.sections.dataAvailability.li3}</li>
+        </ul>
+        <p>{t.terms.sections.dataAvailability.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.accountAuthentication.title}</h2>
+        <p>{t.terms.sections.accountAuthentication.p1}</p>
+        <ul>
+          <li><strong set:html={t.terms.sections.accountAuthentication.li1}></strong></li>
+          <li><strong set:html={t.terms.sections.accountAuthentication.li2}></strong></li>
+        </ul>
+        <p>{t.terms.sections.accountAuthentication.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.priceAlerts.title}</h2>
+        <p>{t.terms.sections.priceAlerts.p1}</p>
+        <p>{t.terms.sections.priceAlerts.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.freePaidPlans.title}</h2>
+        <p>{t.terms.sections.freePaidPlans.p1}</p>
+        <p set:html={t.terms.sections.freePaidPlans.p2}></p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.audienceMinors.title}</h2>
+        <p>{t.terms.sections.audienceMinors.p1}</p>
+        <p>{t.terms.sections.audienceMinors.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.intellectualProperty.title}</h2>
+        <p>{t.terms.sections.intellectualProperty.p1}</p>
+        <p>{t.terms.sections.intellectualProperty.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.limitationOfLiability.title}</h2>
+        <p>{t.terms.sections.limitationOfLiability.p1}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.changesToTerms.title}</h2>
+        <p set:html={t.terms.sections.changesToTerms.p1}></p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.serviceDiscontinuation.title}</h2>
+        <p set:html={t.terms.sections.serviceDiscontinuation.p1}></p>
+        <p>{t.terms.sections.serviceDiscontinuation.p2}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t.terms.sections.governingLaw.title}</h2>
+        <p>{t.terms.sections.governingLaw.p1}</p>
+      </section>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .legal-page {
+    min-height: 100vh;
+  }
+
+  .legal-container {
+    max-width: 780px;
+    margin-inline: auto;
+    /* Garante que o texto não cole nas bordas em mobile */
+    padding-inline: var(--space-4);
+  }
+
+  .legal-header h1 {
+    font-size: var(--text-2xl);
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
+    color: var(--color-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .legal-header {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-meta {
+    font-size: var(--text-xs);
+    font-family: var(--font-mono);
+    color: var(--color-text-faint);
+  }
+
+  .legal-section {
+    margin-bottom: var(--space-10);
+  }
+
+  .legal-section h2 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--space-4);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .legal-section p {
+    font-size: var(--text-base);
+    line-height: 1.8;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-section ul {
+    padding-left: var(--space-6);
+    margin-bottom: var(--space-6);
+    list-style: disc;
+  }
+
+  .legal-section ul li {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+    color: var(--color-text-muted);
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color var(--transition);
+  }
+
+  .legal-section a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  .legal-callout {
+    background: var(--color-error-highlight);
+    border-left: 4px solid var(--color-error);
+    padding: var(--space-5);
+    margin-block: var(--space-8);
+    border-radius: var(--radius-md);
+  }
+
+  .legal-callout p {
+    color: var(--color-text);
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+</style>

@@ -1,0 +1,830 @@
+---
+import '../styles/global.css';
+import Logo         from '@components/Logo.astro';
+import DolarMapLogo from '@components/DolarMapLogo.astro';
+import { ClientRouter } from 'astro:transitions';
+import { useTranslations } from '../i18n';
+
+
+export interface Props {
+  title:       string;
+  description: string;
+  ogImage?:    string;
+  canonical?:  string;
+  lang?:       string;
+  schema?:     object;
+  ogType?:     string;
+  /**
+   * hreflang alternates para sites bilíngues.
+   * Forneça APENAS quando a página counterpart já existir em produção.
+   * Apontar hreflang para páginas inexistentes gera penalidade no Google.
+   *
+   * Exemplo:
+   * alternates={[
+   *   { hreflang: 'en',        href: 'https://bitsark.com/exchanges/' },
+   *   { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/' },
+   *   { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/' },
+   * ]}
+   */
+  alternates?: Array<{ hreflang: string; href: string }>;
+  noindex?:    boolean;
+}
+
+
+const {
+  title,
+  description,
+  ogImage    = 'https://bitsark.com/og-default.png',
+  canonical,
+  lang       = 'en',
+  schema,
+  ogType     = 'website',
+  alternates = [],
+  noindex    = false,
+} = Astro.props;
+
+
+const path         = Astro.url.pathname;
+const canonicalURL = canonical ?? `https://bitsark.com${path}`;
+
+// ── Normaliza o idioma para UI e SEO (padroniza em pt-BR) ──
+const normalizedLang = lang.startsWith('pt') ? 'pt-BR' : 'en';
+
+// ── Detecção de produto (suporta /pt/* e raiz) ──────────────
+const isDolarMap    = path.startsWith('/dolarmap')            || path.startsWith('/pt/dolarmap');
+const isExchanges   = path.startsWith('/exchanges')           || path.startsWith('/pt/exchanges');
+const isStablecoins = path.startsWith('/stablecoins-brasil')  || path.startsWith('/pt/stablecoins-brasil');
+const isApiPage     = path.startsWith('/exchanges/api')       || path.startsWith('/pt/exchanges/api');
+
+// ── Strings de UI no idioma correto ───────────────────────
+const t = useTranslations(normalizedLang);
+
+
+// ── Helper para localizar links internos ──────────────────
+const l = (link: string): string => {
+  if (link.startsWith('http') || link.startsWith('#')) return link;
+
+  const translated = [
+    '/', '/about', '/exchanges', '/exchanges/decripto',
+    '/terms', '/dolarmap', '/stablecoins-brasil',
+    '/dolarmap/privacy', '/dolarmap/terms', '/dolarmap/support',
+    '/stablecoins-brasil/receber-exterior-pj', '/exchanges/api',
+  ];
+
+  const hashIndex = link.indexOf('#');
+  const cleanPath = (hashIndex >= 0 ? link.slice(0, hashIndex) : link)
+    .replace(/\/$/, '') || '/';
+  const fragment = hashIndex >= 0 ? link.slice(hashIndex) : '';
+
+  if (
+    normalizedLang === 'pt-BR' &&
+    translated.includes(cleanPath)
+  ) {
+    const ptPath = cleanPath === '/' ? '/pt/' : `/pt${cleanPath}/`;
+    return `${ptPath}${fragment}`;
+  }         // ← este } estava faltando
+
+  return link;
+};
+
+
+// ── Helper para garantir que links de alternates sejam sempre relativos ──
+const toRelative = (url?: string): string | undefined => {
+  if (!url) return undefined;
+  try {
+    const pathname = new URL(url).pathname;
+    return pathname.endsWith('/') ? pathname : `${pathname}/`;
+  } catch {
+    return url;
+  }
+};
+
+
+// ── Cálculo de hrefs para o seletor de idioma ─────────────
+// Prioriza alternates fornecidos; caso contrário, vai para a home do idioma.
+const langHrefs: Record<string, string> = {
+  'en':    toRelative(alternates.find(a => a.hreflang === 'en' || a.hreflang === 'x-default')?.href) ?? '/',
+  'pt-BR': toRelative(alternates.find(a => a.hreflang.startsWith('pt'))?.href) ?? '/pt/',
+};
+
+
+// ── Idiomas disponíveis ───────────────────────────────────
+const languages = [
+  { code: 'pt-BR', label: 'PT', flag: '🇧🇷' },
+  { code: 'en',    label: 'EN', flag: '🇺🇸' },
+];
+
+
+// ── Nav links (desktop) ───────────────────────────────────
+const navLinks = isDolarMap ? [
+  { label: t('nav.dolarmap.buy'),    href: l('/dolarmap#buy')       },
+  { label: t('nav.dolarmap.sell'),   href: l('/dolarmap#sell')      },
+  { label: t('nav.dolarmap.alerts'), href: l('/dolarmap#alertas')   },
+] : isExchanges ? [
+  { label: t('nav.exchanges.list'),        href: l('/exchanges')             },
+  { label: t('nav.exchanges.decripto'),    href: l('/exchanges/decripto')    },
+  { label: t('nav.exchanges.api'),         href: l('/exchanges/api')         },
+  { label: t('nav.exchanges.stablecoins'), href: l('/stablecoins-brasil')    },
+] : isStablecoins ? [
+  { label: t('nav.stablecoins.size'),       href: l('/stablecoins-brasil#data')      },
+  { label: t('nav.stablecoins.receiverPj'), href: l('/stablecoins-brasil/receber-exterior-pj')    },
+  { label: t('nav.stablecoins.exchanges'),  href: l('/exchanges')                                 },
+] : [
+  { label: t('nav.home.dolarmap'),    href: l('/dolarmap')           },
+  { label: t('nav.home.exchanges'),   href: l('/exchanges')          },
+  { label: t('nav.home.stablecoins'), href: l('/stablecoins-brasil') },
+];
+
+
+// ── CTA (desktop) ────────────────────────────────────────
+const cta = isDolarMap ? {
+  label:    t('nav.cta.playstore'),
+  href:     'https://play.google.com/store/apps/details?id=com.bitsark.dolarmap',
+  external: true,
+} : isExchanges ? {
+  label:    t('nav.cta.api'),
+  href:     l('/exchanges/api'),
+  external: false,
+} : isStablecoins ? {
+  label:    t('nav.cta.dolarmap'),
+  href:     'https://play.google.com/store/apps/details?id=com.bitsark.dolarmap',
+  external: true,
+} : null;
+
+
+// ── Nav links (mobile) ────────────────────────────────────
+const mobileLinks = isDolarMap ? [
+  { label: t('nav.dolarmap.buy'),       href: l('/dolarmap#buy')        },
+  { label: t('nav.dolarmap.sell'),      href: l('/dolarmap#sell')       },
+  { label: t('nav.dolarmap.arbitrage'), href: l('/dolarmap#arbitragem') },
+  { label: t('nav.dolarmap.notify'),    href: l('/dolarmap#alertas')    },
+  { label: t('nav.cta.playstore'),      href: 'https://play.google.com/store/apps/details?id=com.bitsark.dolarmap', external: true },
+] : isExchanges ? [
+  { label: t('nav.exchanges.list'),     href: l('/exchanges')           },
+  { label: t('nav.exchanges.decripto'), href: l('/exchanges/decripto')  },
+  { label: t('nav.exchanges.api'),      href: l('/exchanges/api')       },
+] : isStablecoins ? [
+  { label: t('nav.stablecoins.size'),       href: l('/stablecoins-brasil#stablecoin-inflow')      },
+  { label: t('nav.stablecoins.receiverPj'), href: l('/stablecoins-brasil/receber-exterior-pj')    },
+  { label: t('nav.stablecoins.dollar'),     href: l('/dolarmap')                                  },
+  { label: t('nav.stablecoins.exchanges'),  href: l('/exchanges')                                 },
+  { label: t('nav.cta.dolarmap'),           href: 'https://play.google.com/store/apps/details?id=com.bitsark.dolarmap', external: true },
+] : [
+  { label: t('nav.home.dolarmap'),    href: l('/dolarmap')           },
+  { label: t('nav.home.exchanges'),   href: l('/exchanges')          },
+  { label: t('nav.home.stablecoins'), href: l('/stablecoins-brasil') },
+];
+---
+
+
+<!doctype html>
+<html lang={normalizedLang}>
+  <head>
+    <!-- 1. Charset e viewport SEMPRE primeiros -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- 2. Title logo após charset/viewport -->
+    <title>{title}</title>
+
+    <!-- 3. Color scheme: scrollbars/inputs em dark mode corretos nativamente -->
+    <meta name="color-scheme" content="dark" />
+
+    <!-- SEO Core -->
+    <meta name="description"  content={description} />
+    <meta name="robots"       content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <link rel="canonical"     href={canonicalURL} />
+    <meta name="keywords"     content="exchanges brasil, corretoras crypto brasil, stablecoins brazil, dolarmap, câmbio brl usd, bcb crypto, decripto" />
+
+    <!-- 
+      Fontes self-hosted (MIT - Geist by Vercel).
+      Preload antecipado com fetchpriority="high" para eliminar FOUT/CLS.
+    -->
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/GeistVF.woff2"     crossorigin fetchpriority="high" />
+    <link rel="preload" as="font" type="font/woff2" href="/fonts/GeistMonoVF.woff2" crossorigin fetchpriority="high" />
+
+    <!--
+      hreflang: renderizado SOMENTE quando a prop `alternates` é fornecida.
+      Regra: nunca apontar hreflang para uma página que ainda não existe -
+      isso gera penalidade no Google Search Console.
+      Forneça `alternates` na página apenas quando ambas as variantes estiverem em produção.
+    -->
+    {alternates.map(alt => (
+      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+    ))}
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content={ogType} />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:locale"      content={normalizedLang === 'pt-BR' ? 'pt_BR' : 'en_US'} />
+    <meta property="og:site_name"   content="bitsARK Labs" />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+    {alternates
+      .filter(a => a.hreflang !== 'x-default' && a.hreflang !== normalizedLang)
+      .map(alt => (
+        <meta property="og:locale:alternate"
+              content={alt.hreflang === 'pt-BR' ? 'pt_BR' : 'en_US'} />
+      ))
+    }
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:site"        content="@bitsARKLabs" />
+    <meta name="twitter:creator"     content="@bitsARKLabs" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <!--
+      View Transitions API (Astro 5 ClientRouter).
+      `fallback="none"` desativa o animation fallback em browsers sem suporte
+      (Safari < 18.2, Firefox < 134) - navegação tradicional é preservada
+      e nenhum JS é executado. Em browsers compatíveis, ganha-se transição
+      suave entre páginas + prefetch automático no hover.
+    -->
+    <ClientRouter fallback="none" />
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=1.0" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=1.0" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=1.0" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png?v=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1.0" />
+    <link rel="manifest" href="/site.webmanifest?v=1.0" />
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#4f98a3" />
+    <meta name="apple-mobile-web-app-title" content="bitsARK" />
+    <meta name="msapplication-TileColor"    content="#0f1012" />
+    <meta name="theme-color"                content="#0f1012" />
+    <link rel="shortcut icon" href="/favicon.ico?v=1.0" />
+
+    <!-- Schema.org JSON-LD dinâmico (por página) -->
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+
+    <!-- Schema Organization fixo (presente em todas as páginas) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://bitsark.com/#organization",
+      "name": "bitsARK Labs",
+      "legalName": "Tecnologia Atual Serviços LTDA",
+      "taxID": "51.334.748/0001-61",
+      "url": "https://bitsark.com",
+      "logo": "https://bitsark.com/favicon.svg",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "support@bitsark.com",
+        "contactType": "customer support",
+        "availableLanguage": ["English", "Portuguese"]
+      },
+      "sameAs": ["https://github.com/bitsARK-Labs"]
+    })} />
+
+    <style is:global>
+      .skip-link {
+        border-radius: 0 0 var(--radius-md) var(--radius-md);
+      }
+
+      /* ── DolarMap Nav Identity ──────────────────────────── */
+      .dm-identity-nav {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        min-width: 0;
+      }
+      .dm-identity-nav__link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+      }
+      .dm-identity-nav__product {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .dm-logo-svg {
+        height: 18px;
+        width: auto;
+        color: var(--color-text);
+      }
+
+      /* "by" separator - editorial dashes (never a pipe) */
+      .dm-identity-nav__by {
+        position: relative;
+        font-family: var(--font-mono);
+        font-size: 0.55rem;
+        color: var(--color-text-faint);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-weight: 600;
+        opacity: 0.55;
+        padding: 0 0.65rem;
+      }
+      .dm-identity-nav__by::before,
+      .dm-identity-nav__by::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 6px;
+        height: 1px;
+        background: currentColor;
+        opacity: 0.6;
+      }
+      .dm-identity-nav__by::before { left: 0; }
+      .dm-identity-nav__by::after  { right: 0; }
+
+      .dm-identity-nav__endorser {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        --logo-bits-color: var(--color-text-faint);
+        --logo-ark-color: var(--color-text-faint);
+        --logo-labs-color: var(--color-text-faint);
+        --logo-bracket-color: var(--color-text-faint);
+        transition: --logo-bits-color 0.3s ease;
+      }
+      .dm-identity-nav__link:hover .dm-identity-nav__endorser {
+        --logo-bits-color: var(--color-text-muted);
+        --logo-ark-color: var(--color-text-muted);
+        --logo-labs-color: var(--color-text-muted);
+        --logo-bracket-color: var(--color-text-muted);
+      }
+      .dm-identity-nav__endorser :global(.logo-svg) {
+        height: 11px;
+        width: auto;
+      }
+
+      /* Mobile <= 540px - drop the endorser and keep just the wordmark */
+      @media (max-width: 540px) {
+        .dm-identity-nav__by,
+        .dm-identity-nav__endorser {
+          display: none;
+        }
+      }
+
+      /* ── Sub-brand (Exchanges / Stablecoins) ──────────── */
+      .nav__product-block {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+        gap: 0;
+      }
+      .nav__product-block__name {
+        font-family: var(--font-mono);
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+      }
+      .nav__product-block__sub {
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+      }
+
+      /* ── Modificadores de cor - eliminam inline style= ── */
+      .nav__product-block__name--primary { color: var(--color-primary); }
+      .nav__product-block__name--success { color: var(--color-success); }
+      .nav__product-block__sub--faint    { color: var(--color-text-faint); }
+
+      /* ── Mobile CTA item ────────────────────────────────── */
+      .mobile-menu__link--cta {
+        margin-top: 0.75rem;
+        color: var(--color-primary);
+        border-top: 1px solid var(--color-border);
+        padding-top: 0.75rem;
+      }
+
+      /* ── Lang Picker ─────────────────────────────────────
+         Estilos base vivem no global.css.
+         Aqui apenas o override específico do layout.
+      ─────────────────────────────────────────────────────── */
+      .nav__lang-picker {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        color: var(--color-text-faint);
+      }
+      .nav__lang-picker--mobile {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--color-border);
+      }
+      .nav__lang-picker svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        margin-right: 0.1rem;
+        opacity: 0.5;
+      }
+      .nav__lang-link {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-text-faint);
+        text-decoration: none;
+        padding: 0.2em 0.4em;
+        border-radius: var(--radius-sm);
+        transition: color var(--transition), background var(--transition);
+      }
+      .nav__lang-link:hover {
+        color: var(--color-text);
+        background: var(--color-primary-highlight);
+      }
+      .nav__lang-link.active {
+        color: var(--color-primary);
+        background: var(--color-primary-highlight);
+      }
+    </style>
+
+    <!--
+      Slot nomeado "head": permite que páginas injetem tags adicionais no <head>,
+      tipicamente <script type="application/ld+json" slot="head"> para JSON-LD
+      específico da página (ex.: FAQPage, Legislation), além do prop `schema`.
+    -->
+    <slot name="head" />
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip-link">
+      {t('nav.skipLink')}
+    </a>
+
+    <!-- ── NAV ───────────────────────────────────────────── -->
+    <nav class="nav" aria-label={t('nav.ariaLabel')}>
+      <div class="container">
+        <div class="nav__inner">
+
+          <!-- ── LOGO ─────────────────────────────────────── -->
+          {isDolarMap ? (
+
+            /* ── DolarMap: SVG próprio + by + bitsARK faint ── */
+            <div class="nav__logo dm-identity-nav">
+              <a href={l('/dolarmap')} class="dm-identity-nav__link" aria-label="DolarMap - home">
+                <div class="dm-identity-nav__product">
+                  <DolarMapLogo gradientId="dm-logo-gradient-nav" aria-hidden="true" focusable="false" />
+                </div>
+              </a>
+              <span class="dm-identity-nav__by">by</span>
+              <a href={l('/')} class="dm-identity-nav__link" aria-label={t('nav.ariaHome')}>
+                <div class="dm-identity-nav__endorser"><Logo /></div>
+              </a>
+            </div>
+
+          ) : isExchanges ? (
+
+            /* ── Exchanges: 2 linhas + by + bitsARK faint ── */
+            <div class="nav__logo dm-identity-nav">
+              <a href={l('/exchanges')} aria-label="Exchanges in Brazil - home">
+                <div class="nav__product-block">
+                  <span class="nav__product-block__name nav__product-block__name--primary">Exchanges</span>
+                  <span class="nav__product-block__sub nav__product-block__sub--faint">in Brazil</span>
+                </div>
+              </a>
+              <span class="dm-identity-nav__by">by</span>
+              <a href={l('/')} class="dm-identity-nav__link" aria-label={t('nav.ariaHome')}>
+                <div class="dm-identity-nav__endorser"><Logo /></div>
+              </a>
+            </div>
+
+          ) : isStablecoins ? (
+
+            /* ── Stablecoins: 2 linhas + by + bitsARK faint ── */
+            <div class="nav__logo dm-identity-nav">
+              <a href={l('/stablecoins-brasil')} aria-label="Stablecoins in Brazil - home">
+                <div class="nav__product-block">
+                  <span class="nav__product-block__name nav__product-block__name--success">Stablecoins</span>
+                  <span class="nav__product-block__sub nav__product-block__sub--faint">in Brazil</span>
+                </div>
+              </a>
+              <span class="dm-identity-nav__by">by</span>
+              <a href={l('/')} class="dm-identity-nav__link" aria-label={t('nav.ariaHome')}>
+                <div class="dm-identity-nav__endorser"><Logo /></div>
+              </a>
+            </div>
+
+          ) : (
+
+            /* ── Home / global ── */
+            <a href={l('/')} class="nav__logo" aria-label={t('nav.ariaHome')}>
+              <Logo />
+            </a>
+
+          )}
+
+          <!-- ── NAV LINKS ──────────────────────────────────── -->
+          <ul class="nav__links" role="list">
+            {navLinks.map(link => (
+              <li>
+                <a
+                  href={link.href}
+                  class:list={[
+                    'nav__link',
+                    {
+                      active: !link.href.includes('#') && (() => {
+                        const normalizedPath = path.replace(/\/$/, '') || '/';
+                        const normalizedHref = link.href.replace(/\/$/, '') || '/';
+                        
+                        // Match exato (sempre prioridade)
+                        if (normalizedPath === normalizedHref) return true;
+
+                        // Excluir hubs principais do "startsWith" para evitar duplo highlight em subpáginas
+                        const hubs = ['/dolarmap', '/exchanges', '/stablecoins-brasil', '/pt/dolarmap', '/pt/exchanges', '/pt/stablecoins-brasil'];
+                        return !hubs.includes(normalizedHref) && normalizedPath.startsWith(normalizedHref + '/');
+                      })(),
+                    },
+                  ]}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <!-- ── Language Toggle (Desktop) ─────────────────── -->
+          <div class="nav__lang-picker desktop-only-flex" aria-label={t('nav.langPicker.ariaLabel')}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            {languages.map(langItem => (
+              <a
+                href={langHrefs[langItem.code]}
+                class:list={[
+                'nav__lang-link',
+                  { active: langItem.code === normalizedLang },
+                ]}
+                aria-label={`Switch to ${langItem.label}`}
+              >
+                {langItem.label}
+              </a>
+            ))}
+          </div>
+
+
+          <!-- ── CTA ───────────────────────────────────────── -->
+          {cta && (
+            <a
+              href={cta.href}
+              class="nav__cta desktop-only"
+              {...(cta.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+            >
+              {cta.href.includes('play.google.com') && (
+                <svg class="nav__cta-icon" width="13" height="13" viewBox="0 0 512 512" aria-hidden="true" focusable="false">
+                  <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z" fill="#EA4335"/>
+                  <path d="M47 0C34 6.8 25.3 19.2 25.3 35V477c0 15.8 8.7 28.2 21.7 35l242.3-242L47 0z" fill="#4285F4"/>
+                  <path d="M425.2 225.6l-58.3-33.5-65.4 64.1 65.4 64.1 59.1-34c16.8-9.8 16.8-33.1-.8-60.7z" fill="#FBBC05"/>
+                  <path d="M47 477c0 15.8 8.7 28.2 21.7 35l242.3-242-63.8-63.8L47 477z" fill="#34A853"/>
+                </svg>
+              )}
+              {cta.label}
+            </a>
+          )}
+
+          <!-- Hamburger
+               data-label-open / data-label-close: passam strings i18n para o script
+               client-side sem quebrar o padrão SSG (zero runtime Astro).
+          -->
+          <button
+            class="nav__hamburger"
+            id="hamburger"
+            aria-label={t('nav.hamburger.open')}
+            data-label-open={t('nav.hamburger.open')}
+            data-label-close={t('nav.hamburger.close')}
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            type="button"
+          >
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+
+        </div>
+
+        <!-- ── MOBILE MENU ──────────────────────────────────── -->
+        <div class="mobile-menu" id="mobile-menu" aria-label="Mobile menu">
+          <div class="mobile-menu__links">
+
+            <!-- Lang Toggle Mobile -->
+            <div class="nav__lang-picker nav__lang-picker--mobile"
+                 aria-label={t('nav.langPicker.ariaLabel')}>
+              {languages.map(langItem => (
+                <a
+                  href={langHrefs[langItem.code]}
+                  class:list={[
+                    'nav__lang-link',
+                    { active: langItem.code === normalizedLang },
+                  ]}
+                  aria-label={`Switch to ${langItem.label}`}
+                >
+                  {langItem.flag} {langItem.label}
+                </a>
+              ))}
+            </div>
+
+            {mobileLinks.map((link, i) => (
+              <a
+                href={link.href}
+                class:list={[
+                  'mobile-menu__link',
+                  {
+                    'mobile-menu__link--cta':
+                      cta &&
+                      i === mobileLinks.length - 1 &&
+                      link.href === cta.href,
+                  },
+                ]}
+                {...('external' in link && link.external
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </nav>
+
+    <!-- ── MAIN ──────────────────────────────────────────── -->
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+
+    <!-- ── FOOTER ────────────────────────────────────────── -->
+    <footer class:list={['footer', { 'footer--product': isDolarMap }]} aria-label="Site footer">
+      <div class="container">
+        <div class="footer__grid">
+
+          <!-- Brand -->
+          <div class="footer__brand">
+            <a href={l('/')} class="nav__logo footer__logo" aria-label={t('nav.ariaHome')}>
+              <Logo />
+            </a>
+            <p class="footer__tagline">{t('footer.tagline')}</p>
+            <a href="mailto:support@bitsark.com" class="footer__contact">{t('footer.email')}</a>
+          </div>
+
+          <!-- Solutions -->
+          <div class="footer__col">
+            <p class="footer__heading">{t('footer.solutions')}</p>
+            <a href={l('/dolarmap')} class="footer__link">DolarMap</a>
+            <a href="https://play.google.com/store/apps/details?id=com.bitsark.dolarmap"
+               class="footer__link footer__link--sub"
+               target="_blank" rel="noopener noreferrer">
+              {t('footer.playstore')}
+            </a>
+            <a href={l('/exchanges/api')} class="footer__link">Exchanges API</a>
+          </div>
+
+          <!-- Market Intelligence -->
+          <div class="footer__col">
+            <p class="footer__heading">{t('footer.intelligence')}</p>
+            <a href={l('/exchanges')}          class="footer__link">{t('footer.exchanges')}</a>
+            <a href={l('/stablecoins-brasil')} class="footer__link">{t('footer.stablecoins')}</a>
+            <a href={l('/stablecoins-brasil/receber-exterior-pj')}
+               class="footer__link footer__link--sub">{t('footer.stablecoinsPj')}</a>
+            <a href={l('/exchanges/decripto')} class="footer__link">{t('footer.decripto')}</a>
+          </div>
+
+          <!-- Company -->
+          <div class="footer__col">
+            <p class="footer__heading">{t('footer.company')}</p>
+            <a href={l('/about')}                    class="footer__link">{t('footer.about')}</a>
+            <a href={l('/about#hiring')}             class="footer__link">{t('footer.contact')}</a>
+            <a href="https://github.com/bitsARK-Labs/exchanges-api"
+               class="footer__link" target="_blank" rel="noopener noreferrer">
+              {t('footer.github')}
+            </a>
+          </div>
+
+          <!-- DolarMap Legal - só em /dolarmap/* -->
+          {isDolarMap && (
+            <div class="footer__col footer__col--app">
+              <p class="footer__heading">DolarMap</p>
+              <a href={l('/dolarmap/privacy')} class="footer__link">{t('footer.privacy')}</a>
+              <a href={l('/dolarmap/terms')}   class="footer__link">{t('footer.terms')}</a>
+              <a href={l('/dolarmap/support')} class="footer__link">{t('footer.support')}</a>
+              <a
+                href="https://status.bitsark.com"
+                class="footer__uptime-badge"
+                target="_blank" rel="noopener noreferrer"
+                aria-label="Status dos serviços DolarMap - ver página de status"
+              >
+                <img
+                  src="https://uptime.betterstack.com/status-badges/v1/monitor/2m005.svg"
+                  alt="DolarMap uptime status"
+                  width="105" height="20"
+                  loading="lazy" decoding="async"
+                />
+              </a>
+            </div>
+          )}
+
+        </div>
+
+        <!-- Legal bar -->
+        <div class="footer__legal">
+          <p>© {new Date().getFullYear()} bitsARK Labs · Tecnologia Atual Serviços LTDA · <span class="footer__cnpj">CNPJ 51.334.748/0001-61</span></p>
+          <p>{t('footer.legal')}</p>
+        </div>
+
+      </div>
+    </footer>
+
+    <!-- ── SCRIPT ─────────────────────────────────────────── -->
+    <script>
+      const hamburger  = document.getElementById('hamburger')   as HTMLButtonElement | null;
+      const mobileMenu = document.getElementById('mobile-menu') as HTMLElement | null;
+
+      // Strings i18n passadas via data attributes - sem dependency em runtime Astro.
+      const labelOpen  = hamburger?.dataset.labelOpen  ?? 'Open menu';
+      const labelClose = hamburger?.dataset.labelClose ?? 'Close menu';
+
+      function openMenu() {
+        mobileMenu?.classList.add('open');
+        hamburger?.setAttribute('aria-expanded', 'true');
+        hamburger?.setAttribute('aria-label', labelClose);
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        mobileMenu?.classList.remove('open');
+        hamburger?.setAttribute('aria-expanded', 'false');
+        hamburger?.setAttribute('aria-label', labelOpen);
+        document.body.style.overflow = '';
+      }
+
+      hamburger?.addEventListener('click', () => {
+        mobileMenu?.classList.contains('open') ? closeMenu() : openMenu();
+      });
+
+      document.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && mobileMenu?.classList.contains('open')) {
+          closeMenu();
+          hamburger?.focus();
+        }
+      });
+
+      document.addEventListener('click', (e: MouseEvent) => {
+        const nav = document.querySelector('.nav');
+        if (nav && !nav.contains(e.target as Node) && mobileMenu?.classList.contains('open')) {
+          closeMenu();
+        }
+      });
+
+      // Active link highlight
+      const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+      const hubPaths = ['/dolarmap', '/exchanges', '/stablecoins-brasil', '/pt/dolarmap', '/pt/exchanges', '/pt/stablecoins-brasil'];
+
+      document.querySelectorAll('.nav__link, .mobile-menu__link').forEach((link) => {
+        const href = link.getAttribute('href')?.replace(/\/$/, '') || '';
+        if (!href || href.includes('#')) return;
+
+        // Remove a classe antes de aplicar para evitar duplicidade do SSR
+        link.classList.remove('active');
+
+        if (currentPath === href) {
+          // Match exato
+          link.classList.add('active');
+        } else if (href !== '' && currentPath.startsWith(href + '/') && !hubPaths.includes(href)) {
+          // Match de sub-rota apenas para links que não são "hubs" principais
+          link.classList.add('active');
+        }
+      });
+
+      // Nav scroll state - condense from translucent to opaque after the first 8px
+      const navEl = document.querySelector('.nav') as HTMLElement | null;
+      if (navEl) {
+        const onScroll = () => {
+          if (window.scrollY > 8) {
+            navEl.classList.add('is-scrolled');
+          } else {
+            navEl.classList.remove('is-scrolled');
+          }
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+    </script>
+
+    <!-- ── Persistência de Idioma (Gold Standard UX) ── -->
+    <script is:inline>
+      (function() {
+        const currentLang = document.documentElement.lang; // 'en' ou 'pt-BR'
+        localStorage.setItem('preferred-lang', currentLang);
+      })();
+    </script>
+
+  </body>
+</html>

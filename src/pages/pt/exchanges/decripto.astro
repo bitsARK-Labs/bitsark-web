@@ -1,0 +1,497 @@
+---
+import Base from '@layouts/Base.astro';
+import { useTranslations } from '@i18n/ui';
+import '@styles/pages/decripto.css';
+
+const t = useTranslations('pt-BR');
+
+const canonical = 'https://bitsark.com/pt/exchanges/decripto/';
+const datePublished = '2025-12-01';
+const dateModified = '2026-05-11';
+
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/exchanges/decripto/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/decripto/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/decripto/' },
+];
+
+// Timeline Logic
+const now = new Date();
+// const now = new Date('2026-05-15'); // Para testar cenário Jan-Jun 2026
+
+const timelineConfig = [
+  { date: new Date('2024-01-01'), end: new Date('2024-12-31T23:59:59') },
+  { date: new Date('2025-01-01'), end: new Date('2025-12-31T23:59:59') },
+  { date: new Date('2026-01-01'), end: new Date('2026-06-30T23:59:59') },
+  { date: new Date('2026-07-01'), end: new Date('2026-12-31T23:59:59') },
+  { date: new Date('2027-01-01'), end: new Date('2099-12-31') },
+];
+
+const processedTimeline = t.decripto.timeline.items.map((item, i) => {
+  const config = timelineConfig[i];
+  const status = now > config.end ? 'past' : now >= config.date ? 'active' : 'future';
+  return { ...item, ...config, status };
+});
+
+const allFaqs = t.decripto.faq.categories.flatMap((cat) => cat.questions);
+const isTransitionPeriod = processedTimeline[2]?.status === 'active';
+const isInForce = processedTimeline[3]?.status === 'active' || processedTimeline[3]?.status === 'past' || processedTimeline[4]?.status === 'active';
+
+const icons: Record<string, string> = {
+  info: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  calendar: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  users: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  'file-text': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`,
+  coins: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18.06"/><path d="M7 6h1v4"/><path d="M17 12h1v4"/></svg>`,
+  'check-circle': `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+  receipt: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5V18.5"/><path d="M12 7V8"/></svg>`,
+  globe: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+  landmark: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="2" y1="22" x2="22" y2="22"/><line x1="2" y1="11" x2="22" y2="11"/><path d="m2 11 10-9 10 9"/><path d="M4 11v11"/><path d="M8 11v11"/><path d="M12 11v11"/><path d="M16 11v11"/><path d="M20 11v11"/></svg>`,
+  map: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>`,
+  warning: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  chevron: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
+  search: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+};
+---
+
+<Base
+  title="DeCripto 2026: O Novo Padrão de Reporte da Receita Federal (IN 2.291)"
+  description="Guia completo sobre a nova regulamentação cripto no Brasil. Entenda como a DeCripto (IN 2.291/2025) substitui a IN 1.888 e impacta investidores."
+  lang="pt-BR"
+  canonical={canonical}
+  alternates={alternates}
+  ogImage="https://bitsark.com/og/decripto.png"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': canonical,
+        url: canonical,
+        name: t.decripto.meta.title,
+        description: t.decripto.meta.description,
+        inLanguage: 'pt-BR',
+        datePublished: datePublished,
+        dateModified: dateModified,
+        publisher: { '@type': 'Organization', name: 'bitsARK', url: 'https://bitsark.com' },
+        about: [
+          { '@type': 'Legislation', name: 'Instrução Normativa RFB nº 2.291/2025', alternateName: 'DeCripto', legislationType: 'Instrução Normativa', jurisdiction: 'Brasil', dateEnacted: '2025-11-14' },
+          { '@type': 'Legislation', name: 'Lei nº 14.754/2023', alternateName: 'Lei das Offshores', legislationType: 'Lei Ordinária Federal', jurisdiction: 'Brasil', dateEnacted: '2023-12-12' },
+          { '@type': 'Legislation', name: 'Instrução Normativa RFB nº 1.888/2019', legislationType: 'Instrução Normativa', jurisdiction: 'Brasil', dateEnacted: '2019-05-03' },
+        ],
+        breadcrumb: {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://bitsark.com/pt/' },
+            { '@type': 'ListItem', position: 2, name: 'Exchanges', item: 'https://bitsark.com/pt/exchanges/' },
+            { '@type': 'ListItem', position: 3, name: 'DeCripto 2026', item: canonical },
+          ],
+        },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${canonical}#faq`,
+        mainEntity: allFaqs.map((faq) => ({
+          '@type': 'Question',
+          name: faq.q,
+          acceptedAnswer: { '@type': 'Answer', text: faq.a },
+        })),
+      },
+    ],
+  })} />
+
+  <!-- ══════════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════════ -->
+  <section class="dc-hero" aria-labelledby="page-heading">
+    <div class="dc-hero__atmos" aria-hidden="true">
+      <div class="dc-hero__halo"></div>
+      <div class="dc-hero__grid"></div>
+      <div class="dc-hero__noise"></div>
+    </div>
+
+    <div class="container dc-hero__body">
+      <nav class="dc-breadcrumb fade-up" aria-label="Breadcrumb">
+        <a href="/pt/">Início</a>
+        <span aria-hidden="true">›</span>
+        <a href="/pt/exchanges/">Exchanges</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">DeCripto 2026</span>
+      </nav>
+
+      <div class="dc-hero__topbar fade-up">
+        <div class="dc-urgency-pill" role="status">
+          <span class="dc-urgency-pill__dot" aria-hidden="true"></span>
+          <span class="dc-urgency-pill__txt">IN 2.291/2025 · {t.decripto.hero.badge}</span>
+        </div>
+        <p class="dc-hero__meta">
+          <time datetime={dateModified}>
+            {t.decripto.meta.lastReviewedLabel}: {new Date(dateModified + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}
+          </time>
+          <span class="dc-hero__meta-sep" aria-hidden="true">·</span>
+          <span class="dc-hero__meta-disclaimer">{t.decripto.meta.disclaimerNotLegal}</span>
+        </p>
+      </div>
+
+      <h1 id="page-heading" class="dc-hero__title fade-up" style="animation-delay:.1s">
+        {t.decripto.hero.title}
+      </h1>
+
+      <p class="dc-hero__sub fade-up" style="animation-delay:.2s" set:html={t.decripto.hero.sub} />
+
+      <div class="dc-hero__chips fade-up" style="animation-delay:.3s">
+        {t.decripto.hero.chips.map((chip, i) => (
+          <span class="dc-chip">
+            <span class="dc-chip__icon" set:html={icons[(['calendar', 'globe', 'landmark', 'map'] as const)[i]] || icons.map} />
+            {chip}
+          </span>
+        ))}
+      </div>
+
+      <!-- Floating stat cards: Glassmorphism layer -->
+      <div class="dc-hero__floats" aria-hidden="true">
+        <div class="dc-hfloat dc-hfloat--a">
+          <span class="dc-hfloat__label">VOCÊ PRECISA DECLARAR ACIMA DE</span>
+          <span class="dc-hfloat__value">R$&nbsp;35k</span>
+          <span class="dc-hfloat__meta">por mês · operações em DEX ou P2P</span>
+        </div>
+        <div class="dc-hfloat dc-hfloat--b">
+          <span class="dc-hfloat__label">PAÍSES QUE TROCAM DADOS</span>
+          <span class="dc-hfloat__value">70<sup>+</sup></span>
+          <span class="dc-hfloat__meta">acordo internacional da OCDE</span>
+        </div>
+        <div class="dc-hfloat dc-hfloat--c">
+          <span class="dc-hfloat__tag">{isInForce ? 'EM VIGOR' : 'ENTRA EM VIGOR'}</span>
+          <span class="dc-hfloat__date">Julho 2026</span>
+          <span class="dc-hfloat__dot" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       ALERTA CONTEXTUAL (Jan–Jun 2026)
+  ══════════════════════════════════════════════════════════ -->
+  {isTransitionPeriod && (
+    <div class="dc-alert-band">
+      <div class="container">
+        <aside class="dc-alert" role="alert">
+          <span class="dc-alert__icon" set:html={icons.warning} />
+          <div set:html={t.decripto.alert} />
+        </aside>
+      </div>
+    </div>
+  )}
+
+  <!-- ══════════════════════════════════════════════════════════
+       STATS STRIP
+  ══════════════════════════════════════════════════════════ -->
+  <aside class="dc-strip" aria-label="Métricas regulatórias chave">
+    <div class="container">
+      <ol class="dc-strip__row fade-up">
+        <li class="dc-strip__cell">
+          <span class="dc-strip__n">R$&nbsp;30<span class="dc-strip__unit">k</span></span>
+          <span class="dc-strip__lbl">Limite mensal antigo (vale até junho/2026)</span>
+        </li>
+        <li class="dc-strip__cell">
+          <span class="dc-strip__n">R$&nbsp;35<span class="dc-strip__unit">k</span></span>
+          <span class="dc-strip__lbl">Novo limite mensal · DeCripto</span>
+        </li>
+        <li class="dc-strip__cell">
+          <span class="dc-strip__n">70<span class="dc-strip__plus">+</span></span>
+          <span class="dc-strip__lbl">Países trocando dados de cripto</span>
+        </li>
+        <li class="dc-strip__cell">
+          <span class="dc-strip__n">15<span class="dc-strip__unit">%</span></span>
+          <span class="dc-strip__lbl">Imposto fixo sobre cripto no exterior</span>
+        </li>
+        <li class="dc-strip__cell">
+          <span class="dc-strip__n">Jul<span class="dc-strip__unit">'26</span></span>
+          <span class="dc-strip__lbl">Quando a DeCripto entra em vigor</span>
+        </li>
+      </ol>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CALLOUT - PJ exportador (cross-link para guia específico)
+  ══════════════════════════════════════════════════════════ -->
+  <div class="dc-alert-band">
+    <div class="container">
+      <aside class="dc-alert dc-alert--info" role="note">
+        <span class="dc-alert__icon" set:html={icons['file-text']} />
+        <div>
+          <strong>Tem CNPJ e recebe do exterior em stablecoin?</strong>
+          Aí entra um pacote separado: nota fiscal de exportação (NFS-e), conversão pela cotação oficial do dólar do dia e o novo IOF que está sendo discutido.
+          <a href="/pt/stablecoins-brasil/receber-exterior-pj/">Veja o guia operacional para PJ →</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TIMELINE
+  ══════════════════════════════════════════════════════════ -->
+  <section class="dc-band dc-band--alt" aria-labelledby="timeline-heading">
+    <div class="container">
+      <header class="dc-section-head fade-up">
+        <p class="dc-eyebrow"><span aria-hidden="true">/</span> Roadmap Regulatório</p>
+        <h2 id="timeline-heading" class="dc-section-title">{t.decripto.timeline.title}</h2>
+      </header>
+
+      <ol class="dc-timeline" role="list" aria-label="Marcos regulatórios cripto">
+        {processedTimeline.map((item) => (
+          <li class={`dc-tl-item dc-tl-item--${item.status} fade-up`} aria-current={item.status === 'active' ? 'step' : undefined}>
+            <div class="dc-tl-connector" aria-hidden="true">
+              <div class="dc-tl-dot"></div>
+              <div class="dc-tl-line"></div>
+            </div>
+            <div class="dc-tl-content">
+              <time class="dc-tl-label" datetime={item.date.toISOString().slice(0, 7)}>{item.label}</time>
+              {item.status === 'active' && <span class="dc-tl-badge">Agora</span>}
+              <p class="dc-tl-text">{item.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TABELA COMPARATIVA
+  ══════════════════════════════════════════════════════════ -->
+  <section class="dc-band" aria-labelledby="compare-heading">
+    <div class="container">
+      <header class="dc-section-head fade-up">
+        <p class="dc-eyebrow"><span aria-hidden="true">/</span> Comparação Lado a Lado</p>
+        <h2 id="compare-heading" class="dc-section-title">{t.decripto.table.title}</h2>
+      </header>
+      <div class="dc-table-frame fade-up">
+        <div class="dc-table-wrapper">
+          <table class="dc-data-table">
+            <thead>
+              <tr>
+                {t.decripto.table.headers.map((h, i) => (
+                  <th class={i === 2 ? 'dc-th--highlight' : ''}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {t.decripto.table.rows.map((row) => (
+                <tr>
+                  {row.map((cell, i) => (
+                    <td class={i === 2 ? 'dc-td--highlight' : ''}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CHECKLIST
+  ══════════════════════════════════════════════════════════ -->
+  <section class="dc-band dc-band--alt" aria-labelledby="checklist-heading">
+    <div class="container">
+      <header class="dc-section-head fade-up">
+        <p class="dc-eyebrow"><span aria-hidden="true">/</span> Checklist Prático</p>
+        <h2 id="checklist-heading" class="dc-section-title">{t.decripto.checklist.title}</h2>
+      </header>
+      <div class="dc-checklist-grid">
+        <div class="dc-checklist-card fade-up">
+          <div class="dc-checklist-card__head">
+            <div class="dc-card-tag-row">
+              <span class="dc-card-tag dc-card-tag--users">USUÁRIOS</span>
+            </div>
+            <h3>{t.decripto.checklist.users.title}</h3>
+          </div>
+          <ul class="dc-checklist-list">
+            {t.decripto.checklist.users.items.map((item, i) => (
+              <li>
+                <input type="checkbox" id={`u${i}`} class="dc-checkbox" />
+                <label for={`u${i}`} class="dc-checkbox-label">
+                  <span class="dc-checkbox-box" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
+                  </span>
+                  {item}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="dc-checklist-card fade-up" style="animation-delay:.1s">
+          <div class="dc-checklist-card__head">
+            <div class="dc-card-tag-row">
+              <span class="dc-card-tag dc-card-tag--accountants">CONTADORES</span>
+            </div>
+            <h3>{t.decripto.checklist.accountants.title}</h3>
+          </div>
+          <ul class="dc-checklist-list">
+            {t.decripto.checklist.accountants.items.map((item, i) => (
+              <li>
+                <input type="checkbox" id={`c${i}`} class="dc-checkbox" />
+                <label for={`c${i}`} class="dc-checkbox-label">
+                  <span class="dc-checkbox-box" aria-hidden="true">
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 5 9 10 3"/></svg>
+                  </span>
+                  {item}
+                </label>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       FAQ
+  ══════════════════════════════════════════════════════════ -->
+  <section class="dc-band" aria-labelledby="faq-heading" id="faq">
+    <div class="container">
+      <header class="dc-section-head fade-up">
+        <p class="dc-eyebrow"><span aria-hidden="true">/</span> Base de Conhecimento</p>
+        <h2 id="faq-heading" class="dc-section-title">{t.decripto.faq.title}</h2>
+      </header>
+
+      <nav class="dc-faq-nav fade-up" aria-label="Categorias do FAQ">
+        {t.decripto.faq.categories.map((cat, i) => (
+          <a href={`#${cat.id}`} class={`dc-faq-nav-pill${i === 0 ? ' active' : ''}`}>
+            <span class="dc-faq-nav-icon" set:html={icons[cat.icon] || ''} />
+            {cat.title}
+          </a>
+        ))}
+      </nav>
+
+      <div class="dc-faq-search-wrapper fade-up">
+        <div class="dc-faq-search-box">
+          <span class="dc-faq-search-icon" set:html={icons.search} />
+          <input type="text" id="faq-search" placeholder={t.decripto.faq.searchPlaceholder} aria-label="Pesquisar no FAQ" />
+        </div>
+        <p id="faq-no-results" class="dc-faq-no-results is-hidden">{t.decripto.faq.noResults}</p>
+      </div>
+
+      <div class="dc-faq-categories">
+        {t.decripto.faq.categories.map((cat, ci) => (
+          <div id={cat.id} class="dc-faq-cat fade-up" style={`animation-delay:${ci * 0.05}s`}>
+            <h3 class="dc-faq-cat__title">
+              <span class="dc-faq-cat__icon" set:html={icons[cat.icon] || ''} />
+              {cat.title}
+            </h3>
+            <div class="faq-list" role="list">
+              {cat.questions.map((faq) => (
+                <details class="faq-item" role="listitem">
+                  <summary>{faq.q}</summary>
+                  <div class="faq-answer"><p>{faq.a}</p></div>
+                </details>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       CTA
+  ══════════════════════════════════════════════════════════ -->
+  <section class="dc-band dc-band--alt" aria-labelledby="cta-heading">
+    <div class="container">
+      <div class="dc-cta fade-up">
+        <div class="dc-cta__halo" aria-hidden="true"></div>
+        <p class="dc-cta__eyebrow"><span aria-hidden="true">/</span> Pronto para começar?</p>
+        <h2 id="cta-heading" class="dc-section-title dc-cta__title">{t.decripto.cta.title}</h2>
+        <p class="dc-cta__sub">{t.decripto.cta.sub}</p>
+        <a href="/pt/exchanges" class="dc-cta-btn">
+          {t.decripto.cta.btn}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       DISCLAIMER
+  ══════════════════════════════════════════════════════════ -->
+  <div class="dc-disclaimer-band">
+    <div class="container">
+      <p class="dc-disclaimer" set:html={t.decripto.disclaimer} />
+    </div>
+  </div>
+</Base>
+
+<!-- IntersectionObserver para .fade-up -->
+<script>
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          (e.target as HTMLElement).classList.add('is-visible');
+          observer.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+  document.querySelectorAll('.fade-up').forEach((el) => observer.observe(el));
+
+  /* FAQ nav - highlight da categoria visível no scroll */
+  (function () {
+    const links = document.querySelectorAll<HTMLAnchorElement>('.dc-faq-nav-pill');
+    if (!links.length) return;
+    const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href') ?? ''));
+    function update() {
+      const y = window.scrollY + 200;
+      let idx = 0;
+      sections.forEach((s, i) => { if (s && (s as HTMLElement).offsetTop <= y) idx = i; });
+      links.forEach((l, i) => l.classList.toggle('active', i === idx));
+    }
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
+
+  /* FAQ Search Logic */
+  (function() {
+    const searchInput = document.getElementById('faq-search') as HTMLInputElement;
+    const faqItems = document.querySelectorAll('.faq-item');
+    const categories = document.querySelectorAll('.dc-faq-cat');
+    const noResultsMsg = document.getElementById('faq-no-results');
+    const nav = document.querySelector('.dc-faq-nav');
+
+    if (!searchInput) return;
+
+    searchInput.addEventListener('input', (e) => {
+      const term = (e.target as HTMLInputElement).value.toLowerCase().trim();
+      let hasAnyResult = false;
+
+      categories.forEach(cat => {
+        const items = cat.querySelectorAll('.faq-item');
+        let hasVisibleItemsInCat = false;
+
+        items.forEach(item => {
+          const text = item.textContent?.toLowerCase() || '';
+          const isMatch = text.includes(term);
+          item.classList.toggle('is-hidden', !isMatch);
+          if (isMatch) {
+            hasVisibleItemsInCat = true;
+            hasAnyResult = true;
+          }
+        });
+
+        cat.classList.toggle('is-hidden', !hasVisibleItemsInCat);
+      });
+
+      // Esconder a navegação por pills se estiver pesquisando para não confundir o scroll
+      if (nav) nav.classList.toggle('is-hidden', term.length > 0);
+      
+      if (noResultsMsg) {
+        noResultsMsg.classList.toggle('is-hidden', hasAnyResult || term.length === 0);
+      }
+    });
+  })();
+</script>

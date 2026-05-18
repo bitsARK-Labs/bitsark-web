@@ -1,0 +1,819 @@
+---
+import Base from "@layouts/Base.astro";
+import t    from "@i18n/pt.json";
+import "@styles/pages/stablecoins.css";
+
+/* ─── Data loading ────────────────────────────────────────────────── */
+let marketData = { latestMarketCapUsd: 0, yoyGrowthPct: 0, monthly: [], updatedAt: null };
+let brazilData = { latestAccumulatedUsd: 0, latestMonth: null, monthly: [], isFallback: false };
+
+try {
+  const mRaw = await import("../../../../public/data/stablecoin-market.json");
+  const bRaw = await import("../../../../public/data/stablecoin-brazil.json");
+  marketData = mRaw.default ?? mRaw;
+  brazilData = bRaw.default ?? bRaw;
+} catch (e) {
+  console.warn("[stablecoins-brasil] Could not load data JSONs:", e.message);
+}
+
+/* ─── Helpers ─────────────────────────────────────────────────────── */
+function fmtBillion(n) {
+  if (!n) return "-";
+  if (n >= 1e12) return `$${(n / 1e12).toFixed(1)}T`;
+  if (n >= 1e9)  return `$${(n / 1e9).toFixed(0)}B`;
+  if (n >= 1e6)  return `$${(n / 1e6).toFixed(0)}M`;
+  return `$${n.toLocaleString("pt-BR")}`;
+}
+
+const marketCap     = fmtBillion(marketData.latestMarketCapUsd);
+const brazilAccum   = fmtBillion(brazilData.latestAccumulatedUsd);
+const yoy           = marketData.yoyGrowthPct ? `+${marketData.yoyGrowthPct}%` : "-";
+
+const locale = "pt-BR";
+const dataUpdatedAt = marketData.updatedAt
+  ? new Date(marketData.updatedAt).toLocaleDateString(locale, { month: "long", year: "numeric" })
+  : "-";
+
+/* Razão fluxo-Brasil-vs-estoque-global: proxy de intensidade de adoção,
+   NÃO posse direta. Caveats metodológicos vão no insightNote. */
+const brazilFlowToGlobalCapPct =
+  marketData.latestMarketCapUsd && brazilData.latestAccumulatedUsd
+    ? Math.round((brazilData.latestAccumulatedUsd / marketData.latestMarketCapUsd) * 100)
+    : 19;
+
+const usdtShare  = 70;
+const usdcShare  = 25;
+const otherShare = 5;
+
+const heroKpis = [
+  { value: marketCap,                                label: t.stablecoins_page.hero.kpiGlobalCap,    meta: t.stablecoins_page.hero.kpiGlobalCapMeta,    accent: false, delta: yoy, deltaTone: "positive" },
+  { value: yoy,                                      label: t.stablecoins_page.hero.kpiGrowth,       meta: t.stablecoins_page.hero.kpiGrowthMeta,       accent: false, deltaTone: "positive", noDelta: true },
+  { value: brazilAccum,                              label: t.stablecoins_page.hero.kpiBrazilInflow, meta: t.stablecoins_page.hero.kpiBrazilInflowMeta, accent: true,  delta: `≈${brazilFlowToGlobalCapPct}% ${t.stablecoins_page.data.shareLabel}`, deltaTone: "accent" },
+  { value: `≈${brazilFlowToGlobalCapPct}%`,          label: t.stablecoins_page.hero.kpiBrazilShare,  meta: t.stablecoins_page.hero.kpiBrazilShareMeta,  accent: false, noDelta: true },
+];
+
+const chartMarket = JSON.stringify(marketData.monthly ?? []);
+const chartBrazil = JSON.stringify(brazilData.monthly ?? []);
+
+/* ─── Schema.org ──────────────────────────────────────────────────── */
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Article",
+      "@id": "https://bitsark.com/pt/stablecoins-brasil/#article",
+      "headline": t.stablecoins_page.meta.title,
+      "description": t.stablecoins_page.meta.description,
+      "inLanguage": "pt-BR",
+      "image": "https://bitsark.com/og/stablecoins-brasil.png",
+      "author": {
+        "@type": "Person",
+        "name": "Ricardo Delfino",
+        "url": "https://bitsark.com/pt/about/"
+      },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "mainEntityOfPage": { "@id": "https://bitsark.com/pt/stablecoins-brasil/" },
+      "datePublished": "2025-11-01",
+      "dateModified": marketData.updatedAt ?? new Date().toISOString(),
+      "about": [
+        { "@id": "https://bitsark.com/pt/stablecoins-brasil/#term-stablecoin" },
+        { "@type": "Thing", "name": "Criptomoedas no Brasil" },
+        { "@type": "Thing", "name": "USDT" },
+        { "@type": "Thing", "name": "USDC" },
+        { "@type": "Thing", "name": "Regulação Banco Central Brasil" }
+      ]
+    },
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://bitsark.com/pt/stablecoins-brasil/#term-stablecoin",
+      "name": "Stablecoin",
+      "description": "Criptomoeda atrelada 1:1 ao valor de uma moeda fiat, geralmente o dólar americano. As principais são USDT (Tether) e USDC (Circle).",
+      "inDefinedTermSet": {
+        "@type": "DefinedTermSet",
+        "name": "Glossário Cripto bitsARK",
+        "url": "https://bitsark.com/pt/stablecoins-brasil/"
+      }
+    }
+  ]
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": t.stablecoins_page.hero.breadcrumbHome,    "item": "https://bitsark.com/pt/" },
+    { "@type": "ListItem", "position": 2, "name": t.stablecoins_page.hero.breadcrumbCurrent, "item": "https://bitsark.com/pt/stablecoins-brasil" },
+  ],
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": t.stablecoins_page.faq.items.map(item => ({
+    "@type": "Question",
+    "name": item.q,
+    "acceptedAnswer": { "@type": "Answer", "text": item.a.replace(/<[^>]+>/g, "") }
+  }))
+};
+
+const alternates = [
+  { hreflang: "en",        href: "https://bitsark.com/stablecoins-brasil/" },
+  { hreflang: "pt-BR",     href: "https://bitsark.com/pt/stablecoins-brasil/" },
+  { hreflang: "x-default", href: "https://bitsark.com/stablecoins-brasil/" }
+];
+---
+
+<Base
+  title={t.stablecoins_page.meta.title}
+  description={t.stablecoins_page.meta.description}
+  lang="pt-BR"
+  canonical="https://bitsark.com/pt/stablecoins-brasil/"
+  alternates={alternates}
+  ogType="website"
+  ogImage="https://bitsark.com/og/stablecoins-brasil.png"
+  schema={schema}
+>
+
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-hero">
+    <div class="sb-hero-glow" aria-hidden="true"></div>
+    <div class="sb-hero-grid-bg" aria-hidden="true"></div>
+    <div class="sb-container">
+
+      <nav class="sb-breadcrumb" aria-label="Breadcrumb">
+        <a href="/pt/">{t.stablecoins_page.hero.breadcrumbHome}</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{t.stablecoins_page.hero.breadcrumbCurrent}</span>
+      </nav>
+
+      <div class="sb-hero-tags">
+        <div class="sb-live-badge">
+          <span class="status-dot" aria-hidden="true"></span>
+          {t.stablecoins_page.hero.liveBadge} {dataUpdatedAt}
+        </div>
+        <div class="sb-rank-pill">
+          <span class="sb-rank-pill-hash" aria-hidden="true">#</span>
+          {t.stablecoins_page.hero.rankTag}
+        </div>
+      </div>
+
+      <h1 class="sb-hero-title" set:html={t.stablecoins_page.hero.title} />
+
+      <p class="sb-hero-sub">
+        {t.stablecoins_page.hero.subtitle}
+      </p>
+
+      <div class="sb-kpi-row" aria-label="Indicadores principais do mercado">
+        {heroKpis.map((k, i) => (
+          <div class:list={["sb-kpi", k.accent && "sb-kpi--accent"]} style={`--sb-kpi-i:${i}`}>
+            <span class="sb-kpi-meta">{k.meta}</span>
+            <span class="sb-kpi-value">{k.value}</span>
+            <span class="sb-kpi-label">{k.label}</span>
+            {!k.noDelta && k.delta && (
+              <span class:list={["sb-kpi-delta", `sb-kpi-delta--${k.deltaTone || "muted"}`]}>
+                {k.delta}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TL;DR
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section sb-section--alt sb-section--tight" id="tldr">
+    <div class="sb-container">
+      <div class="sb-tldr-head">
+        <p class="eyebrow">{t.stablecoins_page.tldr.eyebrow}</p>
+        <h2 class="sb-section-title">{t.stablecoins_page.tldr.title}</h2>
+        <p class="sb-section-sub">{t.stablecoins_page.tldr.sub}</p>
+      </div>
+
+      <div class="sb-tldr-grid">
+        {t.stablecoins_page.tldr.items.map((item, i) => (
+          <div class="sb-tldr-card" style={`--sb-stagger:${i}`}>
+            <div class="sb-tldr-icon" aria-hidden="true">
+              {item.icon === "shield" && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              )}
+              {item.icon === "pix" && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12 12 5l7 7-7 7z"/>
+                  <path d="m9 12 3-3 3 3-3 3z"/>
+                </svg>
+              )}
+              {item.icon === "receipt" && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2H4z"/>
+                  <path d="M8 7h8M8 11h8M8 15h5"/>
+                </svg>
+              )}
+              {item.icon === "chart" && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 3v18h18"/>
+                  <path d="m7 14 4-4 4 3 5-6"/>
+                </svg>
+              )}
+            </div>
+            <h3 class="sb-tldr-q">{item.q}</h3>
+            <p class="sb-tldr-a" set:html={item.a} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BASICS
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section" id="basics">
+    <div class="sb-container sb-narrow">
+      <p class="eyebrow">{t.stablecoins_page.basics.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.basics.title}</h2>
+      <p>{t.stablecoins_page.basics.p1}</p>
+      <p set:html={t.stablecoins_page.basics.p2} />
+
+      <div class="sb-analogy-card">
+        <div class="sb-analogy-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a7 7 0 0 1 5 11.95V17a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1v-3.05A7 7 0 0 1 12 2Z"/>
+            <path d="M9 21h6M10 17v1M14 17v1"/>
+          </svg>
+        </div>
+        <p set:html={t.stablecoins_page.basics.analogy} />
+      </div>
+
+      <div class="sb-flow" role="img" aria-label={t.stablecoins_page.basics.flow.aria}>
+        <div class="sb-flow-node">
+          <div class="sb-flow-circle">R$</div>
+          <p set:html={t.stablecoins_page.basics.flow.step1} />
+        </div>
+        <div class="sb-flow-connector" aria-hidden="true"></div>
+        <div class="sb-flow-node">
+          <div class="sb-flow-circle">⇄</div>
+          <p set:html={t.stablecoins_page.basics.flow.step2} />
+        </div>
+        <div class="sb-flow-connector" aria-hidden="true"></div>
+        <div class="sb-flow-node sb-flow-node--accent">
+          <div class="sb-flow-circle">$</div>
+          <p set:html={t.stablecoins_page.basics.flow.step3} />
+        </div>
+        <div class="sb-flow-connector" aria-hidden="true"></div>
+        <div class="sb-flow-node">
+          <div class="sb-flow-circle">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <p set:html={t.stablecoins_page.basics.flow.step4} />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MARKET DATA
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section sb-section--alt" id="data">
+    <div class="sb-container">
+      <p class="eyebrow">{t.stablecoins_page.data.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.data.title}</h2>
+      <p class="sb-section-sub">{t.stablecoins_page.data.sub}</p>
+
+      <div class="sb-charts-grid">
+        <div class="sb-chart-card">
+          <div class="sb-chart-header">
+            <div>
+              <h3>{t.stablecoins_page.data.globalTitle}</h3>
+              <span class="sb-chart-badge">{t.stablecoins_page.data.globalBadge}</span>
+            </div>
+            <div class="sb-chart-figure">
+              <span class="sb-chart-figure-value">{marketCap}</span>
+              <span class="sb-chart-figure-delta sb-chart-figure-delta--positive">{yoy} YoY</span>
+            </div>
+          </div>
+          <div class="sb-chart-wrap" id="wrap-global">
+            <canvas id="chart-global" aria-label={t.stablecoins_page.data.globalTitle} aria-describedby="table-global-data"></canvas>
+            <table id="table-global-data" class="sr-only">
+              <caption>{t.stablecoins_page.data.globalTitle}</caption>
+              <thead>
+                <tr>
+                  <th>Mês</th>
+                  <th>Market Cap (USD)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {marketData.monthly.map((d) => (
+                  <tr>
+                    <td>{d.month}</td>
+                    <td>{d.marketCapUsd}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="sb-chart-source">
+            Fonte: <a href="https://defillama.com/stablecoins" target="_blank" rel="noopener noreferrer">DefiLlama</a>
+            &mdash; atualizado em {dataUpdatedAt}
+          </p>
+        </div>
+
+        <div class="sb-chart-card sb-chart-card--accent">
+          <div class="sb-chart-header">
+            <div>
+              <h3>{t.stablecoins_page.data.brazilTitle}</h3>
+              <span class="sb-chart-badge" set:html={t.stablecoins_page.data.brazilBadge} />
+            </div>
+            <div class="sb-chart-figure">
+              <span class="sb-chart-figure-value sb-chart-figure-value--accent">{brazilAccum}</span>
+              <span class="sb-chart-figure-delta sb-chart-figure-delta--accent">≈{brazilFlowToGlobalCapPct}% {t.stablecoins_page.data.shareLabel}</span>
+            </div>
+          </div>
+          <div class="sb-chart-wrap" id="wrap-brazil">
+            <canvas id="chart-brazil" aria-label={t.stablecoins_page.data.brazilTitle} aria-describedby="table-brazil-data"></canvas>
+            <table id="table-brazil-data" class="sr-only">
+              <caption>{t.stablecoins_page.data.brazilTitle}</caption>
+              <thead>
+                <tr>
+                  <th>Mês</th>
+                  <th>Entrada Acumulada (USD)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {brazilData.monthly.map((d) => (
+                  <tr>
+                    <td>{d.month}</td>
+                    <td>{d.accumulatedUsd}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="sb-chart-source">
+            Fonte: <a href="https://www.bcb.gov.br" target="_blank" rel="noopener noreferrer">Banco Central do Brasil</a>
+            &mdash; {t.stablecoins_page.data.bcbSource}
+            {brazilData.isFallback && <span class="sb-chart-fallback"> {t.stablecoins_page.data.fallbackNote}</span>}
+          </p>
+        </div>
+      </div>
+
+      <div class="sb-insight-callout">
+        <div class="sb-insight-stat">~1 em {Math.round(100 / brazilFlowToGlobalCapPct)}</div>
+        <div class="sb-insight-body">
+          <p>{t.stablecoins_page.data.insightStat}</p>
+          <p set:html={t.stablecoins_page.data.insightP1.replace("{accum}", brazilAccum).replace("{share}", brazilFlowToGlobalCapPct.toString())} />
+          <p class="sb-insight-caveat" set:html={t.stablecoins_page.data.insightNote} />
+          <a href="https://x.com/fernandoulrich" target="_blank" rel="noopener noreferrer" class="sb-link">
+            {t.stablecoins_page.data.insightLink}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       RANKING - Brasil no mundo
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section" id="ranking">
+    <div class="sb-container">
+      <p class="eyebrow">{t.stablecoins_page.ranking.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.ranking.title}</h2>
+      <p class="sb-section-sub">{t.stablecoins_page.ranking.sub}</p>
+
+      <div class="sb-rank-table" role="table" aria-label="Ranking de adoção por país">
+        <div class="sb-rank-row sb-rank-row--head" role="row">
+          <div class="sb-rank-cell sb-rank-cell--rank">{t.stablecoins_page.ranking.rank}</div>
+          <div class="sb-rank-cell sb-rank-cell--country">{t.stablecoins_page.ranking.colCountry}</div>
+          <div class="sb-rank-cell sb-rank-cell--note">{t.stablecoins_page.ranking.colNote}</div>
+          <div class="sb-rank-cell sb-rank-cell--bar">{t.stablecoins_page.ranking.colVolume}</div>
+          <div class="sb-rank-cell sb-rank-cell--loss">{t.stablecoins_page.ranking.colInflation}</div>
+        </div>
+        {t.stablecoins_page.ranking.countries.map((c, i) => (
+          <div class:list={["sb-rank-row", c.code === "BRA" && "sb-rank-row--highlight"]} style={`--sb-stagger:${i}`} role="row">
+            <div class="sb-rank-cell sb-rank-cell--rank">
+              <span class="sb-rank-num">{String(i + 1).padStart(2, "0")}</span>
+            </div>
+            <div class="sb-rank-cell sb-rank-cell--country">
+              <span class="sb-rank-code">{c.code}</span>
+              <span class="sb-rank-name">{c.name}</span>
+            </div>
+            <div class="sb-rank-cell sb-rank-cell--note">{c.note}</div>
+            <div class="sb-rank-cell sb-rank-cell--bar">
+              <div class="sb-rank-bar-wrap" aria-hidden="true">
+                <div class="sb-rank-bar-fill" style={`--sb-rank-w:${c.intensity}%`}></div>
+              </div>
+              <span class="sb-rank-bar-val">{c.intensity}</span>
+            </div>
+            <div class="sb-rank-cell sb-rank-cell--loss">{c.loss}</div>
+          </div>
+        ))}
+      </div>
+
+      <div class="sb-rank-meta">
+        <p set:html={t.stablecoins_page.ranking.note} />
+        <p class="sb-rank-source">{t.stablecoins_page.ranking.source}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       BREAKDOWN - USDT vs USDC
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section sb-section--alt" id="breakdown">
+    <div class="sb-container sb-narrow-md">
+      <p class="eyebrow">{t.stablecoins_page.breakdown.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.breakdown.title}</h2>
+      <p class="sb-section-sub">{t.stablecoins_page.breakdown.sub}</p>
+
+      <div class="sb-breakdown">
+        <div class="sb-breakdown-bar" aria-hidden="true">
+          <div class="sb-breakdown-seg sb-breakdown-seg--usdt" style={`--w:${usdtShare}%`}>
+            <span>{usdtShare}%</span>
+          </div>
+          <div class="sb-breakdown-seg sb-breakdown-seg--usdc" style={`--w:${usdcShare}%`}>
+            <span>{usdcShare}%</span>
+          </div>
+          <div class="sb-breakdown-seg sb-breakdown-seg--other" style={`--w:${otherShare}%`}>
+            <span>{otherShare}%</span>
+          </div>
+        </div>
+
+        <div class="sb-breakdown-legend">
+          <div class="sb-breakdown-item">
+            <span class="sb-breakdown-dot sb-breakdown-dot--usdt" aria-hidden="true"></span>
+            <div>
+              <strong>{t.stablecoins_page.breakdown.usdtLabel}</strong>
+              <p>{t.stablecoins_page.breakdown.usdtNote}</p>
+            </div>
+          </div>
+          <div class="sb-breakdown-item">
+            <span class="sb-breakdown-dot sb-breakdown-dot--usdc" aria-hidden="true"></span>
+            <div>
+              <strong>{t.stablecoins_page.breakdown.usdcLabel}</strong>
+              <p>{t.stablecoins_page.breakdown.usdcNote}</p>
+            </div>
+          </div>
+          <div class="sb-breakdown-item">
+            <span class="sb-breakdown-dot sb-breakdown-dot--other" aria-hidden="true"></span>
+            <div>
+              <strong>{t.stablecoins_page.breakdown.otherLabel}</strong>
+              <p>{t.stablecoins_page.breakdown.otherNote}</p>
+            </div>
+          </div>
+        </div>
+
+        <p class="sb-breakdown-note">{t.stablecoins_page.breakdown.note}</p>
+      </div>
+
+      <div class="sb-compare">
+        <h3 class="sb-compare-title">{t.stablecoins_page.breakdown.compareTitle}</h3>
+        <div class="sb-compare-grid" role="table" aria-label="Comparação USDT vs USDC">
+          <div class="sb-compare-row sb-compare-row--head" role="row">
+            <span></span>
+            <span class="sb-compare-h sb-compare-h--usdt">USDT</span>
+            <span class="sb-compare-h sb-compare-h--usdc">USDC</span>
+          </div>
+          {t.stablecoins_page.breakdown.compareRows.map((row, i) => (
+            <div class="sb-compare-row" style={`--sb-stagger:${i}`} role="row">
+              <span class="sb-compare-label">{row.label}</span>
+              <span>{row.usdt}</span>
+              <span>{row.usdc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       WHY - use cases
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section" id="why">
+    <div class="sb-container">
+      <p class="eyebrow">{t.stablecoins_page.why.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.why.title}</h2>
+
+      <div class="sb-use-cases">
+        {t.stablecoins_page.why.cards.map((card, i) => {
+          const icons = [
+            `<polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/>`,
+            `<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
+            `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>`,
+            `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
+          ];
+          return (
+            <div class="sb-use-card" style={`--sb-stagger:${i}`}>
+              <div class="sb-use-card-head">
+                <span class="sb-use-icon" aria-hidden="true">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                       set:html={icons[i]} />
+                </span>
+                {card.stat && (
+                  <div class="sb-use-stat">
+                    <span class="sb-use-stat-val">{card.stat}</span>
+                    <span class="sb-use-stat-label">{card.statLabel}</span>
+                  </div>
+                )}
+              </div>
+              <h3>{card.title}</h3>
+              <p>{card.desc}</p>
+              {card.link && <a href="/pt/dolarmap/" class="sb-use-link">{card.link}</a>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       START / como começar
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section sb-section--alt" id="start">
+    <div class="sb-container sb-narrow">
+      <p class="eyebrow">{t.stablecoins_page.start.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.start.title}</h2>
+      <p>{t.stablecoins_page.start.p}</p>
+
+      <div class="sb-steps">
+        <div class="sb-step">
+          <div class="sb-step-num">01</div>
+          <div class="sb-step-body">
+            <h3>{t.stablecoins_page.start.step1.title}</h3>
+            <p>{t.stablecoins_page.start.step1.desc}</p>
+            <a href="/pt/exchanges/" class="sb-link">{t.stablecoins_page.start.step1.link}</a>
+          </div>
+        </div>
+
+        <div class="sb-step">
+          <div class="sb-step-num">02</div>
+          <div class="sb-step-body">
+            <h3>{t.stablecoins_page.start.step2.title}</h3>
+            <p>{t.stablecoins_page.start.step2.desc}</p>
+          </div>
+        </div>
+
+        <div class="sb-step">
+          <div class="sb-step-num">03</div>
+          <div class="sb-step-body">
+            <h3>{t.stablecoins_page.start.step3.title}</h3>
+            <p>{t.stablecoins_page.start.step3.desc}</p>
+            <a href="/pt/dolarmap/" class="sb-link">{t.stablecoins_page.start.step3.link}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       REGULATION - timeline + tax
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section" id="regulation">
+    <div class="sb-container">
+      <p class="eyebrow">{t.stablecoins_page.regulation.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.regulation.title}</h2>
+      <p class="sb-narrow" set:html={t.stablecoins_page.regulation.p} />
+
+      <div class="sb-reg-grid">
+        <ol class="sb-timeline" aria-label={t.stablecoins_page.regulation.timelineAria}>
+          {t.stablecoins_page.regulation.timeline.map((ev, i) => (
+            <li class:list={["sb-timeline-event", `sb-timeline-event--${ev.status}`]} style={`--sb-stagger:${i}`}>
+              <div class="sb-timeline-dot" aria-hidden="true">
+                {ev.status === "done" && (
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                )}
+                {ev.status === "active" && (
+                  <span class="sb-timeline-pulse" aria-hidden="true"></span>
+                )}
+                {ev.status === "upcoming" && <span class="sb-timeline-arrow" aria-hidden="true">›</span>}
+              </div>
+              <div class="sb-timeline-body">
+                <div class="sb-timeline-meta">
+                  <span class="sb-timeline-date">{ev.date}</span>
+                  <span class:list={["sb-timeline-badge", `sb-timeline-badge--${ev.status}`]}>{ev.badge}</span>
+                </div>
+                <h3 class="sb-timeline-title">{ev.title}</h3>
+                <p class="sb-timeline-desc">{ev.desc}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <aside class="sb-tax-box" aria-label="Tributação em um relance">
+          <p class="sb-tax-title">{t.stablecoins_page.regulation.taxBox.title}</p>
+          <ul class="sb-tax-list">
+            {t.stablecoins_page.regulation.taxBox.items.map(item => (
+              <li class="sb-tax-item">
+                <div class="sb-tax-item-head">
+                  <span class="sb-tax-item-label">{item.label}</span>
+                  <span class="sb-tax-item-value">{item.value}</span>
+                </div>
+                <p class="sb-tax-item-note">{item.note}</p>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FAQ
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section sb-section--alt" id="faq">
+    <div class="sb-container sb-narrow">
+      <p class="eyebrow">{t.stablecoins_page.faq.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.faq.title}</h2>
+
+      <div class="faq-list">
+        {t.stablecoins_page.faq.items.map((item) => (
+          <details class="faq-item">
+            <summary>{item.q}</summary>
+            <div class="faq-answer">
+              <p set:html={item.a} />
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SOURCES
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section" id="sources">
+    <div class="sb-container sb-narrow-md">
+      <p class="eyebrow">{t.stablecoins_page.sources.eyebrow}</p>
+      <h2 class="sb-section-title">{t.stablecoins_page.sources.title}</h2>
+      <p class="sb-section-sub">{t.stablecoins_page.sources.sub}</p>
+
+      <ul class="sb-sources">
+        {t.stablecoins_page.sources.items.map((s, i) => (
+          <li class="sb-source-item" style={`--sb-stagger:${i}`}>
+            <span class="sb-source-label">{s.label}</span>
+            <a href={s.href} target="_blank" rel="noopener noreferrer" class="sb-source-link">
+              {s.source}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <p class="sb-sources-meta">
+        <span>{t.stablecoins_page.sources.lastUpdatedLabel}:</span>
+        <strong>{dataUpdatedAt}</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CTA
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="sb-section sb-section--cta">
+    <div class="sb-container sb-narrow">
+      <div class="sb-cta-inner">
+        <div class="sb-cta-glow" aria-hidden="true"></div>
+        <p class="eyebrow">{t.stablecoins_page.cta.eyebrow}</p>
+        <h2>{t.stablecoins_page.cta.title}</h2>
+        <p class="sb-cta-sub">
+          {t.stablecoins_page.cta.sub}
+        </p>
+        <div class="sb-cta-btns">
+          <a href="/pt/dolarmap/" class="sb-btn sb-btn--primary">{t.stablecoins_page.cta.primary}</a>
+          <a href="/pt/exchanges/" class="sb-btn sb-btn--ghost">{t.stablecoins_page.cta.secondary}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       STYLES (mirror of EN)
+  ══════════════════════════════════════════════════════════════ -->
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+
+  <script define:vars={{ chartMarket, chartBrazil }}>
+    document.addEventListener("DOMContentLoaded", () => {
+      const style = getComputedStyle(document.documentElement);
+      const C = {
+        primary:     style.getPropertyValue('--color-primary').trim(),
+        primaryFill: style.getPropertyValue('--color-primary-highlight').trim(),
+        success:     style.getPropertyValue('--color-success').trim(),
+        successFill: style.getPropertyValue('--color-success-highlight').trim(),
+        grid:        style.getPropertyValue('--color-border').trim(),
+        ticks:       style.getPropertyValue('--color-text-faint').trim(),
+        tooltipBg:   style.getPropertyValue('--color-surface').trim(),
+        tooltipBdr:  style.getPropertyValue('--color-border').trim(),
+        tooltipTitle:style.getPropertyValue('--color-text').trim(),
+        tooltipBody: style.getPropertyValue('--color-text-muted').trim(),
+      };
+
+      const baseOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: C.tooltipBg,
+            borderColor: C.tooltipBdr,
+            borderWidth: 1,
+            titleColor: C.tooltipTitle,
+            bodyColor: C.tooltipBody,
+            padding: 12,
+            cornerRadius: 6,
+            titleFont: { family: 'Geist Mono, monospace', size: 11, weight: '500' },
+            bodyFont:  { family: 'Geist Mono, monospace', size: 12 },
+          },
+        },
+        scales: {
+          x: { grid: { color: C.grid, drawTicks: false }, ticks: { color: C.ticks, maxRotation: 0, autoSkip: true, maxTicksLimit: 6, font: { family: 'Geist Mono, monospace', size: 10 }, padding: 8 }, border: { color: C.grid } },
+          y: { grid: { color: C.grid, drawTicks: false }, ticks: { color: C.ticks, font: { family: 'Geist Mono, monospace', size: 10 }, padding: 8 }, border: { color: C.grid } },
+        },
+        animation: { duration: 800, easing: "easeOutQuart" },
+      };
+
+      function markLoaded(canvasId) {
+        const wrap = document.getElementById(canvasId)?.closest(".sb-chart-wrap");
+        if (wrap) wrap.classList.add("is-loaded");
+      }
+
+      /* Global market cap */
+      const mData   = JSON.parse(chartMarket);
+      const mLabels = mData.map(d => d.month.slice(0, 7));
+      const mValues = mData.map(d => +(d.marketCapUsd / 1e9).toFixed(1));
+
+      new Chart(document.getElementById("chart-global"), {
+        type: "line",
+        data: {
+          labels: mLabels,
+          datasets: [{
+            data: mValues,
+            borderColor: C.primary,
+            backgroundColor: ctx => {
+              const chart = ctx.chart;
+              const { ctx: cctx, chartArea } = chart;
+              if (!chartArea) return C.primaryFill;
+              const g = cctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+              g.addColorStop(0, 'rgba(79, 152, 163, 0.25)');
+              g.addColorStop(1, 'rgba(79, 152, 163, 0.0)');
+              return g;
+            },
+            fill: true, tension: 0.4, pointRadius: 0, pointHitRadius: 14, borderWidth: 2,
+          }],
+        },
+        options: {
+          ...baseOptions,
+          plugins: { ...baseOptions.plugins, tooltip: { ...baseOptions.plugins.tooltip, callbacks: { label: ctx => ` $${ctx.parsed.y}B de market cap` } } },
+          scales: { ...baseOptions.scales, y: { ...baseOptions.scales.y, ticks: { ...baseOptions.scales.y.ticks, callback: v => `$${v}B` } } },
+        },
+      });
+      markLoaded("chart-global");
+
+      /* Brazil cumulative */
+      const bData   = JSON.parse(chartBrazil);
+      const bLabels = bData.map(d => d.month.slice(0, 7));
+      const bValues = bData.map(d => +(d.accumulatedUsd / 1e9).toFixed(2));
+
+      new Chart(document.getElementById("chart-brazil"), {
+        type: "line",
+        data: {
+          labels: bLabels,
+          datasets: [{
+            data: bValues,
+            borderColor: C.success,
+            backgroundColor: ctx => {
+              const chart = ctx.chart;
+              const { ctx: cctx, chartArea } = chart;
+              if (!chartArea) return C.successFill;
+              const g = cctx.createLinearGradient(0, chartArea.top, 0, chartArea.bottom);
+              g.addColorStop(0, 'rgba(109, 170, 69, 0.28)');
+              g.addColorStop(1, 'rgba(109, 170, 69, 0.0)');
+              return g;
+            },
+            fill: true, tension: 0.4, pointRadius: 0, pointHitRadius: 14, borderWidth: 2,
+          }],
+        },
+        options: {
+          ...baseOptions,
+          plugins: { ...baseOptions.plugins, tooltip: { ...baseOptions.plugins.tooltip, callbacks: { label: ctx => ` $${ctx.parsed.y}B de entrada acumulada` } } },
+          scales: { ...baseOptions.scales, y: { ...baseOptions.scales.y, ticks: { ...baseOptions.scales.y.ticks, callback: v => `$${v}B` } } },
+        },
+      });
+      markLoaded("chart-brazil");
+    });
+  </script>
+
+</Base>

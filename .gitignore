@@ -1,0 +1,35 @@
+# Build output - gerado pelo astro build, não commitar
+dist/
+
+# Cache interno do Astro
+.astro/
+
+# Dependências
+node_modules/
+
+# Ambiente local
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ── ADICIONAR ABAIXO ──────────────────────────
+
+# Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Arquivos de trabalho temporários
+*.bak
+*-old.*
+*-claude.*
+scripts/_*
+*.log
+.claude/
+
+# Documentação interna (estratégica/pessoal + instruções para Claude)
+docs/_internal/

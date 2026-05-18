@@ -1,0 +1,110 @@
+name: Fetch Stablecoin Data
+
+on:
+  schedule:
+    # Toda segunda-feira às 13:00 UTC (10:00 BRT)
+    - cron: "0 13 * * 1"
+  workflow_dispatch: # permite rodar manualmente pelo GitHub UI
+
+permissions:
+  contents: write # commit automático dos JSONs
+  issues: write   # abrir alerta quando BCB cair em fallback persistente
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run data fetch script
+        run: node scripts/fetch-stablecoin-data.js
+
+      - name: Check for changes
+        id: diff
+        run: |
+          git diff --quiet public/data/stablecoin-market.json public/data/stablecoin-brazil.json \
+            && echo "changed=false" >> $GITHUB_OUTPUT \
+            || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit updated data files
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "bitsARK Data Bot"
+          git config user.email "bot@bitsark.com"
+          git add public/data/stablecoin-market.json public/data/stablecoin-brazil.json
+          git commit -m "chore(data): update stablecoin market data [$(date -u +'%Y-%m-%d')]"
+          git push
+
+      - name: Alert on stale BCB fallback (>90 days)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          IS_FALLBACK=$(node -e "console.log(JSON.parse(require('fs').readFileSync('public/data/stablecoin-brazil.json','utf-8')).isFallback === true)")
+          if [ "$IS_FALLBACK" != "true" ]; then
+            echo "BCB fetch ok - no alert needed."
+            exit 0
+          fi
+
+          LAST_SUCCESS=$(node -e "console.log(JSON.parse(require('fs').readFileSync('public/data/stablecoin-brazil.json','utf-8')).lastSuccessAt ?? '')")
+          NOW=$(date -u +%s)
+          NINETY_DAYS=$((90 * 86400))
+
+          if [ -z "$LAST_SUCCESS" ]; then
+            STALE_DAYS="∞ (nunca teve sucesso registrado)"
+            SHOULD_ALERT=true
+          else
+            LAST_TS=$(date -u -d "$LAST_SUCCESS" +%s)
+            DELTA=$((NOW - LAST_TS))
+            STALE_DAYS=$((DELTA / 86400))
+            if [ "$DELTA" -gt "$NINETY_DAYS" ]; then SHOULD_ALERT=true; else SHOULD_ALERT=false; fi
+          fi
+
+          if [ "$SHOULD_ALERT" != "true" ]; then
+            echo "BCB em fallback há $STALE_DAYS dias - ainda dentro do limite de 90d."
+            exit 0
+          fi
+
+          # Evita issues duplicadas: só abre se não houver issue aberta com a mesma label
+          EXISTING=$(gh issue list --label "bcb-fallback-stale" --state open --json number --jq 'length')
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "Já existe issue aberta de stale fallback - não criando duplicada."
+            exit 0
+          fi
+
+          gh label create "bcb-fallback-stale" --color "d93f0b" --description "BCB XLSX fetch caindo em fallback há >90 dias" 2>/dev/null || true
+
+          gh issue create \
+            --title "[data] BCB XLSX em fallback há $STALE_DAYS dias - atualizar parser" \
+            --label "bcb-fallback-stale" \
+            --body "$(cat <<EOF
+          O pipeline \`fetch-stablecoin-data.js\` está caindo no seed do Brasil há **$STALE_DAYS dias** (último sucesso: \`$LAST_SUCCESS\`).
+
+          Possíveis causas:
+          - BCB mudou a URL/filename da Tabela Especial do Balanço de Pagamentos
+          - BCB mudou o layout/aba do XLSX
+          - BCB mudou a redação da linha de stablecoins (atualmente buscamos: \`com passivo correspondente\`, \`criptoativos com passivo\`, etc.)
+
+          **Como corrigir:**
+          1. Acessar https://www.bcb.gov.br/estatisticas/tabelasespeciais e encontrar o XLSX atual do BP
+          2. Atualizar \`BCB_XLSX_CANDIDATES\` em [scripts/fetch-stablecoin-data.js](../blob/main/scripts/fetch-stablecoin-data.js)
+          3. Se a redação da linha mudou, atualizar \`STABLECOIN_LABELS\` no mesmo arquivo
+          4. Rodar workflow manualmente (Actions → Fetch Stablecoin Data → Run workflow)
+          5. Confirmar \`isFallback: false\` no \`public/data/stablecoin-brazil.json\`
+
+          Esta issue foi aberta automaticamente pelo workflow \`.github/workflows/fetch-stablecoin-data.yml\`.
+          EOF
+          )"

@@ -1,0 +1,1306 @@
+---
+import Base from '@layouts/Base.astro';
+import { codeToHtml } from 'shiki';
+import { getLangFromUrl, useTranslations, defaultLang, useLocalizedPath } from '@i18n/index';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const l = useLocalizedPath(lang);
+const BASE_URL = 'https://api.bitsark.com/v1';
+
+const _hl = (code: string, lang: string) =>
+  codeToHtml(code, { lang, theme: 'github-dark' });
+
+const exampleSingle = `{
+  "success": true,
+  "notice": "Data is provided for informational purposes only and may be outdated. BitsARK does not guarantee accuracy. Always verify with the official exchange. Full terms: https://bitsark.com/terms",
+  "data": {
+    "id": "mercado-bitcoin",
+    "name": "Mercado Bitcoin",
+    "slug": "mercado-bitcoin",
+    "website": "https://www.mercadobitcoin.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/mercado-bitcoin.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "fiscal_status_br": "Nacional",
+    "operational_details_br": {
+      "cnpj": "18.213.434/0001-35",
+      "bcb_authorized": true,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.003,
+      "taker": 0.007,
+      "fee_url": "https://www.mercadobitcoin.com.br/taxas-contas-limites",
+      "note": "Largest Brazilian exchange by volume. Pix fully supported. Volume-based tiers."
+    }
+  }
+}`;
+
+const hlSingle = await _hl(exampleSingle, 'json');
+const hlQuickstart = await _hl(
+  `curl "${BASE_URL}/exchanges?accepts_pix=true&brazil_registered=true"`,
+  'bash'
+);
+const hlFetch = await _hl(
+  `const res = await fetch('${BASE_URL}/exchanges/mercado-bitcoin');
+if (!res.ok) throw new Error('BitsARK API ' + res.status);
+
+const body = await res.json();
+console.log(body.data.fiscal_details_br.tax_regime);`,
+  'javascript'
+);
+const hlPython = await _hl(
+  `import json
+from urllib.request import urlopen
+
+with urlopen("${BASE_URL}/exchanges/mercado-bitcoin") as res:
+    body = json.load(res)
+
+print(body["data"]["fiscal_details_br"]["tax_regime"])`,
+  'python'
+);
+const hlLlmGuide = await _hl(
+  `Use the BitsARK Exchanges API for Brazilian crypto exchange metadata, Pix support, BCB authorization, fiscal classification, RFB reporting obligations, and fee comparisons.
+Base URL: ${BASE_URL}
+No API key is required. CORS is enabled. Use data as informational, not as tax, legal, investment, or financial advice.`,
+  'text'
+);
+const hlRateLimit = await _hl(
+`{
+  "success": false,
+  "error": "Rate limit exceeded. Maximum 60 requests per minute.",
+  "retry_after": 1746000420
+}`,
+  'json'
+);
+const hlCurl = await _hl(
+  `curl "${BASE_URL}/exchanges?brazil_registered=true&bcb_licensed=true&accepts_pix=true"`,
+  'bash'
+);
+const hlToFlag = await _hl(
+  `const toFlag = (iso) => String.fromCodePoint(...[...iso].map(c => 0x1F1E6 - 65 + c.charCodeAt(0)));`,
+  'javascript'
+);
+const hlMakerNull = await _hl(
+  `"maker": null, "taker": 0.006 // spread/flat-rate model`,
+  'jsonc'
+);
+
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/exchanges/api' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/api' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/api' },
+];
+---
+
+<Base
+  title={t('exchanges_api.meta.title')}
+  description={t('exchanges_api.meta.description')}
+  lang={lang}
+  alternates={alternates}
+  ogImage="https://bitsark.com/og/exchanges-api.png"
+>
+  <meta
+    slot="head"
+    name="robots"
+    content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+  />
+  <link
+    slot="head"
+    rel="alternate"
+    type="text/plain"
+    href="https://bitsark.com/llms.txt"
+    title="BitsARK LLM-readable summary"
+  />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify([
+    {
+      "@context": "https://schema.org",
+      "@type": "WebAPI",
+      "name": "BitsARK Exchanges API",
+      "description": "Free JSON API providing fiscal, regulatory, and fee data on cryptocurrency exchanges operating in Brazil.",
+      "url": "https://bitsark.com/exchanges/api",
+      "documentation": "https://bitsark.com/exchanges/api",
+      "termsOfService": "https://bitsark.com/terms",
+      "isAccessibleForFree": true,
+      "encodingFormat": "application/json",
+      "entryPoint": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://api.bitsark.com/v1/exchanges",
+        "httpMethod": "GET",
+        "contentType": "application/json"
+      },
+      "provider": {
+        "@type": "Organization",
+        "name": "BitsARK Labs",
+        "legalName": "Tecnologia Atual Serviços LTDA",
+        "url": "https://bitsark.com",
+        "contactPoint": { "@type": "ContactPoint", "email": "support@bitsark.com" }
+      },
+      "license": "https://opensource.org/licenses/MIT"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "BitsARK Exchanges API Documentation",
+      "description": "Free REST API with fiscal, regulatory, and fee data on 24+ crypto exchanges in Brazil.",
+      "url": "https://bitsark.com/exchanges/api",
+      "proficiencyLevel": "Beginner",
+      "inLanguage": "en"
+    }
+  ])} />
+
+  <div class="api-layout">
+
+    <!-- ── Sidebar ─────────────────────────────────────────── -->
+    <aside class="api-sidebar" aria-label="API navigation">
+      <nav>
+        <p class="api-sidebar__group">{t('exchanges_api.sidebar.getting_started')}</p>
+        <a href="#overview" class="api-sidebar__link">{t('exchanges_api.sidebar.overview')}</a>
+        <a href="#quickstart" class="api-sidebar__link">{t('exchanges_api.sidebar.quickstart')}</a>
+        <a href="#base-url" class="api-sidebar__link">{t('exchanges_api.sidebar.base_url')}</a>
+        <a href="#rate-limits" class="api-sidebar__link">{t('exchanges_api.sidebar.rate_limits')}</a>
+
+        <p class="api-sidebar__group">{t('exchanges_api.sidebar.endpoints')}</p>
+        <a href="#ep-list" class="api-sidebar__link">GET /exchanges</a>
+        <a href="#ep-fees" class="api-sidebar__link">GET /exchanges/fees</a>
+        <a href="#ep-brazil" class="api-sidebar__link">GET /exchanges/brazil-registered</a>
+        <a href="#ep-single" class="api-sidebar__link">GET /exchanges/:id</a>
+
+        <p class="api-sidebar__group">{t('exchanges_api.sidebar.reference')}</p>
+        <a href="#example" class="api-sidebar__link">{t('exchanges_api.sidebar.example')}</a>
+        <a href="#schema" class="api-sidebar__link">{t('exchanges_api.sidebar.schema')}</a>
+        <a href="#filters" class="api-sidebar__link">{t('exchanges_api.sidebar.filters')}</a>
+
+        <p class="api-sidebar__group">{t('exchanges_api.sidebar.fiscal')}</p>
+        <a href="#tax-regime" class="api-sidebar__link">{t('exchanges_api.sidebar.tax_regime')}</a>
+        <a href="#rfb-reports" class="api-sidebar__link">{t('exchanges_api.sidebar.rfb_reports')}</a>
+        <a href="#user-actions" class="api-sidebar__link">{t('exchanges_api.sidebar.user_actions')}</a>
+
+        <p class="api-sidebar__group">{t('exchanges_api.sidebar.operational')}</p>
+        <a href="#jurisdiction" class="api-sidebar__link">{t('exchanges_api.sidebar.jurisdiction')}</a>
+        <a href="#fees-spread" class="api-sidebar__link">{t('exchanges_api.sidebar.fees_spread')}</a>
+
+      <p class="api-sidebar__group">{t('exchanges_api.sidebar.support')}</p>
+      <button type="button" id="open-feedback-btn-sidebar" class="api-sidebar__link api-sidebar__link--support">
+        {t('exchanges_api.sidebar.report_issue')}
+      </button>
+
+      <!-- Uptime badge - Exchanges API -->
+      <a
+        href="https://status.bitsark.com"
+        class="api-sidebar__uptime"
+        target="_blank"
+        rel="noopener noreferrer" 
+        aria-label={t('exchanges_api.aria_labels.api_status_page')}
+      >
+        <img
+          src="https://uptime.betterstack.com/status-badges/v1/monitor/2m06z.svg"
+          alt={t('exchanges_api.aria_labels.api_uptime_alt')}
+          width="104"
+          height="20"
+          loading="lazy"
+          decoding="async"
+        />
+      </a>
+      </nav>
+    </aside>
+
+    <!-- ── Main content ───────────────────────────────────── -->
+    <div class="api-content" id="api-content">
+
+      <!-- Overview -->
+      <section id="overview" class="api-section">
+        <p class="eyebrow">{t('exchanges_api.hero.eyebrow')}</p>
+        <h1 class="api-hero__title">{t('exchanges_api.hero.title')}</h1>
+        <p class="api-hero__sub">
+          {t('exchanges_api.hero.sub1')}
+        </p>
+        <p class="api-hero__sub">
+          {t('exchanges_api.hero.sub2')}
+        </p>
+        <p class="api-hero__sub" style="font-size: var(--text-xs); border-left: 2px solid var(--color-warning); padding-left: 1rem;">
+          <strong>{t('exchanges_api.hero.disclaimer_strong')}</strong> {t('exchanges_api.hero.disclaimer')} 
+          {t('exchanges_api.hero.terms_prefix')} <a href={l('/terms')} style="color: var(--color-primary); text-decoration: underline;">{t('exchanges_api.hero.terms_of_service')}</a>.
+        </p>
+        <div class="api-badges">
+          <span class="badge badge-success">{t('exchanges_api.hero.badges.live')}</span>
+          <span class="badge badge-neutral">{t('exchanges_api.hero.badges.rest_json')}</span>
+          <span class="badge badge-neutral">{t('exchanges_api.hero.badges.cors_enabled')}</span>
+          <span class="badge badge-neutral">{t('exchanges_api.hero.badges.no_auth')}</span>
+          <span class="badge badge-neutral">{t('exchanges_api.hero.badges.open_source')}</span>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Quickstart -->
+      <section id="quickstart" class="api-section">
+        <h2>{t('exchanges_api.quickstart.title')}</h2>
+        <p>
+          {t('exchanges_api.quickstart.desc')}
+        </p>
+
+        <div class="quickstart-grid">
+          <article class="quickstart-card">
+            <div class="quickstart-card__head">
+              <span class="quickstart-card__step">1</span>
+              <h3>{t('exchanges_api.quickstart.step1_title')}</h3>
+            </div>
+            <p>{t('exchanges_api.quickstart.step1_desc')}</p>
+            <div class="code-block code-block--compact" aria-label="Quickstart curl example" set:html={hlQuickstart}></div>
+          </article>
+
+          <article class="quickstart-card">
+            <div class="quickstart-card__head">
+              <span class="quickstart-card__step">2</span>
+              <h3>{t('exchanges_api.quickstart.step2_title')}</h3>
+            </div>
+            <p>{t('exchanges_api.quickstart.step2_desc')}</p>
+            <div class="code-block code-block--compact" aria-label="JavaScript fetch example" set:html={hlFetch}></div>
+          </article>
+
+          <article class="quickstart-card">
+            <div class="quickstart-card__head">
+              <span class="quickstart-card__step">3</span>
+              <h3>{t('exchanges_api.quickstart.step3_title')}</h3>
+            </div>
+            <p>{t('exchanges_api.quickstart.step3_desc')}</p>
+            <div class="code-block code-block--compact" aria-label="Python request example" set:html={hlPython}></div>
+          </article>
+        </div>
+
+        <div class="llm-usage">
+          <div>
+            <h3>{t('exchanges_api.quickstart.ai_title')}</h3>
+            <p>
+              {t('exchanges_api.quickstart.ai_desc')} {t('exchanges_api.quickstart.ai_summary_prefix')}
+              <a href="/llms.txt">/llms.txt</a>.
+            </p>
+          </div>
+          <div class="code-block code-block--compact" aria-label="LLM usage guidance" set:html={hlLlmGuide}></div>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Base URL -->
+      <section id="base-url" class="api-section">
+        <h2>{t('exchanges_api.base_url.title')}</h2>
+        <p>{t('exchanges_api.base_url.desc1')}</p>
+        <div class="base-url-box"><span class="base-url-label">BASE URL</span><code class="base-url-value">https://api.bitsark.com/v1</code></div>
+        <p style="margin-top:1rem">
+          {t('exchanges_api.base_url.content_type_note')}
+        </p>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Rate limits -->
+      <section id="rate-limits" class="api-section">
+        <h2>{t('exchanges_api.rate_limits.title')}</h2>
+        <p>
+          {t('exchanges_api.rate_limits.desc1')}
+        </p>
+        <p>{t('exchanges_api.rate_limits.headers_included')}</p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.rate_limits.header_col')}</th><th>{t('exchanges_api.rate_limits.desc_col')}</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>X-RateLimit-Limit</code></td><td>{t('exchanges_api.rate_limits.limit_desc')}</td></tr>
+              <tr><td><code>X-RateLimit-Remaining</code></td><td>{t('exchanges_api.rate_limits.rem_desc')}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:1rem">{t('exchanges_api.rate_limits.error_desc')}</p>
+        <div class="code-block" aria-label="Rate limit error response" set:html={hlRateLimit}></div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- ── Endpoints ──────────────────────────────────────── -->
+      <section id="endpoints" class="api-section">
+        <h2>{t('exchanges_api.endpoints.title')}</h2>
+      </section>
+
+      <!-- GET /exchanges -->
+      <section id="ep-list" class="api-section" style="padding-top:0">
+        <div class="endpoint-card">
+          <div class="endpoint-card__header">
+            <span class="endpoint-card__method">GET</span>
+            <code class="endpoint-card__url">/exchanges</code>
+          </div>
+          <p class="endpoint-card__desc">
+            {t('exchanges_api.endpoints.list_desc')}
+          </p>
+          <p class="endpoint-card__desc">
+            {t('exchanges_api.endpoints.pagination_note')}
+          </p>
+          <div class="endpoint-card__curl">
+            <span class="curl-label">{t('exchanges_api.endpoints.example_label')}</span>
+            <code>curl https://api.bitsark.com/v1/exchanges?accepts_pix=true&amp;brazil_registered=true</code>
+          </div>
+        </div>
+
+        <!-- GET /exchanges/fees -->
+        <div class="endpoint-card" id="ep-fees">
+          <div class="endpoint-card__header">
+            <span class="endpoint-card__method">GET</span>
+            <code class="endpoint-card__url">/exchanges/fees</code>
+          </div>
+          <p class="endpoint-card__desc">
+            {t('exchanges_api.endpoints.fees_desc')}
+          </p>
+          <div class="endpoint-card__curl">
+            <span class="curl-label">{t('exchanges_api.endpoints.example_label')}</span>
+            <code>curl https://api.bitsark.com/v1/exchanges/fees?brazil_registered=true</code>
+          </div>
+        </div>
+
+        <!-- GET /exchanges/brazil-registered -->
+        <div class="endpoint-card" id="ep-brazil">
+          <div class="endpoint-card__header">
+            <span class="endpoint-card__method">GET</span>
+            <code class="endpoint-card__url">/exchanges/brazil-registered</code>
+          </div>
+          <p class="endpoint-card__desc">
+            {t('exchanges_api.endpoints.brazil_desc')}
+          </p>
+          <div class="endpoint-card__curl">
+            <span class="curl-label">{t('exchanges_api.endpoints.example_label')}</span>
+            <code>curl https://api.bitsark.com/v1/exchanges/brazil-registered</code>
+          </div>
+        </div>
+
+        <!-- GET /exchanges/:id -->
+        <div class="endpoint-card" id="ep-single">
+          <div class="endpoint-card__header">
+            <span class="endpoint-card__method">GET</span>
+            <code class="endpoint-card__url">/exchanges/<span class="endpoint-card__param">{'{id}'}</span></code>
+          </div>
+          <p class="endpoint-card__desc">
+            {t('exchanges_api.endpoints.single_desc')}
+          </p>
+          <div class="endpoint-card__examples">
+            <code>mercado-bitcoin</code>
+            <code>binance</code>
+            <code>foxbit</code>
+            <code>nubank</code>
+          </div>
+          <div class="endpoint-card__curl" style="margin-top:0.75rem">
+            <span class="curl-label">{t('exchanges_api.endpoints.example_label')}</span>
+            <code>curl https://api.bitsark.com/v1/exchanges/mercado-bitcoin</code>
+          </div>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Example response -->
+      <section id="example" class="api-section">
+        <h2>{t('exchanges_api.example_response.title')}</h2>
+        <p>
+          {t('exchanges_api.example_response.description')}
+        </p>
+        <div class="code-block" role="region" aria-label="JSON example response" set:html={hlSingle}></div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Schema reference -->
+      <section id="schema" class="api-section"><h2>{t('exchanges_api.schema_reference.title')}</h2>
+        <p>
+          {t('exchanges_api.schema_reference.description')}
+        </p>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{t('exchanges_api.schema_reference.table_headers.field')}</th>
+                <th>{t('exchanges_api.schema_reference.table_headers.type')}</th>
+                <th>{t('exchanges_api.schema_reference.table_headers.description')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>id</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.id_desc')}</td></tr>
+              <tr><td><code>name</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.name_desc')}</td></tr>
+              <tr><td><code>slug</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.slug_desc')}</td></tr>
+              <tr><td><code>website</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.website_desc')}</td></tr>
+              <tr><td><code>logo_url</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.logo_url_desc')}</td></tr>
+              <tr><td><code>updated_at</code></td><td>ISO 8601</td><td>{t('exchanges_api.schema_reference.fields.updated_at_desc')}</td></tr>
+              <tr><td><code>fiscal_status_br</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.fiscal_status_br_desc')}</td></tr>
+              <tr>
+                <td colspan="3" class="data-table__group-header">{t('exchanges_api.schema_reference.fields.operational_details_br_group')}</td>
+              </tr>
+              <tr><td><code>cnpj</code></td><td>string | null</td><td>{t('exchanges_api.schema_reference.fields.cnpj_desc')}</td></tr>
+              <tr><td><code>bcb_authorized</code></td><td>boolean</td><td>{t('exchanges_api.schema_reference.fields.bcb_authorized_desc')}</td></tr>
+              <tr><td><code>accepts_pix</code></td><td>boolean</td><td>{t('exchanges_api.schema_reference.fields.accepts_pix_desc')}</td></tr>
+              <tr><td><code>main_jurisdiction_iso</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.main_jurisdiction_iso_desc')}</td></tr>
+              <tr>
+                <td colspan="3" class="data-table__group-header">{t('exchanges_api.schema_reference.fields.fiscal_details_br_group')}</td>
+              </tr>
+              <tr><td><code>tax_regime</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.tax_regime_desc')}</td></tr>
+              <tr><td><code>monthly_brl_trade_exemption</code></td><td>number</td><td>{t('exchanges_api.schema_reference.fields.monthly_brl_trade_exemption_desc')}</td></tr>
+              <tr><td><code>exchange_rfb_reports</code></td><td>string[]</td><td>{t('exchanges_api.schema_reference.fields.exchange_rfb_reports_desc')}</td></tr>
+              <tr><td><code>user_rfb_action_monthly</code></td><td>string[]</td><td>{t('exchanges_api.schema_reference.fields.user_rfb_action_monthly_desc')}</td></tr>
+              <tr>
+                <td colspan="3" class="data-table__group-header">{t('exchanges_api.schema_reference.fields.fees_group')}</td>
+              </tr>
+              <tr><td><code>maker</code></td><td>number | null</td><td>{t('exchanges_api.schema_reference.fields.maker_desc')}</td></tr>
+              <tr><td><code>taker</code></td><td>number | null</td><td>{t('exchanges_api.schema_reference.fields.taker_desc')}</td></tr>
+              <tr><td><code>fee_url</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.fee_url_desc')}</td></tr>
+              <tr><td><code>note</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.note_desc')}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Query filters -->
+      <section id="filters" class="api-section"><h2>{t('exchanges_api.query_filters.title')}</h2>
+        <p>
+          {t('exchanges_api.query_filters.description')}
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.query_filters.table_headers.parameter')}</th><th>{t('exchanges_api.query_filters.table_headers.type')}</th><th>{t('exchanges_api.query_filters.table_headers.description')}</th><th>{t('exchanges_api.query_filters.table_headers.example')}</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>brazil_registered</code></td>
+                <td>boolean</td>
+                <td>{t('exchanges_api.query_filters.fields.brazil_registered_desc')}</td>
+                <td><code>?brazil_registered=true</code></td>
+              </tr>
+              <tr>
+                <td><code>bcb_licensed</code></td>
+                <td>boolean</td>
+                <td>{t('exchanges_api.query_filters.fields.bcb_licensed_desc')}</td>
+                <td><code>?bcb_licensed=true</code></td>
+              </tr>
+              <tr>
+                <td><code>accepts_pix</code></td>
+                <td>boolean</td>
+                <td>{t('exchanges_api.query_filters.fields.accepts_pix_desc')}</td>
+                <td><code>?accepts_pix=true</code></td>
+              </tr>
+              <tr>
+                <td><code>tax_regime</code></td>
+                <td>string</td>
+                <td>{t('exchanges_api.query_filters.fields.tax_regime_desc')}</td>
+                <td><code>?tax_regime=domestic_exchange</code></td>
+              </tr>
+              <tr>
+                <td><code>fiscal_status_br</code></td>
+                <td>string</td>
+                <td>{t('exchanges_api.query_filters.fields.fiscal_status_br_desc')}</td>
+                <td><code>?fiscal_status_br=Nacional</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:1rem">
+          {t('exchanges_api.query_filters.combined_example')}
+        </p>
+        <div class="code-block" set:html={hlCurl}></div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- tax_regime values -->
+      <section id="tax-regime" class="api-section"><h2>{t('exchanges_api.tax_regime_values.title')}</h2>
+        <p>
+          {t('exchanges_api.tax_regime_values.description')}
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.tax_regime_values.table_headers.value')}</th><th>{t('exchanges_api.tax_regime_values.table_headers.meaning')}</th><th>{t('exchanges_api.tax_regime_values.table_headers.monthly_exemption')}</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>domestic_exchange</code></td>
+                <td>{t('exchanges_api.tax_regime_values.values.domestic_exchange_meaning')}</td>
+                <td>{t('exchanges_api.tax_regime_values.values.domestic_exchange_exemption')}</td>
+              </tr>
+              <tr>
+                <td><code>domestic_exchange_foreign_origin</code></td>
+                <td>{t('exchanges_api.tax_regime_values.values.domestic_exchange_foreign_origin_meaning')}</td>
+                <td>{t('exchanges_api.tax_regime_values.values.domestic_exchange_foreign_origin_exemption')}</td>
+              </tr>
+              <tr>
+                <td><code>offshore_law_14754</code></td>
+                <td>{t('exchanges_api.tax_regime_values.values.offshore_law_14754_meaning')}</td>
+                <td>{t('exchanges_api.tax_regime_values.values.offshore_law_14754_exemption')}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- exchange_rfb_reports -->
+      <section id="rfb-reports" class="api-section"><h2>{t('exchanges_api.exchange_rfb_reports.title')}</h2>
+        <p>
+          {t('exchanges_api.exchange_rfb_reports.description')}
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.exchange_rfb_reports.table_headers.value')}</th><th>{t('exchanges_api.exchange_rfb_reports.table_headers.meaning')}</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>in_1888_monthly</code></td>
+                <td>{t('exchanges_api.exchange_rfb_reports.values.in_1888_monthly_meaning')}</td>
+              </tr>
+              <tr>
+                <td><code>decripto_annually</code></td>
+                <td>{t('exchanges_api.exchange_rfb_reports.values.decripto_annually_meaning')}</td>
+              </tr>
+              <tr>
+                <td><code>[]</code> (empty array)</td>
+                <td>{t('exchanges_api.exchange_rfb_reports.values.empty_array_meaning')}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- user_rfb_action_monthly -->
+      <section id="user-actions" class="api-section"><h2>{t('exchanges_api.user_rfb_action_monthly.title')}</h2>
+        <p>
+          {t('exchanges_api.user_rfb_action_monthly.description')}
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.user_rfb_action_monthly.table_headers.value')}</th><th>{t('exchanges_api.user_rfb_action_monthly.table_headers.user_obligation')}</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>report_in1888_if_traded_over_30k</code></td>
+                <td>{t('exchanges_api.user_rfb_action_monthly.values.report_in1888_if_traded_over_30k_obligation')}</td>
+              </tr>
+              <tr>
+                <td><code>pay_darf_if_profit</code></td>
+                <td>{t('exchanges_api.user_rfb_action_monthly.values.pay_darf_if_profit_obligation')}</td>
+              </tr>
+              <tr>
+                <td><code>[]</code> (empty array)</td>
+                <td>{t('exchanges_api.user_rfb_action_monthly.values.empty_array_obligation')}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Jurisdição ISO -->
+      <section id="jurisdiction" class="api-section"><h2>{t('exchanges_api.main_jurisdiction_iso.title')}</h2>
+        <p>
+          {t('exchanges_api.main_jurisdiction_iso.description')}
+        </p>
+        <div class="code-block" set:html={hlToFlag}></div>
+        <p class="api-section__note">
+          <code>BR</code> → 🇧🇷 &nbsp;
+          <code>SC</code> → 🇸🇨 &nbsp;
+          <code>KY</code> → 🇰🇾 &nbsp;
+          <code>VG</code> → 🇻🇬
+        </p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.main_jurisdiction_iso.table_headers.iso')}</th><th>{t('exchanges_api.main_jurisdiction_iso.table_headers.jurisdiction')}</th><th>{t('exchanges_api.main_jurisdiction_iso.table_headers.examples')}</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>BR</code> 🇧🇷</td><td>{t('exchanges_api.main_jurisdiction_iso.values.br_jurisdiction')}</td><td>{t('exchanges_api.main_jurisdiction_iso.values.br_examples')}</td></tr>
+              <tr><td><code>SC</code> 🇸🇨</td><td>{t('exchanges_api.main_jurisdiction_iso.values.sc_jurisdiction')}</td><td>{t('exchanges_api.main_jurisdiction_iso.values.sc_examples')}</td></tr>
+              <tr><td><code>KY</code> 🇰🇾</td><td>{t('exchanges_api.main_jurisdiction_iso.values.ky_jurisdiction')}</td><td>{t('exchanges_api.main_jurisdiction_iso.values.ky_examples')}</td></tr>
+              <tr><td><code>VG</code> 🇻🇬</td><td>{t('exchanges_api.main_jurisdiction_iso.values.vg_jurisdiction')}</td><td>{t('exchanges_api.main_jurisdiction_iso.values.vg_examples')}</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Fees / Spread model -->
+      <section id="fees-spread" class="api-section">
+        <h2>{t('exchanges_api.fees_spread.title')}</h2>
+        <p>
+          {t('exchanges_api.fees_spread.desc1')}
+        </p>
+        <div class="code-block" set:html={hlMakerNull}></div>
+        <p>{t('exchanges_api.fees_spread.rendering_guide')}</p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>{t('exchanges_api.fees_spread.table_headers.raw_value')}</th><th>{t('exchanges_api.fees_spread.table_headers.display_as')}</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>0.001</code></td><td>{t('exchanges_api.fees_spread.values.example_001_display')}</td></tr>
+              <tr><td><code>0.0</code></td><td>{t('exchanges_api.fees_spread.values.example_zero_display')}</td></tr>
+              <tr><td><code>null</code></td><td>{t('exchanges_api.fees_spread.values.example_null_display')}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top:1rem">
+          {t('exchanges_api.fees_spread.note')}
+        </p>
+      </section>
+
+      <hr class="api-divider" />
+
+      <!-- Support & Feedback -->
+      <section id="feedback" class="api-section">
+        <h2>{t('exchanges_api.feedback.title')}</h2>
+        <div class="api-feedback-card">
+          <div class="api-feedback-card__content">
+            <h3>{t('exchanges_api.feedback.card_title')}</h3>
+            <p>
+              {t('exchanges_api.feedback.card_desc')}
+            </p>
+          </div>
+          <button type="button" id="open-feedback-btn-api" class="btn btn-primary api-feedback-card__btn">
+            {t('exchanges_api.sidebar.report_issue')}
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Modal de Feedback -->
+  <div 
+    id="feedback-modal" 
+    class="feedback-modal" 
+    role="dialog" 
+    aria-modal="true" 
+    aria-labelledby="feedback-title" 
+    data-success={t('exchanges_api.feedback.success_message')}
+    data-error-generic={t('exchanges_api.feedback.error_generic')}
+    data-error-timeout={t('exchanges_api.feedback.error_timeout')}
+    hidden
+  >
+    <div class="feedback-modal-box">
+      <button class="feedback-close" id="close-feedback-btn" aria-label="Close modal">✕</button>
+      <h2 id="feedback-title" class="feedback-title">{t('exchanges_api.feedback.modal_title')}</h2>
+      <p class="feedback-subtitle">{t('exchanges_api.feedback.modal_context')}</p>
+
+      <div class="feedback-types" role="group" aria-label="Issue type">
+        <button type="button" class="feedback-type-btn" data-type="api_bug">🐛 API Bug</button>
+        <button type="button" class="feedback-type-btn" data-type="docs_error">📚 Docs Error</button>
+        <button type="button" class="feedback-type-btn" data-type="outdated_data">📅 Outdated Data</button>
+        <button type="button" class="feedback-type-btn" data-type="feature_req">💡 Feature Request</button>
+      </div>
+
+      <!-- Honeypot anti-bot -->
+      <input type="text" id="feedback-hp" name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+      <label for="feedback-message" class="sr-only">Issue description</label>
+      <textarea id="feedback-message" class="feedback-textarea" placeholder={t('exchanges_api.feedback.modal_placeholder')} rows="4" maxlength="1000"></textarea>
+
+      <label for="feedback-email" class="sr-only">Email (optional)</label>
+      <input type="email" id="feedback-email" class="feedback-email" placeholder="Your email (optional, for follow-up)" />
+
+      <div id="feedback-status" class="feedback-status" hidden></div>
+
+      <!-- O botão de submit deve ser desabilitado por padrão e habilitado apenas após a seleção de um tipo de feedback -->
+      <button 
+        class="feedback-submit" 
+        id="feedback-submit-btn" 
+        data-label-sending={t('exchanges_api.feedback.sending')}
+        data-label-ready={t('exchanges_api.feedback.submit_button')}
+        disabled
+      >
+        {t('exchanges_api.feedback.submit_button')}
+      </button>
+    </div>
+  </div>
+  <div id="feedback-backdrop" class="feedback-backdrop" hidden></div>
+
+</Base>
+
+<style>
+  /* ── Layout ── */
+  .api-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 65px);
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 5vw, 2rem);
+  }
+
+  /* ── Sidebar ── */
+  .api-sidebar {
+    position: sticky;
+    top: 65px;
+    height: calc(100vh - 65px);
+    overflow-y: auto;
+    padding: 2rem 1.5rem 2rem 0;
+    border-right: 1px solid var(--color-border);
+  }
+
+  .api-sidebar__group {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-faint);
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .api-sidebar__group:first-child {
+    margin-top: 0;
+  }
+
+  .api-sidebar__link {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    padding: 0.3rem 0.5rem;
+    border-radius: var(--radius-sm);
+    transition: color var(--transition), background var(--transition);
+  }
+
+  .api-sidebar__link:hover {
+    color: var(--color-text);
+    background: var(--color-surface-2);
+  }
+
+  .api-sidebar__link.is-active,
+  .api-sidebar__link[aria-current="location"] {
+    color: var(--color-text);
+    background: var(--color-primary-highlight);
+    box-shadow: inset 2px 0 0 var(--color-primary);
+    font-weight: 600;
+  }
+
+  .api-sidebar__link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* ── Main content ── */
+  .api-content {
+    padding: 2.5rem 0 4rem 2.5rem;
+    min-width: 0;
+  }
+
+  /* ── Hero ── */
+  .api-hero__title {
+    font-size: clamp(1.6rem, 1rem + 2.5vw, 2.5rem);
+    margin-top: 0.75rem;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .api-hero__sub {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+    max-width: 680px;
+  }
+
+  .api-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .quickstart-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .quickstart-card,
+  .llm-usage {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    padding: 1rem;
+  }
+
+  .quickstart-card__head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .quickstart-card__head h3,
+  .llm-usage h3 {
+    font-size: 1rem;
+    line-height: 1.25;
+    margin: 0;
+  }
+
+  .quickstart-card__step {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.6rem;
+    height: 1.6rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary-highlight);
+    border: 1px solid var(--color-primary-border);
+    color: var(--color-primary);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+  }
+
+  .quickstart-card p,
+  .llm-usage p {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  .llm-usage {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+    background:
+      linear-gradient(135deg, var(--color-primary-highlight), transparent 55%),
+      var(--color-surface);
+  }
+
+  .llm-usage a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .code-block--compact {
+    margin-top: 0.75rem;
+    padding: 1rem;
+    font-size: 0.78rem;
+    line-height: 1.55;
+  }
+
+  /* ── Base URL box ── */
+  .base-url-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+  }
+
+  .base-url-label {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primary);
+    white-space: nowrap;
+  }
+
+  .base-url-value {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    color: var(--color-text);
+    word-break: break-all;
+  }
+
+  /* ── Sections ── */
+  .api-section {
+    padding-block: 2rem;
+    scroll-margin-top: 5.5rem;
+  }
+
+  .api-section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .api-section p {
+    margin-bottom: 0.75rem;
+    line-height: 1.7;
+  }
+
+  .api-section__note {
+    margin-top: 0.75rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .api-divider {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: 0;
+  }
+
+  /* ── Endpoint cards ── */
+  .endpoint-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    background: var(--color-surface);
+    scroll-margin-top: 5.5rem;
+  }
+
+  .endpoint-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .endpoint-card__method {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: var(--color-success);
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.05em;
+  }
+
+  .endpoint-card__url {
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    word-break: break-all;
+  }
+
+  .endpoint-card__param {
+    color: var(--color-primary);
+  }
+
+  .endpoint-card__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .endpoint-card__examples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .endpoint-card__curl {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.6rem 0.85rem;
+    font-size: var(--text-sm);
+    flex-wrap: wrap;
+  }
+
+  .curl-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-faint);
+    white-space: nowrap;
+  }
+
+  .endpoint-card__curl code {
+    font-family: var(--font-mono);
+    color: var(--color-text-muted);
+    word-break: break-all;
+  }
+
+  /* ── Table ── */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-top: 1rem;
+  }
+
+  .data-table__group-header {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+    background: var(--color-primary-highlight);
+    padding: 0.5rem 1rem;
+  }
+
+  .api-sidebar__uptime {
+  display: inline-flex;
+  margin-top: 1rem;
+  margin-left: 0.5rem;
+  opacity: 0.65;
+  transition: opacity var(--transition);
+  }
+
+  .api-sidebar__uptime:hover { opacity: 1; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .api-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .api-sidebar {
+      position: static;
+      height: auto;
+      overflow-y: visible;
+      padding: 1.5rem 0;
+      border-right: none;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .api-content {
+      padding: 1.5rem 0 3rem;
+    }
+
+    .base-url-box {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+    }
+
+    .quickstart-grid,
+    .llm-usage {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Feedback Modal & Card ── */
+  .api-feedback-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.5rem;
+    background: var(--color-surface-2);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    margin-top: 1rem;
+  }
+  .api-feedback-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .api-feedback-card p { font-size: var(--text-sm); color: var(--color-text-muted); margin: 0; }
+  @media (max-width: 640px) {
+    .api-feedback-card { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+    .api-feedback-card__btn { width: 100%; justify-content: center; }
+  }
+
+  .api-sidebar__link--support {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  /* ── Copy buttons ── */
+  document.querySelectorAll<HTMLElement>('.code-block').forEach(block => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-btn';
+    btn.type = 'button';
+    btn.textContent = 'copy';
+    btn.setAttribute('aria-label', 'Copy code to clipboard');
+    btn.addEventListener('click', () => {
+      const pre = block.querySelector('pre');
+      const text = pre?.textContent?.trim() ?? '';
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'copied!';
+        btn.classList.add('copy-btn--copied');
+        setTimeout(() => {
+          btn.textContent = 'copy';
+          btn.classList.remove('copy-btn--copied');
+        }, 2000);
+      }).catch(() => {});
+    });
+    block.appendChild(btn);
+  });
+
+  /* Sidebar section state */
+  const sidebarLinks = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>('.api-sidebar__link[href^="#"]')
+  );
+  const sidebarTargets = sidebarLinks
+    .map(link => {
+      const id = decodeURIComponent(link.hash.slice(1));
+      return { id, link, target: document.getElementById(id) };
+    })
+    .filter((item): item is { id: string; link: HTMLAnchorElement; target: HTMLElement } => Boolean(item.target));
+
+  function setActiveSidebarLink(activeId: string) {
+    sidebarTargets.forEach(({ id, link }) => {
+      const isActive = id === activeId;
+      link.classList.toggle('is-active', isActive);
+      if (isActive) {
+        link.setAttribute('aria-current', 'location');
+      } else {
+        link.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function getCurrentSidebarTarget() {
+    const offset = 120;
+    let current = sidebarTargets[0]?.id ?? '';
+
+    for (const { id, target } of sidebarTargets) {
+      if (target.getBoundingClientRect().top <= offset) {
+        current = id;
+      } else {
+        break;
+      }
+    }
+
+    return current;
+  }
+
+  if (sidebarTargets.length > 0) {
+    let sidebarFrame = 0;
+    const syncSidebar = () => {
+      if (sidebarFrame) return;
+      sidebarFrame = window.requestAnimationFrame(() => {
+        setActiveSidebarLink(getCurrentSidebarTarget());
+        sidebarFrame = 0;
+      });
+    };
+
+    syncSidebar();
+    window.addEventListener('scroll', syncSidebar, { passive: true });
+    window.addEventListener('resize', syncSidebar);
+    window.addEventListener('hashchange', syncSidebar);
+  }
+
+  /* ── Feedback modal ── */
+  const modal = document.getElementById('feedback-modal');
+  const backdrop = document.getElementById('feedback-backdrop');
+  const openBtns = [
+    document.getElementById('open-feedback-btn-api'),
+    document.getElementById('open-feedback-btn-sidebar')
+  ];
+  const closeBtn = document.getElementById('close-feedback-btn');
+  const typeBtns = document.querySelectorAll('.feedback-type-btn');
+  const submitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement;
+  const textarea = document.getElementById('feedback-message') as HTMLTextAreaElement;
+  const emailInput = document.getElementById('feedback-email') as HTMLInputElement;
+  const status = document.getElementById('feedback-status');
+  const hpEl = document.getElementById('feedback-hp'); // Adicionado
+
+  let modalOpenedAt = 0; // Adicionado para a verificação de tempo
+
+  function toggleModal(show: boolean) {
+    modal?.toggleAttribute('hidden', !show);
+    backdrop?.toggleAttribute('hidden', !show);
+    document.body.style.overflow = show ? 'hidden' : '';
+    if (show) modalOpenedAt = Date.now(); // Registra o tempo de abertura do modal
+    if (!show) {
+      if (textarea) textarea.value = '';
+      if (emailInput) emailInput.value = '';
+      if (status) status.setAttribute('hidden', '');
+      typeBtns.forEach(b => b.classList.remove('selected'));
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submit Feedback'; }
+    }
+  }
+
+  openBtns.forEach(btn => btn?.addEventListener('click', () => toggleModal(true)));
+  closeBtn?.addEventListener('click', () => toggleModal(false));
+  backdrop?.addEventListener('click', () => toggleModal(false));
+
+  let selectedType = '';
+  typeBtns.forEach(btn => btn.addEventListener('click', () => {
+    typeBtns.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedType = (btn as HTMLElement).dataset.type || '';
+    if (submitBtn) submitBtn.disabled = false;
+  }));
+
+  submitBtn?.addEventListener('click', async () => {
+    const timeTaken = Date.now() - modalOpenedAt; // Adicionado
+    // Honeypot check and time-based check
+    if (hpEl?.value || timeTaken < 2000) { // Adicionado
+      toggleModal(false);
+      return;
+    }
+    submitBtn.disabled = true;
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = submitBtn.dataset.labelSending || 'Sending...';
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    try {
+      const payload = {
+        page: location.pathname,
+        type: selectedType,
+        message: textarea.value.trim(),
+        email: emailInput.value.trim(),
+        hp: (hpEl as HTMLInputElement)?.value ?? '',
+      };
+
+      const res = await fetch('/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
+      if (status) { 
+        status.textContent = modal?.dataset.success || 'Thank you!';
+        status.className = 'feedback-status feedback-status--success';
+        status.removeAttribute('hidden');
+      }
+      
+      setTimeout(() => toggleModal(false), 2000);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.error('[Feedback] error:', err);
+
+      let errorMsg = modal?.dataset.errorGeneric || 'Error.';
+      if ((err as any).name === 'AbortError') errorMsg = modal?.dataset.errorTimeout || 'Timeout.';
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+
+      if (status) {
+        status.textContent = errorMsg;
+        status.className = 'feedback-status feedback-status--err';
+        status.removeAttribute('hidden');
+      }
+    }
+  });
+</script>

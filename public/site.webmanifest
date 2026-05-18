@@ -1,0 +1,28 @@
+{
+  "name": "bitsARK.com",
+  "short_name": "bitsARK",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png?v=1.0",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png?v=1.0",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "theme_color": "#0f1012",
+  "background_color": "#0f1012",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "id": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "description": "Open data infrastructure for the Brazilian crypto market.",
+  "categories": ["finance"]
+}

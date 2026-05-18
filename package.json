@@ -1,0 +1,25 @@
+{
+  "name": "bitsark-web",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "prebuild": "node scripts/generate-og.mjs",
+    "build": "astro build",
+    "preview": "astro preview",
+    "fetch-data": "node scripts/fetch-stablecoin-data.js",
+    "og": "node scripts/generate-og.mjs",
+    "lh:check": "lhci autorun --config=./lighthouserc.json"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^5.0.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@lhci/cli": "^0.14.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "geist": "^1.7.0",
+    "satori": "^0.26.0"
+  }
+}

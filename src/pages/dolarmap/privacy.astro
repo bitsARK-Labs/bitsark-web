@@ -1,0 +1,319 @@
+---
+import Base from '@layouts/Base.astro';
+import { useTranslations } from '@i18n/index';
+
+const t = useTranslations('en');
+const title = t('privacy.title');
+const description = t('privacy.description');
+const lastUpdated = t('privacy.lastUpdated');
+
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/dolarmap/privacy/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/dolarmap/privacy/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/dolarmap/privacy/' },
+];
+---
+
+<Base
+  title={title}
+  description={description}
+  lang="en"
+  canonical="https://bitsark.com/dolarmap/privacy/"
+  alternates={alternates}
+  noindex={true}
+>
+  <main class="legal-page">
+    <div class="legal-container">
+      <header class="legal-header">
+        <h1>{t('privacy.header')}</h1>
+        <p class="legal-meta">
+          <strong>DolarMap</strong> · {t('privacy.meta')}: {lastUpdated}
+        </p>
+      </header>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.intro.title')}</h2>
+        <p>{t('privacy.sections.intro.p1')}</p>
+        <p>{t('privacy.sections.intro.p2')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.controller.title')}</h2>
+        <p>
+          {t('privacy.sections.controller.p1')}
+          <a href="mailto:support@bitsark.com">support@bitsark.com</a>.
+        </p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.dataCollection.title')}</h2>
+        <p>{t('privacy.sections.dataCollection.p1')}</p>
+
+        <h3>{t('privacy.sections.dataCollection.uuid.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.uuid.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.dataCollection.uuid.li1')}</li>
+          <li>{t('privacy.sections.dataCollection.uuid.li2')}</li>
+        </ul>
+
+        <h3>{t('privacy.sections.dataCollection.firebase.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.firebase.p1')}</p>
+
+        <h3>{t('privacy.sections.dataCollection.fcm.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.fcm.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.dataCollection.fcm.li1')}</li>
+          <li>{t('privacy.sections.dataCollection.fcm.li2')}</li>
+          <li>{t('privacy.sections.dataCollection.fcm.li3')}</li>
+        </ul>
+
+        <h3>{t('privacy.sections.dataCollection.alerts.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.alerts.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.dataCollection.alerts.li1')}</li>
+          <li>{t('privacy.sections.dataCollection.alerts.li2')}</li>
+          <li>{t('privacy.sections.dataCollection.alerts.li3')}</li>
+          <li>{t('privacy.sections.dataCollection.alerts.li4')}</li>
+        </ul>
+        <p>{t('privacy.sections.dataCollection.alerts.p2')}</p>
+
+        <h3>{t('privacy.sections.dataCollection.google.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.google.p1')}</p>
+
+        <h3>{t('privacy.sections.dataCollection.sdks.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.sdks.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.dataCollection.sdks.li1')}</li>
+          <li>{t('privacy.sections.dataCollection.sdks.li2')}</li>
+        </ul>
+        <p>{t('privacy.sections.dataCollection.sdks.p2')}</p>
+
+        <h3>{t('privacy.sections.dataCollection.notCollected.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.notCollected.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.dataCollection.notCollected.items')[0]}</li>
+          <li>{t('privacy.sections.dataCollection.notCollected.items')[1]}</li>
+          <li>{t('privacy.sections.dataCollection.notCollected.items')[2]}</li>
+          <li>{t('privacy.sections.dataCollection.notCollected.items')[3]}</li>
+          <li>{t('privacy.sections.dataCollection.notCollected.items')[4]}</li>
+          <li>{t('privacy.sections.dataCollection.notCollected.items')[5]}</li>
+        </ul>
+
+        <h3>{t('privacy.sections.dataCollection.preferences.title')}</h3>
+        <p>{t('privacy.sections.dataCollection.preferences.p1')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.dataUsage.title')}</h2>
+        <p>{t('privacy.sections.dataUsage.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.dataUsage.items')[0]}</li>
+          <li>{t('privacy.sections.dataUsage.items')[1]}</li>
+          <li>{t('privacy.sections.dataUsage.items')[2]}</li>
+          <li>{t('privacy.sections.dataUsage.items')[3]}</li>
+        </ul>
+        <p>{t('privacy.sections.dataUsage.p2')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.legalBasis.title')}</h2>
+        <p>{t('privacy.sections.legalBasis.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.legalBasis.items')[0]}</li>
+          <li>{t('privacy.sections.legalBasis.items')[1]}</li>
+          <li>{t('privacy.sections.legalBasis.items')[2]}</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.sharing.title')}</h2>
+        <p>{t('privacy.sections.sharing.p1')}</p>
+
+        <h3>{t('privacy.sections.sharing.firebase.title')}</h3>
+        <p>
+          {t('privacy.sections.sharing.firebase.p1')}
+          <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">
+            firebase.google.com/support/privacy
+          </a>.
+        </p>
+
+        <h3>{t('privacy.sections.sharing.server.title')}</h3>
+        <p>{t('privacy.sections.sharing.server.p1')}</p>
+
+        <h3>{t('privacy.sections.sharing.legal.title')}</h3>
+        <p>{t('privacy.sections.sharing.legal.p1')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.retention.title')}</h2>
+        <p>{t('privacy.sections.retention.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.retention.items')[0]}</li>
+          <li>{t('privacy.sections.retention.items')[1]}</li>
+          <li>{t('privacy.sections.retention.items')[2]}</li>
+          <li>{t('privacy.sections.retention.items')[3]}</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.security.title')}</h2>
+        <p>{t('privacy.sections.security.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.security.items')[0]}</li>
+          <li>{t('privacy.sections.security.items')[1]}</li>
+          <li>{t('privacy.sections.security.items')[2]}</li>
+          <li>{t('privacy.sections.security.items')[3]}</li>
+        </ul>
+        <p>{t('privacy.sections.security.p2')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.rights.title')}</h2>
+        <p>{t('privacy.sections.rights.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.rights.items')[0]}</li>
+          <li>{t('privacy.sections.rights.items')[1]}</li>
+          <li>{t('privacy.sections.rights.items')[2]}</li>
+          <li>{t('privacy.sections.rights.items')[3]}</li>
+          <li>{t('privacy.sections.rights.items')[4]}</li>
+          <li>{t('privacy.sections.rights.items')[5]}</li>
+        </ul>
+        <p>{t('privacy.sections.rights.p2')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.cookies.title')}</h2>
+        <p>{t('privacy.sections.cookies.p1')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.internationalTransfer.title')}</h2>
+        <p>{t('privacy.sections.internationalTransfer.p1')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.minors.title')}</h2>
+        <p>{t('privacy.sections.minors.p1')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.changes.title')}</h2>
+        <p>{t('privacy.sections.changes.p1')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.contact.title')}</h2>
+        <p>
+          {t('privacy.sections.contact.p1')}
+        </p>
+        <p>{t('privacy.sections.contact.p2')}</p>
+      </section>
+
+      <section class="legal-section">
+        <h2>{t('privacy.sections.summary.title')}</h2>
+        <p>{t('privacy.sections.summary.p1')}</p>
+
+        <h3>{t('privacy.sections.summary.notLinked.title')}</h3>
+        <p>{t('privacy.sections.summary.notLinked.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.summary.notLinked.items')[0]}</li>
+          <li>{t('privacy.sections.summary.notLinked.items')[1]}</li>
+        </ul>
+
+        <h3>{t('privacy.sections.summary.linked.title')}</h3>
+        <p>{t('privacy.sections.summary.linked.p1')}</p>
+        <ul>
+          <li>{t('privacy.sections.summary.linked.items')[0]}</li>
+          <li>{t('privacy.sections.summary.linked.items')[1]}</li>
+        </ul>
+
+        <h3>{t('privacy.sections.summary.notCollected.title')}</h3>
+        <p>{t('privacy.sections.summary.notCollected.p1')}</p>
+
+        <p>
+          {t('privacy.sections.summary.deletion')}
+        </p>
+      </section>
+    </div>
+  </main>
+</Base>
+
+<style>
+  .legal-page {
+    padding: 3rem 1.5rem 5rem;
+    background-color: var(--color-bg);
+    color: var(--color-text-muted);
+    min-height: 100vh;
+  }
+
+  .legal-container {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  .legal-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .legal-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+  }
+
+  .legal-meta {
+    font-size: 0.875rem;
+    color: var(--color-text-faint);
+  }
+
+  .legal-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .legal-section h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+    padding-top: 0.5rem;
+  }
+
+  .legal-section h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 1.25rem 0 0.5rem;
+    color: var(--color-text);
+  }
+
+  .legal-section p {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .legal-section ul {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0 0.75rem;
+  }
+
+  .legal-section ul li {
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: var(--color-text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .legal-section a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .legal-section a:hover {
+    opacity: 0.8;
+  }
+</style>

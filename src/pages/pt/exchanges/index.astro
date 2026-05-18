@@ -1,0 +1,945 @@
+---
+import Base from '@layouts/Base.astro';
+import t    from '@i18n/pt.json';
+import { taxRegimeLabel, isoFlag, fmtFee } from '@lib/exchanges';
+import exchanges from '@data/exchanges.json';
+import '@styles/pages/exchanges.css';
+
+const alternates = [
+  { hreflang: 'en',        href: 'https://bitsark.com/exchanges/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/' },
+];
+
+function fmtCnpj(c: string | null | undefined): string | null {
+  if (!c) return null;
+  const d = c.replace(/\D/g, '');
+  if (d.length !== 14) return c;
+  return `${d.slice(0,2)}.${d.slice(2,5)}.${d.slice(5,8)}/${d.slice(8,12)}-${d.slice(12)}`;
+}
+
+const countryNames: Record<string, string> = {
+  BR: 'Brasil', US: 'Estados Unidos', GB: 'Reino Unido', KY: 'Ilhas Cayman',
+  SC: 'Seychelles', VG: 'Ilhas Virgens Britânicas', SG: 'Singapura',
+  MT: 'Malta', LT: 'Lituânia', HK: 'Hong Kong', AU: 'Austrália',
+  EU: 'União Europeia', PA: 'Panamá', BZ: 'Belize',
+};
+
+const exchangesData = exchanges.map((ex: any) => {
+  const fd  = ex.fiscal_details_br || {};
+  const op  = ex.operational_details_br || {};
+  const fees = ex.fees || {};
+  const makerRaw = fees.maker ?? null;
+  const takerRaw = fees.taker ?? null;
+  const isSpreadOnly   = makerRaw === null && takerRaw === null;
+  const isSpreadWithFee = makerRaw === null && takerRaw !== null;
+  const isoCode = op.main_jurisdiction_iso ?? null;
+
+  return {
+    id: ex.id,
+    name: ex.name,
+    slug: ex.slug,
+    logo_url: ex.logo_url,
+    website: ex.website,
+    cnpjFmt: fmtCnpj(op.cnpj ?? null),
+    bcb: op.bcb_authorized ?? false,
+    pix: op.accepts_pix ?? false,
+    iso: isoCode,
+    flagEmoji: isoFlag(isoCode),
+    countryName: isoCode ? (countryNames[isoCode] ?? isoCode) : 'Desconhecido',
+    taxRegime: fd.tax_regime ?? '',
+    regimeLabel: taxRegimeLabel(fd.tax_regime ?? ''),
+    exemption: fd.monthly_brl_trade_exemption ?? 0,
+    rfbReports: fd.exchange_rfb_reports ?? [],
+    userActions: fd.user_rfb_action_monthly ?? [],
+    hasIn1888: (fd.exchange_rfb_reports ?? []).includes('in_1888_monthly'),
+    maker: makerRaw,
+    taker: takerRaw,
+    isSpreadOnly,
+    isSpreadWithFee,
+    feeUrl: fees.fee_url ?? null,
+  };
+});
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    ...t.exchanges.faq.items.map(item => ({
+      "@type": "Question",
+      "name": item.q,
+      "acceptedAnswer": { "@type": "Answer", "text": item.a }
+    }))
+  ]
+};
+
+const COLUMNS: { id: string; label: string; default: boolean }[] = [
+  { id: 'col-country',      label: t.exchanges.table.cols.country,  default: true },
+  { id: 'col-rfb',          label: t.exchanges.table.cols.rfb,      default: true },
+  { id: 'col-fees',         label: 'Taxas (Maker / Taker)',         default: true },
+  { id: 'col-pix',          label: t.exchanges.table.cols.pix,      default: true },
+  { id: 'col-obligations',  label: t.exchanges.table.cols.rules,    default: true },
+];
+
+const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+---
+
+<Base
+  title={t.exchanges.meta.title}
+  description={t.exchanges.meta.description}
+  lang={t.lang}
+  canonical="https://bitsark.com/pt/exchanges/"
+  alternates={alternates}
+  ogImage="https://bitsark.com/og/exchanges.png"
+  schema={faqSchema}
+>
+
+  <!-- ── Header ── -->
+  <section class="exch-header">
+    <div class="exch-header-glow" aria-hidden="true"></div>
+    <div class="exch-header-grid-bg" aria-hidden="true"></div>
+    <div class="container exch-header-inner">
+      <!-- Alerta DeCripto 2026 -->
+      <a href="/pt/exchanges/decripto" class="decripto-banner fade-up">
+        <span class="decripto-banner__badge">{t.exchanges.banner.badge}</span>
+        <span class="decripto-banner__text" set:html={t.exchanges.banner.text} />
+        <span class="decripto-banner__arrow" aria-hidden="true">→</span>
+      </a>
+      <div class="exch-header-tags">
+        <p class="eyebrow exch-header__eyebrow">{t.exchanges.header.eyebrow}</p>
+        <div class="exch-rank-pill">
+          <span class="exch-rank-pill-hash" aria-hidden="true">#</span>
+          {t.exchanges.header.rankTag}
+        </div>
+      </div>
+      <h1 class="exch-header__title" set:html={t.exchanges.header.title} />
+      <div class="exch-header__flex">
+        <p class="exch-header__sub" set:html={t.exchanges.header.sub} />
+        <a href="/exchanges/api" class="nav__cta">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          {t.exchanges.header.ctaApi}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TL;DR Quick Answers ── -->
+  <section class="section section--alt section--tight" id="tldr">
+    <div class="container">
+      <div class="exch-block-head">
+        <p class="eyebrow">{t.exchanges.tldr.eyebrow}</p>
+        <h2 class="exch-block-title">{t.exchanges.tldr.title}</h2>
+        <p class="exch-block-sub">{t.exchanges.tldr.sub}</p>
+      </div>
+
+      <div class="exch-tldr-grid">
+        {t.exchanges.tldr.items.map((item, i) => (
+          <div class="exch-tldr-card" style={`--stagger:${i}`}>
+            <div class="exch-tldr-icon" aria-hidden="true">
+              {item.icon === 'shield' && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              )}
+              {item.icon === 'doc' && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+              )}
+              {item.icon === 'alert' && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m21.7 16.3-8-13.6a2 2 0 0 0-3.4 0l-8 13.6A2 2 0 0 0 4 19h16a2 2 0 0 0 1.7-2.7Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              )}
+              {item.icon === 'clock' && (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              )}
+            </div>
+            <h3 class="exch-tldr-q">{item.q}</h3>
+            <p class="exch-tldr-a" set:html={item.a} />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Filtros + Tabela ── -->
+  <section class="section" id="table">
+    <div class="container">
+      <div class="exch-block-head">
+        <p class="eyebrow">{t.exchanges.table.eyebrow}</p>
+        <h2 class="exch-block-title">{t.exchanges.table.title}</h2>
+        <p class="exch-block-sub">{t.exchanges.table.sub}</p>
+      </div>
+
+      <!-- ── Toolbar Premium ── -->
+      <div class="exch-toolbar">
+        <div class="exch-filters" role="group" aria-label={t.exchanges.filters.ariaLabel}>
+          <button class="exch-chip exch-chip--active" data-filter="all"      aria-pressed="true">{t.exchanges.filters.all}</button>
+          <button class="exch-chip"                   data-filter="domestic" aria-pressed="false">{t.exchanges.filters.domestic}</button>
+          <button class="exch-chip"                   data-filter="offshore" aria-pressed="false">{t.exchanges.filters.offshore}</button>
+          <button class="exch-chip"                   data-filter="bcb"      aria-pressed="false">{t.exchanges.filters.bcb}</button>
+          <button class="exch-chip"                   data-filter="pix"      aria-pressed="false">{t.exchanges.filters.pix}</button>
+          <button class="exch-chip"                   data-filter="in1888"   aria-pressed="false">{t.exchanges.filters.in1888}</button>
+        </div>
+
+        <div class="exch-actions">
+          <div class="exch-search-wrap">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <label for="exch-search" class="sr-only">{t.exchanges.filters.search}</label>
+            <input id="exch-search" type="search" class="exch-search" placeholder={t.exchanges.filters.search} aria-label={t.exchanges.filters.search} autocomplete="off" />
+            <button class="exch-search-clear" id="search-clear-btn" aria-label="Limpar busca" hidden>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+
+          <div class="exch-settings-wrap">
+            <button class="exch-settings-btn" id="settings-toggle" aria-expanded="false" aria-controls="settings-panel" title={t.exchanges.table.settingsTitle}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            </button>
+            <div class="exch-settings-panel" id="settings-panel" role="dialog" aria-label={t.exchanges.table.settingsTitle} hidden>
+              <p class="exch-settings-title">{t.exchanges.table.visibleCols}</p>
+              {COLUMNS.map(col => (
+                <label class="exch-settings-item" for={`toggle-${col.id}`}>
+                  <input type="checkbox" id={`toggle-${col.id}`} class="exch-col-toggle" data-col={col.id} checked={col.default} />
+                  <span>{col.label}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-meta">
+        <p class="exch-result-count" id="result-count" aria-live="polite" data-template={t.exchanges.table.results}>{t.exchanges.table.results.replace('{count}', exchangesData.length.toString()).replace('{s}', exchangesData.length !== 1 ? 's' : '')}</p>
+      </div>
+      <div class="table-wrap" role="region" aria-label={t.exchanges.table.ariaLabel} tabindex="0">
+        <table class="data-table" id="exchanges-table">
+          <thead>
+            <tr>
+              <th scope="col" id="col-exchange" class="sticky-col sortable" data-sort="name" aria-sort="none"
+                  data-tooltip={t.exchanges.table.tooltips.cnpj}>
+                {t.exchanges.table.cols.exchange}
+                <span class="sort-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </th>
+              <th scope="col" id="col-country" class="sortable text-center" data-sort="country" aria-sort="none"
+                  data-tooltip={t.exchanges.table.tooltips.country}>
+                {t.exchanges.table.cols.country}
+                <span class="sort-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </th>
+              <th scope="col" id="col-rfb" class="sortable text-center" data-sort="rfbReports" aria-sort="none">
+                {t.exchanges.table.cols.rfb}
+                <span class="sort-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </th>
+              <th scope="col" id="col-fees" class="sortable text-center" data-sort="maker" aria-sort="none"
+                  data-tooltip="Taxa Maker / Taxa Taker. Maker: ordem colocada no book. Taker: ordem executada do book.">
+                Taxas <span class="col-fees-sub">maker / taker</span>
+                <span class="sort-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </th>
+              <th scope="col" id="col-pix" class="sortable text-center" data-sort="pixStatus" aria-sort="none">
+                {t.exchanges.table.cols.pix}
+                <span class="sort-icon" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
+                </span>
+              </th>
+              <!-- FIX: tabindex="0" adicionado manualmente (não é sortable) -->
+              <th scope="col" id="col-obligations" tabindex="0" data-tooltip={t.exchanges.table.tooltips.rules}>
+                {t.exchanges.table.cols.rules}
+              </th>
+            </tr>
+          </thead>
+          <tbody id="exchanges-tbody">
+            {exchangesData.map((ex: any) => (
+              <tr
+                data-name={ex.name.toLowerCase()}
+                data-country={ex.countryName.toLowerCase()}
+                data-regime={ex.taxRegime}
+                data-bcb={ex.bcb   ? 'true' : 'false'}
+                data-pix={ex.pix   ? 'true' : 'false'}
+                data-in1888={ex.hasIn1888 ? 'true' : 'false'}
+                data-maker={ex.maker ?? ''}
+                data-taker={ex.taker ?? ''}
+                data-rfb-reports={ex.rfbReports.join(',')}
+                data-pix-status={ex.pix ? 'true' : 'false'}
+              >
+                <!-- Exchange -->
+                <td class="exch-td-name sticky-col" headers="col-exchange">
+                  <div class="exch-info-group">
+                    <div class="exch-name-row">
+                      <a href={`/exchanges/${ex.slug}`} class="exch-name-link">
+                        {ex.logo_url && (
+                          <img src={ex.logo_url} alt="" class="exch-logo" width="20" height="20" loading="lazy" aria-hidden="true" />
+                        )}
+                        <span class="exch-name-text">{ex.name}</span>
+                      </a>
+                      {ex.bcb && (
+                        <span class="badge badge-bcb" data-tooltip="Corretora autorizada pelo BCB (Banco Central do Brasil)" tabindex="0">BCB</span>
+                      )}
+                    </div>
+                    <span class="exch-cnpj-sub">
+                      {ex.cnpjFmt ? ex.cnpjFmt : t.exchanges.table.tooltips.internationalJurisdiction}
+                    </span>
+                  </div>
+                </td>
+
+                <!-- País -->
+                <td headers="col-country" class="text-center">
+                  <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                  <div class="exch-country-cell" data-tooltip={t.exchanges.table.tooltips.country} tabindex="0">
+                    {ex.iso ? (
+                      <>
+                        <img
+                          src={`https://flagcdn.com/${ex.iso.toLowerCase()}.svg`}
+                          alt={ex.countryName}
+                          class="exch-flag-img"
+                        />
+                        <span class="exch-iso-code">{ex.iso}</span>
+                      </>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="color-text-faint" data-tooltip={t.exchanges.table.tooltips.countryUnknown}>
+                        <circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                      </svg>
+                    )}
+                  </div>
+                </td>
+
+                <!-- Reporte RFB -->
+                <td headers="col-rfb" class="text-center">
+                  {ex.hasIn1888
+                    ? (
+                      <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                      <span
+                        class="badge badge-success"
+                        tabindex="0"
+                        data-tooltip={t.exchanges.table.tooltips.rfb_in1888}>
+                        {t.exchanges.table.badges.in1888}
+                      </span>
+                    )
+                    : ex.rfbReports.includes('decripto_annually')
+                      ? (
+                        <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                        <span
+                          class="badge badge-warning"
+                          tabindex="0"
+                          data-tooltip={t.exchanges.table.tooltips.rfb_decripto}>
+                          {t.exchanges.table.badges.decripto}
+                        </span>
+                      )
+                      : (
+                        <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                        <span class="badge badge-neutral" tabindex="0" data-tooltip={t.exchanges.table.tooltips.rfb_none}>{t.exchanges.table.badges.none}</span>
+                      )
+                  }
+                </td>
+
+                <!-- Taxas (Maker / Taker unificado) -->
+                <td class="exch-td-fee exch-td-fees text-center" headers="col-fees">
+                  {ex.isSpreadOnly
+                    ? (
+                      <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                      <span
+                        class="exch-spread"
+                        tabindex="0"
+                        data-tooltip={t.exchanges.table.tooltips.spread_only}
+                      >Apenas spread</span>
+                    )
+                    : ex.isSpreadWithFee
+                      ? (
+                        <span class="exch-fees-unified">
+                          <span class="exch-spread" tabindex="0"
+                            data-tooltip={t.exchanges.table.tooltips.spread_fee.replace('{fee}', fmtFee(ex.taker) ?? '')}>
+                            Spread
+                          </span>
+                          <span class="exch-fees-sep">+</span>
+                          <span tabindex="0" data-tooltip={t.exchanges.table.tooltips.spread_fee_taker}>{fmtFee(ex.taker)}</span>
+                        </span>
+                      )
+                      : (
+                        <span class="exch-fees-unified">
+                          <span tabindex="0" data-tooltip={t.exchanges.table.tooltips.maker}>{fmtFee(ex.maker)}</span>
+                          <span class="exch-fees-sep">/</span>
+                          <span tabindex="0" data-tooltip={t.exchanges.table.tooltips.taker}>{fmtFee(ex.taker)}</span>
+                        </span>
+                      )
+                  }
+                </td>
+
+                <!-- Pix -->
+                <td headers="col-pix" class="text-center">
+                  {ex.pix
+                    ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="pix-icon--yes" aria-label={t.exchanges.table.pixAccepts}><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="pix-icon--no" aria-label={t.exchanges.table.pixDoesNotAccept}><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  }
+                </td>
+
+                <!-- Regras mensais -->
+                <td class="exch-td-obrig" headers="col-obligations">
+                  <div class="exch-oblig-wrap">
+                    {ex.exemption > 0 && (
+                      <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                      <span
+                        class="badge badge-success"
+                        tabindex="0"
+                        data-tooltip={t.exchanges.table.tooltips.exemption}
+                      >
+                        {t.exchanges.table.badges.exemption}
+                      </span>
+                    )}
+                    {ex.userActions.map((action: string) => {
+                      if (action === 'report_in1888_if_traded_over_30k' || action === 'manual_report_over_30k_traded') {
+                        return (
+                          <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                          <span
+                            class="badge badge-warning"
+                            tabindex="0"
+                            data-tooltip={t.exchanges.table.tooltips.negociou30k}
+                          >
+                            {t.exchanges.table.badges.report30k}
+                          </span>
+                        );
+                      } else if (action === 'pay_darf_if_profit' || action === 'manual_darf_over_15k_profit') {
+                        return (
+                          <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
+                          <span
+                            class="badge badge-warning"
+                            tabindex="0"
+                            data-tooltip={t.exchanges.table.tooltips.lucrou}
+                          >
+                            {t.exchanges.table.badges.payDarf}
+                          </span>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="exch-empty" id="exch-empty" aria-live="polite" hidden>{t.exchanges.table.empty}</p>
+
+      <div class="table-footer-notice">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span set:html={t.exchanges.table.footer} />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Decision flow ── -->
+  <section class="section section--alt" id="decide">
+    <div class="container">
+      <div class="exch-block-head">
+        <p class="eyebrow">{t.exchanges.decide.eyebrow}</p>
+        <h2 class="exch-block-title">{t.exchanges.decide.title}</h2>
+        <p class="exch-block-sub">{t.exchanges.decide.sub}</p>
+      </div>
+
+      <ol class="exch-decide">
+        {t.exchanges.decide.steps.map((s, i) => (
+          <li class="exch-decide-step" style={`--stagger:${i}`}>
+            <div class="exch-decide-num">{s.n}</div>
+            <div class="exch-decide-body">
+              <h3 class="exch-decide-q" set:html={s.q} />
+              <div class="exch-decide-paths">
+                <div class="exch-decide-path exch-decide-path--yes">
+                  <span class="exch-decide-pill exch-decide-pill--yes">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    {s.yes.label}
+                  </span>
+                  <div class="exch-decide-action">
+                    <p set:html={s.yes.action} />
+                    <p class="exch-decide-detail">{s.yes.detail}</p>
+                  </div>
+                </div>
+                <div class="exch-decide-path exch-decide-path--no">
+                  <span class="exch-decide-pill exch-decide-pill--no">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    {s.no.label}
+                  </span>
+                  <div class="exch-decide-action">
+                    <p set:html={s.no.action} />
+                    <p class="exch-decide-detail">{s.no.detail}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="exch-decide-note" set:html={t.exchanges.decide.note} />
+    </div>
+  </section>
+
+  <!-- ── Texto editorial (bridge antes do calendário/SEO) ── -->
+  <section class="section section--editorial">
+    <div class="container editorial">
+      <p set:html={t.exchanges.editorial.p1} />
+      <p set:html={t.exchanges.editorial.p2} />
+    </div>
+  </section>
+
+  <!-- ── Calendário fiscal ── -->
+  <section class="section" id="calendar">
+    <div class="container">
+      <div class="exch-block-head">
+        <p class="eyebrow">{t.exchanges.calendar.eyebrow}</p>
+        <h2 class="exch-block-title">{t.exchanges.calendar.title}</h2>
+        <p class="exch-block-sub">{t.exchanges.calendar.sub}</p>
+      </div>
+
+      <ol class="exch-timeline">
+        {t.exchanges.calendar.events.map((ev, i) => (
+          <li class:list={["exch-timeline-event", `exch-timeline-event--${ev.status}`]} style={`--stagger:${i}`}>
+            <div class="exch-timeline-dot" aria-hidden="true">
+              {ev.status === 'active' && <span class="exch-timeline-pulse"></span>}
+              {ev.status === 'upcoming' && <span class="exch-timeline-arrow">›</span>}
+            </div>
+            <div class="exch-timeline-body">
+              <div class="exch-timeline-meta">
+                <span class="exch-timeline-date">{ev.date}</span>
+                <span class:list={["exch-timeline-badge", `exch-timeline-badge--${ev.status}`]}>{ev.badge}</span>
+              </div>
+              <h3 class="exch-timeline-title">{ev.title}</h3>
+              <p class="exch-timeline-desc">{ev.desc}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ── Bloco editorial SEO ── -->
+  <section class="section section--editorial-full">
+    <div class="container editorial">
+      <h2 set:html={t.exchanges.seoBlock.h2_1} />
+      <p set:html={t.exchanges.seoBlock.p1_1} />
+      <p set:html={t.exchanges.seoBlock.p1_2} />
+
+      <h2 set:html={t.exchanges.seoBlock.h2_2} />
+      <ul class="editorial-list">
+        <li set:html={t.exchanges.seoBlock.li_1} />
+        <li set:html={t.exchanges.seoBlock.li_2} />
+        <li set:html={t.exchanges.seoBlock.li_3} />
+      </ul>
+
+      <h2 set:html={t.exchanges.seoBlock.h2_3} />
+      <p set:html={t.exchanges.seoBlock.p3_1} />
+    </div>
+  </section>
+
+  <!-- ── FAQ ── -->
+  <section class="section section--alt">
+    <div class="container exch-faq">
+      <!-- FIX: style inline removido → classe .eyebrow--faq no CSS -->
+      <p class="eyebrow eyebrow--faq">{t.exchanges.faq.eyebrow}</p>
+      <h2 class="exch-faq__title">{t.exchanges.faq.title}</h2>
+
+      <div class="faq-list">
+        {t.exchanges.faq.items.map(item => (
+          <details class="faq-item">
+            <summary>{item.q}</summary>
+            <div class="faq-answer"><p>{item.a}</p></div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Fontes e metodologia ── -->
+  <section class="section" id="sources">
+    <div class="container exch-narrow-md">
+      <div class="exch-block-head">
+        <p class="eyebrow">{t.exchanges.sources.eyebrow}</p>
+        <h2 class="exch-block-title">{t.exchanges.sources.title}</h2>
+        <p class="exch-block-sub">{t.exchanges.sources.sub}</p>
+      </div>
+
+      <ul class="exch-sources">
+        {t.exchanges.sources.items.map((s, i) => (
+          <li class="exch-source-item" style={`--stagger:${i}`}>
+            <span class="exch-source-label">{s.label}</span>
+            <a href={s.href} target="_blank" rel="noopener noreferrer" class="exch-source-link">
+              {s.source}
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10"/></svg>
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <p class="exch-sources-meta">
+        <span>{t.exchanges.sources.lastUpdatedLabel}:</span>
+        <strong>{updatedAt}</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- Modal de Feedback -->
+  <div id="feedback-modal" class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-title" hidden>
+    <div class="feedback-modal-box">
+      <button class="feedback-close" id="close-feedback-btn" aria-label={t.exchanges.feedback.closeModal}>✕</button>
+      <h2 id="feedback-title" class="feedback-title">{t.exchanges.feedback.title}</h2>
+      <p class="feedback-subtitle" set:html={t.exchanges.feedback.context} />
+
+      <div class="feedback-types" role="group" aria-label="Tipo de problema">
+        <button type="button" class="feedback-type-btn" data-type="taxa">{t.exchanges.feedback.typeFee}</button>
+        <button type="button" class="feedback-type-btn" data-type="cnpj">{t.exchanges.feedback.typeCnpj}</button>
+        <button type="button" class="feedback-type-btn" data-type="rfb">{t.exchanges.feedback.typeRfb}</button>
+        <button type="button" class="feedback-type-btn" data-type="outro">{t.exchanges.feedback.typeOther}</button>
+      </div>
+
+      <!-- Honeypot field to prevent bots -->
+      <input type="text" id="feedback-hp" name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+      <textarea
+        id="feedback-message"
+        class="feedback-textarea"
+        placeholder={t.exchanges.feedback.placeholderMessage}
+        rows="3"
+        maxlength="500"
+      ></textarea>
+
+      <input
+        type="email"
+        id="feedback-email"
+        class="feedback-email"
+        placeholder={t.exchanges.feedback.placeholderEmail}
+      />
+
+      <div id="feedback-status" class="feedback-status" hidden></div>
+
+      <button
+        class="feedback-submit"
+        id="feedback-submit-btn"
+        disabled
+        data-label-sending={t.exchanges.feedback.sending}
+        data-label-default={t.exchanges.feedback.cta}
+        data-label-success={t.exchanges.feedback.success}>{t.exchanges.feedback.cta}</button>
+    </div>
+  </div>
+  <div id="feedback-backdrop" class="feedback-backdrop" hidden></div>
+
+</Base>
+
+
+<script>
+  const searchInput      = document.getElementById('exch-search') as HTMLInputElement | null;
+  const searchClearBtn   = document.getElementById('search-clear-btn') as HTMLButtonElement | null;
+  const resetFiltersBtn  = document.getElementById('reset-filters-btn') as HTMLButtonElement | null;
+  const chips          = document.querySelectorAll<HTMLButtonElement>('.exch-chip');
+  const rows           = document.querySelectorAll<HTMLTableRowElement>('#exchanges-tbody tr');
+  const emptyMsg       = document.getElementById('exch-empty');
+  const emptyMsgText     = document.getElementById('exch-empty-msg');
+  const resultCountElement = document.getElementById('result-count');
+  const settingsToggle = document.getElementById('settings-toggle') as HTMLButtonElement | null;
+  const settingsPanel  = document.getElementById('settings-panel') as HTMLElement | null;
+  const colToggles     = document.querySelectorAll<HTMLInputElement>('.exch-col-toggle');
+  const sortableHeaders = document.querySelectorAll<HTMLTableCellElement>('th.sortable');
+
+  // Feedback Modal Elements
+  const modal = document.getElementById('feedback-modal');
+  const backdrop = document.getElementById('feedback-backdrop');
+  const openFeedbackBtn = document.getElementById('open-feedback-btn-footer');
+  const closeFeedbackBtn = document.getElementById('close-feedback-btn');
+  const feedbackTypeBtns = document.querySelectorAll('.feedback-type-btn');
+  const feedbackSubmitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement;
+  const feedbackStatus = document.getElementById('feedback-status');
+  const feedbackTextarea = document.getElementById('feedback-message') as HTMLTextAreaElement;
+  const feedbackEmail = document.getElementById('feedback-email') as HTMLInputElement;
+  const feedbackHp = document.getElementById('feedback-hp') as HTMLInputElement;
+
+  let modalOpenedAt = 0;
+  let activeFilter = 'all';
+  let searchTerm   = '';
+  let sortCol      = '';
+  let sortDir      = 'asc';
+
+  function updateResultCount(count: number) {
+    if (!resultCountElement) return;
+    const template = resultCountElement.dataset.template || 'Exibindo {count} corretora{s}';
+    resultCountElement.textContent = template
+      .replace('{count}', count.toString())
+      .replace('{s}', count !== 1 ? 's' : '');
+  }
+
+  // ── Navegação por linha ──
+  const tbody = document.getElementById('exchanges-tbody');
+  tbody?.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    const row = target.closest('tr');
+    if (!row) return;
+
+    if (target.closest('a, button, [data-tooltip], .pix-icon')) return;
+
+    const link = row.querySelector('.exch-name-link') as HTMLAnchorElement;
+    if (link) {
+      if (e.ctrlKey || e.metaKey) window.open(link.href, '_blank');
+      else link.click();
+    }
+  });
+
+  // ── Filtros ──
+  function applyFilters() {
+    let count = 0;
+    rows.forEach(row => {
+      const matches =
+        (row.dataset.name ?? '').includes(searchTerm.toLowerCase()) &&
+        (activeFilter === 'all' ||
+         (activeFilter === 'domestic'  && (row.dataset.regime ?? '').includes('domestic_exchange')) ||
+         (activeFilter === 'offshore'  && row.dataset.regime === 'offshore_law_14754') ||
+         (activeFilter === 'bcb'       && row.dataset.bcb    === 'true') ||
+         (activeFilter === 'pix'       && row.dataset.pix    === 'true') ||
+         (activeFilter === 'in1888'    && row.dataset.in1888 === 'true'));
+      row.hidden = !matches;
+      if (matches) count++;
+    });
+    updateResultCount(count);
+
+    if (emptyMsg) {
+      emptyMsg.hidden = count > 0;
+      if (count === 0 && emptyMsgText) {
+        const parts: string[] = [];
+        if (searchTerm) parts.push(`"${searchTerm}"`);
+        if (activeFilter !== 'all') parts.push(`filtro: ${activeFilter.toUpperCase()}`);
+        emptyMsgText.textContent = parts.length
+          ? `Nenhuma corretora encontrada para ${parts.join(' + ')}.`
+          : 'Nenhuma corretora encontrada para os filtros selecionados.';
+      }
+    }
+  }
+
+  function resetAllFilters() {
+    searchTerm = '';
+    activeFilter = 'all';
+    if (searchInput) searchInput.value = '';
+    if (searchClearBtn) searchClearBtn.hidden = true;
+    chips.forEach(c => { c.classList.remove('exch-chip--active'); c.setAttribute('aria-pressed', 'false'); });
+    const allChip = document.querySelector<HTMLButtonElement>('.exch-chip[data-filter="all"]');
+    if (allChip) { allChip.classList.add('exch-chip--active'); allChip.setAttribute('aria-pressed', 'true'); }
+    applyFilters();
+  }
+
+  searchInput?.addEventListener('input', () => {
+    searchTerm = searchInput!.value;
+    if (searchClearBtn) searchClearBtn.hidden = searchTerm.length === 0;
+    applyFilters();
+  });
+
+  searchClearBtn?.addEventListener('click', () => {
+    searchTerm = '';
+    if (searchInput) searchInput.value = '';
+    searchClearBtn.hidden = true;
+    searchInput?.focus();
+    applyFilters();
+  });
+
+  resetFiltersBtn?.addEventListener('click', resetAllFilters);
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      activeFilter = chip.dataset.filter ?? 'all';
+      chips.forEach(c => { c.classList.remove('exch-chip--active'); c.setAttribute('aria-pressed', 'false'); });
+      chip.classList.add('exch-chip--active');
+      chip.setAttribute('aria-pressed', 'true');
+      // Reset search when switching filters for cleaner UX
+      if (searchInput && searchInput.value) {
+        searchTerm = '';
+        searchInput.value = '';
+        if (searchClearBtn) searchClearBtn.hidden = true;
+      }
+      applyFilters();
+    });
+  });
+
+  // ── Ordenação ──
+  function sortTable(col: string) {
+    sortDir = sortCol === col ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+    sortCol = col;
+
+    sortableHeaders.forEach(th => {
+      if (th.dataset.sort === col) {
+        th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
+      } else {
+        th.setAttribute('aria-sort', 'none');
+      }
+    });
+
+    const tbody = document.getElementById('exchanges-tbody');
+    if (!tbody) return;
+    const arr = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
+    arr.sort((a, b) => {
+      const av = a.dataset[col] ?? '';
+      const bv = b.dataset[col] ?? '';
+
+      const an = parseFloat(av);
+      const bn = parseFloat(bv);
+
+      if (!isNaN(an) && !isNaN(bn)) {
+        return sortDir === 'asc' ? an - bn : bn - an;
+      }
+
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    arr.forEach(r => tbody.appendChild(r));
+  }
+
+  sortableHeaders.forEach(th => {
+    th.setAttribute('tabindex', '0');
+    th.addEventListener('click', () => sortTable(th.dataset.sort ?? ''));
+    th.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortTable(th.dataset.sort ?? ''); } });
+  });
+
+  // ── Settings ──
+  settingsToggle?.addEventListener('click', e => {
+    e.stopPropagation();
+    const open = settingsPanel?.hidden === false;
+    if (settingsPanel) settingsPanel.hidden = open;
+    settingsToggle.setAttribute('aria-expanded', String(!open));
+  });
+
+  document.addEventListener('click', e => {
+    if (settingsPanel && !settingsPanel.hidden) {
+      const wrap = settingsToggle?.closest('.exch-settings-wrap');
+      if (wrap && !wrap.contains(e.target as Node)) {
+        settingsPanel.hidden = true;
+        settingsToggle?.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && settingsPanel && !settingsPanel.hidden) {
+      settingsPanel.hidden = true;
+      settingsToggle?.setAttribute('aria-expanded', 'false');
+      settingsToggle?.focus();
+    }
+  });
+
+  // ── Persistência de Colunas ──
+  const COL_KEY = 'bitsark.exchanges.cols';
+  const syncCol = (id: string, show: boolean) => {
+    document.getElementById(id)?.classList.toggle('col-hidden', !show);
+    document.querySelectorAll(`td[headers="${id}"]`).forEach(td => (td as HTMLElement).classList.toggle('col-hidden', !show));
+  };
+
+  const savedCols = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
+  colToggles.forEach(t => {
+    const id = t.dataset.col || '';
+    if (savedCols[id] !== undefined) { t.checked = savedCols[id]; syncCol(id, t.checked); }
+    t.addEventListener('change', () => {
+      syncCol(id, t.checked);
+      const curr = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
+      curr[id] = t.checked;
+      localStorage.setItem(COL_KEY, JSON.stringify(curr));
+    });
+  });
+
+  // Initial filter and count update on page load
+  applyFilters();
+
+  // Feedback Logic
+  function toggleModal(show: boolean) {
+    modal?.toggleAttribute('hidden', !show);
+    backdrop?.toggleAttribute('hidden', !show);
+    document.body.style.overflow = show ? 'hidden' : '';
+    if (show) modalOpenedAt = Date.now();
+
+    if (!show) {
+      if (feedbackTextarea) feedbackTextarea.value = '';
+      if (feedbackEmail) feedbackEmail.value = '';
+      if (feedbackStatus) feedbackStatus.setAttribute('hidden', '');
+      feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
+      if (feedbackSubmitBtn) {
+        feedbackSubmitBtn.disabled = true;
+        feedbackSubmitBtn.textContent = feedbackSubmitBtn.dataset.labelDefault || '';
+      }
+    }
+  }
+
+  openFeedbackBtn?.addEventListener('click', () => toggleModal(true));
+  closeFeedbackBtn?.addEventListener('click', () => toggleModal(false));
+  backdrop?.addEventListener('click', () => toggleModal(false));
+
+  let selectedType = '';
+  feedbackTypeBtns.forEach(btn => btn.addEventListener('click', () => {
+    feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedType = (btn as HTMLElement).dataset.type || '';
+    if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
+  }));
+
+  feedbackSubmitBtn?.addEventListener('click', async () => {
+    const timeTaken = Date.now() - modalOpenedAt;
+    if (feedbackHp?.value || timeTaken < 2000) {
+      toggleModal(false);
+      return;
+    }
+
+    feedbackSubmitBtn.disabled = true;
+    const originalText = feedbackSubmitBtn.textContent;
+    feedbackSubmitBtn.textContent = feedbackSubmitBtn.dataset.labelSending || 'Enviando...';
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    try {
+      const payload = {
+        type: selectedType,
+        message: feedbackTextarea?.value?.trim() ?? '',
+        email: feedbackEmail?.value?.trim() ?? '',
+        hp: feedbackHp?.value ?? '',
+        page: location.pathname,
+      };
+
+      const res = await fetch('/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+          signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      if (feedbackStatus) {
+        feedbackStatus.textContent = feedbackSubmitBtn.dataset.labelSuccess || '';
+        feedbackStatus.className = 'feedback-status feedback-status--success';
+        feedbackStatus.removeAttribute('hidden');
+      }
+      setTimeout(() => toggleModal(false), 2000);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      console.error('[Feedback] erro:', err);
+
+      let errorMsg = 'Erro ao enviar. Tente novamente.';
+      if ((err as any).name === 'AbortError') errorMsg = 'Tempo limite excedido. Tente novamente.';
+
+      if (feedbackStatus) {
+        feedbackStatus.textContent = errorMsg;
+        feedbackStatus.className = 'feedback-status feedback-status--err';
+        feedbackStatus.removeAttribute('hidden');
+      }
+
+      feedbackSubmitBtn.disabled = false;
+      feedbackSubmitBtn.textContent = originalText;
+    }
+  });
+</script>

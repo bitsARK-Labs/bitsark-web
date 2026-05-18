@@ -1,0 +1,2242 @@
+---
+import Base from '@layouts/Base.astro';
+import { fmtFee, taxRegimeLabel, isoFlag, getAllSlugs, getExchangeBySlug } from '@lib/exchanges';
+import { useTranslations } from '../../i18n/ui';
+
+// ── Static Paths ───────────────────────────────────────────────────
+export function getStaticPaths() {
+  return getAllSlugs().map((slug) => ({ params: { slug } }));
+}
+
+// ── Data Fetching ──────────────────────────────────────────────────
+const { slug } = Astro.params;
+const i18n = useTranslations('en');
+const t = i18n.exchanges.detail;
+
+const ex = getExchangeBySlug(slug);
+
+if (!ex) return Astro.redirect('/exchanges');
+
+const op   = ex.operational_details_br  ?? {};
+const fd   = ex.fiscal_details_br       ?? {};
+const fees = ex.fees                    ?? {};
+
+const isDomestic   = (fd.tax_regime ?? '').includes('domestic_exchange');
+const isOffshore   = fd.tax_regime === 'offshore_law_14754';
+const hasExemption = (fd.monthly_brl_trade_exemption ?? 0) > 0;
+const maker        = fmtFee(fees.maker ?? null);
+const taker        = fmtFee(fees.taker ?? null);
+const flag         = isoFlag(op.main_jurisdiction_iso ?? '');
+const lang         = 'en';
+
+const updatedAt = ex.updated_at
+  ? new Date(ex.updated_at).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  : null;
+// ISO 8601 para dateModified nos schemas
+const updatedAtISO = ex.updated_at
+  ? new Date(ex.updated_at).toISOString()
+  : new Date().toISOString();
+
+// ── Helpers ────────────────────────────────────────────────────────
+function isoCountryName(iso: string | null | undefined): string {
+  return (iso && t.countries[iso]) ?? iso ?? '-';
+}
+
+function taxRegimeDesc(regime: string): string {
+  return t.regime[regime] || '';
+}
+
+function rfbReportLabel(report: string): string {
+  switch (report) {
+    case 'in_1888_monthly':   return t.obligations.reports.in_1888_monthly;
+    case 'decripto_annually': return t.obligations.reports.decripto_annually;
+    default: return report;
+  }
+}
+
+function fillName(s: string): string {
+  return s.replaceAll('{name}', ex.name);
+}
+function fillNameCnpj(s: string, cnpj: string): string {
+  return s.replaceAll('{name}', ex.name).replaceAll('{cnpj}', cnpj);
+}
+function fillValue(s: string, value: string): string {
+  return s.replaceAll('{name}', ex.name).replaceAll('{value}', value);
+}
+
+function userActionLabel(action: string, regime: string): string {
+  const isOff = regime === 'offshore_law_14754';
+  switch (action) {
+    case 'report_in1888_if_traded_over_30k':
+    case 'manual_report_over_30k_traded':
+      return isOff ? t.userActions.reportOver30kOffshore : t.userActions.reportOver30kDomestic;
+    case 'pay_darf_if_profit':
+    case 'manual_darf_over_15k_profit':
+      return isOff ? t.userActions.payDarfOffshore : t.userActions.payDarfDomestic;
+    default: return action;
+  }
+}
+
+function feeBarWidth(val: number | null | undefined): number {
+  if (val === null || val === undefined) return 0;
+  return Math.min(Math.round((val / 0.02) * 100), 100);
+}
+
+function feeColorClass(val: number | null | undefined): string {
+  if (val === null || val === undefined) return 'fee-color--na';
+  if (val === 0)    return 'fee-color--zero';
+  if (val <= 0.002) return 'fee-color--green';
+  if (val <= 0.008) return 'fee-color--yellow';
+  if (val <= 0.014) return 'fee-color--orange';
+  return 'fee-color--red';
+}
+
+function feeBarColorClass(val: number | null | undefined): string {
+  if (val === null || val === undefined) return 'fee-bar--na';
+  if (val === 0)    return 'fee-bar--zero';
+  if (val <= 0.002) return 'fee-bar--green';
+  if (val <= 0.008) return 'fee-bar--yellow';
+  if (val <= 0.014) return 'fee-bar--orange';
+  return 'fee-bar--red';
+}
+
+function feeLabel(val: number | null | undefined): string | null {
+  if (val === null || val === undefined) return null;
+  const labels = t.cards.feeLabels;
+  if (val === 0)    return labels[0];
+  if (val <= 0.002) return labels[1];
+  if (val <= 0.008) return labels[2];
+  if (val <= 0.014) return labels[3];
+  return labels[4];
+}
+
+// ── Textos fiscais centralizados (FAQ + JSON-LD) - i18n-driven ────
+const hasDec = (fd.exchange_rfb_reports ?? []).includes('decripto_annually');
+
+const txtRfbReport = isDomestic
+  ? fillName(t.faqAnswers.rfbReportDomestic)
+  : fillName(hasDec ? t.faqAnswers.rfbReportOffshoreWithDec : t.faqAnswers.rfbReportOffshoreNoDec);
+
+const txtIRPF = fillName(isDomestic ? t.faqAnswers.irpfDomestic : t.faqAnswers.irpfOffshore);
+
+const txtCNPJ = op.cnpj
+  ? fillNameCnpj(t.faqAnswers.cnpjHas, op.cnpj)
+  : fillName(t.faqAnswers.cnpjNone);
+
+const txtBCB = fillName(op.bcb_authorized ? t.faqAnswers.bcbAuthorized : t.faqAnswers.bcbNone);
+
+const txtPix = fillName(op.accepts_pix ? t.faqAnswers.pixYes : t.faqAnswers.pixNo);
+
+const txtLei14754 = fillName(t.faqAnswers.lei14754);
+
+const txtDeCriptoFAQ = fillName(isDomestic ? t.faqAnswers.decriptoDomestic : t.faqAnswers.decriptoOffshore);
+
+
+// ── Meta SEO ───────────────────────────────────────────────────────
+const pageTitle = isDomestic
+  ? `Does ${ex.name} Report to Brazil's IRS (Receita Federal)? 2026 Tax Guide | bitsARK`
+  : `Does ${ex.name} Report to Brazil's IRS? Offshore Crypto Tax Guide 2026 | bitsARK`;
+const pageDescription = isDomestic
+  ? `${ex.name} is a Brazilian exchange that reports monthly to Receita Federal under IN 1888. Find out if you must file IRPF, the R$ 35,000/month tax-free threshold, CNPJ ${op.cnpj ?? 'unavailable'}, and current fees.`
+  : `${ex.name} is a foreign exchange under Brazil's Law 14.754/2023. See if you must file IRPF, how to pay a 15% flat DARF, the DeCripto rules effective July 2026, and CNPJ ${op.cnpj ?? 'not registered'}.`;
+const pageUrl         = `https://bitsark.com/exchanges/${ex.slug}/`;
+
+const alternates = [
+  { hreflang: 'en',        href: pageUrl },
+  { hreflang: 'pt-BR',     href: `https://bitsark.com/pt/exchanges/${ex.slug}/` },
+  { hreflang: 'x-default', href: `https://bitsark.com/exchanges/${ex.slug}/` },
+];
+
+// OG Image dinâmica - gerada pelo endpoint /og/exchanges/[slug].png
+const ogImage = `https://bitsark.com/og/exchanges/${ex.slug}.png`;
+
+
+// ── JSON-LD: um único @graph com todos os schemas ──────────────────
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://bitsark.com/#organization",
+      "name": "bitsARK Labs",
+      "url": "https://bitsark.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://bitsark.com/logo.png",
+        "width": 512,
+        "height": 512,
+      },
+      "sameAs": [
+        "https://twitter.com/bitsark",
+        "https://github.com/bitsark",
+      ],
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${pageUrl}#webpage`,
+      "url": pageUrl,
+      "name": pageTitle,
+      "description": pageDescription,
+      "inLanguage": lang,
+      "isPartOf": { "@id": "https://bitsark.com/#website" },
+      "about": { "@id": `${pageUrl}#dataset` },
+      "dateModified": updatedAtISO,
+      "breadcrumb": { "@id": `${pageUrl}#breadcrumb` },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+    },
+    {
+      "@type": "Dataset",
+      "@id": `${pageUrl}#dataset`,
+      "name": `${ex.name} - Fiscal and Operational Data in Brazil`,
+      "description": `Fiscal and operational data for ${ex.name} in Brazil. CNPJ: ${op.cnpj ?? 'N/A'}. Tax regime: ${taxRegimeLabel(fd.tax_regime ?? '', lang)}. BCB authorized: ${op.bcb_authorized ? 'Yes' : 'No'}. Accepts Pix: ${op.accepts_pix ? 'Yes' : 'No'}. Maker fee: ${maker ?? 'N/A'}. Taker fee: ${taker ?? 'N/A'}.`,
+      "url": pageUrl,
+      "dateModified": updatedAtISO,
+      "creator": { "@id": "https://bitsark.com/#organization" },
+      "distribution": {
+        "@type": "DataDownload",
+        "contentUrl": `https://api.bitsark.com/v1/exchanges/${ex.slug}`,
+        "encodingFormat": "application/json",
+      },
+      "keywords": [
+        ex.name, "crypto exchange brazil", "exchange CNPJ", "BCB PSAV",
+        "crypto income tax declaration", "IN 1888", "DARF bitcoin",
+        "trading fees", "Pix crypto", "crypto tax regime",
+      ],
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${pageUrl}#breadcrumb`,
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": t.breadcrumbHome,      "item": "https://bitsark.com/" },
+        { "@type": "ListItem", "position": 2, "name": t.breadcrumbExchanges, "item": "https://bitsark.com/exchanges/" },
+        { "@type": "ListItem", "position": 3, "name": ex.name,      "item": pageUrl },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${pageUrl}#faq`,
+      "mainEntity": [
+        { "@type": "Question", "name": fillName(t.faqQuestions.rfbReport), "acceptedAnswer": { "@type": "Answer", "text": txtRfbReport } },
+        { "@type": "Question", "name": fillName(t.faqQuestions.irpf),      "acceptedAnswer": { "@type": "Answer", "text": txtIRPF } },
+        { "@type": "Question", "name": fillName(t.faqQuestions.cnpj),      "acceptedAnswer": { "@type": "Answer", "text": txtCNPJ } },
+        { "@type": "Question", "name": fillName(t.faqQuestions.bcb),       "acceptedAnswer": { "@type": "Answer", "text": txtBCB } },
+        { "@type": "Question", "name": fillName(t.faqQuestions.pix),       "acceptedAnswer": { "@type": "Answer", "text": txtPix } },
+        ...(isOffshore ? [{ "@type": "Question", "name": fillName(t.faqQuestions.lei14754), "acceptedAnswer": { "@type": "Answer", "text": txtLei14754 } }] : []),
+        { "@type": "Question", "name": fillName(t.faqQuestions.decripto),  "acceptedAnswer": { "@type": "Answer", "text": txtDeCriptoFAQ } },
+      ],
+    },
+    {
+      "@type": "Article",
+      "@id": `${pageUrl}#article`,
+      "headline": pageTitle,
+      "description": pageDescription,
+      "image": ogImage,
+      "inLanguage": lang,
+      "author": {
+        "@type": "Person",
+        "name": "Ricardo Delfino",
+        "url": "https://bitsark.com/about/"
+      },
+      "datePublished": "2025-12-01",
+      "dateModified": updatedAtISO,
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "mainEntityOfPage": { "@id": `${pageUrl}#webpage` }
+    },
+  ],
+};
+---
+
+<Base
+  title={pageTitle}
+  description={pageDescription}
+  ogImage={ogImage}
+  canonical={pageUrl}
+  lang={lang}
+  alternates={alternates}
+  schema={schema}
+>
+
+  <!-- ── Breadcrumb ─────────────────────────────────────────── -->
+  <nav class="breadcrumb" aria-label={t.a11y.breadcrumb}>
+    <div class="container">
+      <ol class="breadcrumb__list">
+        <li><a href="/" class="breadcrumb__link">{t.breadcrumbHome}</a></li>
+        <li aria-hidden="true" class="breadcrumb__sep">›</li>
+        <li><a href="/exchanges" class="breadcrumb__link">{t.breadcrumbExchanges}</a></li>
+        <li aria-hidden="true" class="breadcrumb__sep">›</li>
+        <li aria-current="page" class="breadcrumb__current">{ex.name}</li>
+      </ol>
+      <div class="breadcrumb__meta">
+        {updatedAt && (
+          <span class="breadcrumb__updated">
+            <time datetime={updatedAtISO}>{t.updatedAtLabel} {updatedAt}</time>
+          </span>
+        )}
+        <span class="breadcrumb__reviewed" aria-label={t.a11y.reviewedBy}>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {t.reviewedBy} <a href="/about" class="breadcrumb__reviewed-link">bitsARK Labs</a>
+        </span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero (verdict-first; uma fonte de verdade por fato) ── -->
+  <section
+    class={`ex-hero ${isOffshore ? 'ex-hero--offshore' : 'ex-hero--domestic'}`}
+    aria-labelledby="exchange-heading"
+  >
+    <div class="ex-hero__glow" aria-hidden="true"></div>
+    <div class="container">
+      <div class="ex-hero__layout">
+        <div class="ex-hero__identity">
+          {ex.logo_url && (
+            <div class="ex-hero__logo-wrap">
+              <img
+                src={ex.logo_url}
+                alt={`Logo ${ex.name}`}
+                class="ex-hero__logo"
+                width="64"
+                height="64"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+              />
+            </div>
+          )}
+          <div>
+            <h1 id="exchange-heading" class="ex-hero__name">{ex.name}</h1>
+            <div class="ex-hero__badges" role="list" aria-label={t.a11y.exchangeBadges}>
+              {isDomestic
+                ? <span class="badge badge--success" role="listitem">{t.badges.domestic}</span>
+                : <span class="badge badge--warning" role="listitem">{t.badges.offshore}</span>
+              }
+              {op.bcb_authorized && (
+                <span class="badge badge--success" role="listitem">
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                    <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  {t.badges.bcbAuthorized}
+                </span>
+              )}
+              {op.accepts_pix && <span class="badge badge--neutral" role="listitem">{t.badges.pixAvailable}</span>}
+              {hasExemption && <span class="badge badge--success" role="listitem">{t.badges.exemption}</span>}
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-hero__actions">
+          <a
+            href={ex.website}
+            class="btn btn-secondary ex-hero__cta"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={fillName(t.a11y.visitOfficialSite)}
+          >
+            {t.ctaWebsite}
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2.5 9.5l7-7M9.5 9V2.5H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+          <button
+            type="button"
+            id="open-feedback-btn"
+            class="btn btn-ghost ex-hero__report"
+            aria-haspopup="dialog"
+            aria-controls="feedback-modal"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            {t.ctaReport}
+          </button>
+        </div>
+      </div>
+
+      <!-- Verdict: direct answer in the hero (query-aligned) -->
+      <aside class="ex-hero__verdict-box" role="complementary" aria-labelledby="verdict-q">
+        <p class="ex-hero__verdict-q" id="verdict-q">
+          {fillName(t.faqQuestions.verdictHero)}
+        </p>
+        <p class="ex-hero__verdict-a">
+          <strong class="ex-hero__verdict-badge">
+            {isDomestic ? t.verdictBadge.domestic : t.verdictBadge.offshore}
+          </strong>
+        </p>
+        <p class="ex-hero__verdict" role="note">
+          {isDomestic
+            ? <span set:html={t.verdictDomestic.replace('{name}', ex.name)} />
+            : <span set:html={t.verdictOffshore.replace('{name}', ex.name)} />
+          }
+        </p>
+      </aside>
+
+      <!-- Chips numéricos compactos: só o que não está nos badges (maker/taker/jurisdição) -->
+      <div class="ex-hero__stats" role="list" aria-label={t.a11y.heroStats}>
+        <div class="stat-chip" role="listitem">
+          <span class="stat-chip__label">{t.stats.maker}</span>
+          <span class={`stat-chip__value mono ${feeColorClass(fees.maker)}`}>
+            {maker !== null ? maker : <span class="stat-chip__na">{t.stats.notAvailable}</span>}
+          </span>
+          {fees.maker !== null && <span class="stat-chip__sub">{feeLabel(fees.maker)}</span>}
+        </div>
+        <div class="stat-chip" role="listitem">
+          <span class="stat-chip__label">{t.stats.taker}</span>
+          <span class={`stat-chip__value mono ${feeColorClass(fees.taker)}`}>
+            {taker !== null ? taker : <span class="stat-chip__na">{t.stats.notAvailable}</span>}
+          </span>
+          {fees.taker !== null && <span class="stat-chip__sub">{feeLabel(fees.taker)}</span>}
+        </div>
+        <div class="stat-chip stat-chip--operational" role="listitem">
+          <span class="stat-chip__label">{t.stats.jurisdiction}</span>
+          <span class="stat-chip__value">
+            <span aria-hidden="true">{flag}</span>
+            <span class="stat-chip__country">{isoCountryName(op.main_jurisdiction_iso)}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Anchor nav ─────────────────────────────────────────── -->
+  <nav class="page-nav" aria-label={t.a11y.pageNav}>
+    <div class="container">
+      <ul class="page-nav__list">
+        <li><a href="#operational" class="page-nav__link">{t.nav.operational}</a></li>
+        <li><a href="#fees"        class="page-nav__link">{t.nav.fees}</a></li>
+        <li><a href="#fiscal"      class="page-nav__link">{t.nav.fiscal}</a></li>
+        <li><a href="#obligations" class="page-nav__link">{t.nav.obligations}</a></li>
+        <li><a href="#faq"         class="page-nav__link">{t.nav.faq}</a></li>
+        <li><a href="#api"         class="page-nav__link">{t.nav.api}</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ── Dados operacionais + Taxas ─────────────────────────── -->
+  <!--
+    HEADING CORRIGIDO:
+    Esta section não tem um <h2> visível próprio - os cards são
+    subcomponentes dela, então seus títulos são H3, não H2.
+    O ID "operacional" + "taxas" servem de âncoras de navegação.
+  -->
+  <section class="section" id="operational" aria-label={t.a11y.operationalAndFees}>
+    <div class="container two-col-grid">
+
+      <!-- Card: Dados operacionais -->
+      <div class="data-card">
+        <header class="data-card__header">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="data-card__icon">
+            <rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+            <rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+            <rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+            <rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.4"/>
+          </svg>
+          <!-- H3: subcomponente dentro da section sem H2 visível -->
+          <h3 class="data-card__title">{t.cards.operationalTitle}</h3>
+        </header>
+
+        <dl class="field-list">
+          <div class="field-row">
+            <dt class="field-label">{t.cards.cnpjLabel}</dt>
+            <dd class="field-value">
+              {op.cnpj
+                ? <code class="cnpj-code">{op.cnpj}</code>
+                : <span class="field-na">{t.cards.cnpjNone}</span>
+              }
+            </dd>
+          </div>
+
+          <div class="field-row">
+            <dt class="field-label">{t.cards.bcbLabel}</dt>
+            <dd class="field-value">
+              {op.bcb_authorized
+                ? (
+                  <a
+                    href="https://www.bcb.gov.br/estabilidadefinanceira/psav"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="bcb-link bcb-link--ok"
+                    aria-label={t.a11y.bcbList}
+                  >
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                      <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {t.cards.bcbOk}
+                  </a>
+                )
+                : <span class="field-neutral">{t.cards.bcbNone}</span>
+              }
+            </dd>
+          </div>
+
+          <div class="field-row">
+            <dt class="field-label">{t.cards.pixLabel}</dt>
+            <dd class="field-value">
+              {op.accepts_pix
+                ? <span class="field-ok">{t.cards.pixOk}</span>
+                : <span class="field-neutral">{t.cards.pixNone}</span>
+              }
+            </dd>
+          </div>
+
+          <div class="field-row">
+            <dt class="field-label">{t.cards.jurisdictionLabel}</dt>
+            <dd class="field-value">
+              <span class="jurisdiction">
+                <span aria-hidden="true">{flag}</span>
+                <span>{isoCountryName(op.main_jurisdiction_iso)}</span>
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- Card: Taxas -->
+      <div class="data-card" id="fees">
+        <header class="data-card__header">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="data-card__icon">
+            <circle cx="4.5" cy="4.5" r="2" stroke="currentColor" stroke-width="1.4"/>
+            <circle cx="11.5" cy="11.5" r="2" stroke="currentColor" stroke-width="1.4"/>
+            <line x1="13" y1="3" x2="3" y2="13" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          <!-- H3: paralelo ao "Dados operacionais" no mesmo grid -->
+          <h3 class="data-card__title">{t.cards.feesTitle}</h3>
+        </header>
+
+        <div class="fee-display">
+
+          <div class="fee-item">
+            <div class="fee-item__meta">
+              <span class="fee-item__label">{t.stats.maker}</span>
+              <span class="fee-item__hint">{t.cards.feesMakerHint}</span>
+              {fees.maker !== null && (
+                <span class={`fee-badge ${feeColorClass(fees.maker)}`}>{feeLabel(fees.maker)}</span>
+              )}
+            </div>
+            <div class="fee-item__bar-row">
+              <div
+                class="fee-bar-track"
+                role="progressbar"
+                aria-valuenow={feeBarWidth(fees.maker)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={fillValue(t.a11y.feeMakerBar, maker ?? t.a11y.feeNotAvailable)}
+              >
+                <div
+                  class={`fee-bar-fill ${feeBarColorClass(fees.maker)}`}
+                  style={`width: ${feeBarWidth(fees.maker)}%`}
+                ></div>
+              </div>
+              <span class={`fee-item__value mono ${feeColorClass(fees.maker)}`}>
+                {maker !== null ? maker : <span class="field-na">{t.stats.notAvailable}</span>}
+              </span>
+            </div>
+          </div>
+
+          <div class="fee-item">
+            <div class="fee-item__meta">
+              <span class="fee-item__label">{t.stats.taker}</span>
+              <span class="fee-item__hint">{t.cards.feesTakerHint}</span>
+              {fees.taker !== null && (
+                <span class={`fee-badge ${feeColorClass(fees.taker)}`}>{feeLabel(fees.taker)}</span>
+              )}
+            </div>
+            <div class="fee-item__bar-row">
+              <div
+                class="fee-bar-track"
+                role="progressbar"
+                aria-valuenow={feeBarWidth(fees.taker)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={fillValue(t.a11y.feeTakerBar, taker ?? t.a11y.feeNotAvailable)}
+              >
+                <div
+                  class={`fee-bar-fill ${feeBarColorClass(fees.taker)}`}
+                  style={`width: ${feeBarWidth(fees.taker)}%`}
+                ></div>
+              </div>
+              <span class={`fee-item__value mono ${feeColorClass(fees.taker)}`}>
+                {taker !== null ? taker : <span class="field-na">{t.stats.notAvailable}</span>}
+              </span>
+            </div>
+          </div>
+
+        </div>
+
+        {fees.note && (
+          <p class="fee-note">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="fee-note__icon">
+              <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M6 5.5v3M6 4h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+            {fees.note}
+          </p>
+        )}
+
+        {fees.fee_url && (
+          <a
+            href={fees.fee_url}
+            class="btn btn-secondary btn-sm fee-table-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={fillName(t.a11y.fullFeeTable)}
+          >
+            {t.cards.feesTableCta}
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+              <path d="M2.5 9.5l7-7M9.5 9V2.5H3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+        )}
+
+        <div class="fee-legend" aria-label={t.a11y.feeLegend}>
+          <span class="fee-legend__label">{t.cards.feesLegendLabel}</span>
+          <div class="fee-legend__scale">
+            <span class="fee-legend__low">{t.cards.feesLegendLow}</span>
+            <div class="fee-legend__bar" aria-hidden="true">
+              <div class="fee-legend__bar-fill"></div>
+            </div>
+            <span class="fee-legend__high">{t.cards.feesLegendHigh}</span>
+          </div>
+          <div class="fee-legend__ticks" aria-hidden="true">
+            <span class="fee-legend__tick fee-legend__tick--green">{t.cards.feeLabels[1]}</span>
+            <span class="fee-legend__tick fee-legend__tick--yellow">{t.cards.feeLabels[2]}</span>
+            <span class="fee-legend__tick fee-legend__tick--orange">{t.cards.feeLabels[3]}</span>
+            <span class="fee-legend__tick fee-legend__tick--red">{t.cards.feeLabels[4]}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Regime tributário ───────────────────────────────────── -->
+  <section
+    class={`section regime-section ${isDomestic ? 'regime-section--domestic' : 'regime-section--offshore'}`}
+    id="fiscal"
+    aria-labelledby="regime-heading"
+  >
+    <div class="container">
+
+      <div class="regime-banner">
+        <div class="regime-banner__icon-col" aria-hidden="true">
+          {isDomestic
+            ? (
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" class="regime-icon regime-icon--ok">
+                <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+                <path d="M9 16l5 5 9-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )
+            : (
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" class="regime-icon regime-icon--warn">
+                <path d="M16 4L29 26H3L16 4z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" opacity=".3"/>
+                <path d="M16 13v6M16 22h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            )
+          }
+        </div>
+
+        <div class="regime-banner__content">
+          <p class="regime-banner__eyebrow">{t.regime.eyebrow}</p>
+          <!-- H2 semântico: seção independente com heading próprio visível -->
+          <h2 id="regime-heading" class="regime-banner__regime">{taxRegimeLabel(fd.tax_regime ?? '', lang)}</h2>
+          <p class="regime-banner__desc">{taxRegimeDesc(fd.tax_regime ?? '')}</p>
+          {hasExemption && (
+            <div class="exemption-callout">
+              <span class="exemption-callout__label">{t.regime.exemptionLabel}</span>
+              <span class="exemption-callout__value mono">{t.regime.exemptionValue}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Obrigações fiscais ──────────────────────────────────── -->
+  <section class="section" id="obligations" aria-labelledby="obligations-heading">
+    <div class="container">
+
+      <header class="section-header">
+        <!-- H2: seção principal de conteúdo -->
+        <h2 id="obligations-heading" class="section-header__title">{t.obligations.title}</h2>
+        <p class="section-header__sub">
+          {t.obligations.sub.replace('{name}', ex.name)}
+        </p>
+      </header>
+
+      <div class="obligations-grid">
+
+        <div class="obligation-card obligation-card--exchange">
+          <header class="obligation-card__header">
+            <div class="obligation-card__badge">{t.obligations.exchangeCard}</div>
+            <!-- H3: subitem dentro da section com H2 definido acima -->
+            <h3 class="obligation-card__title">{t.obligations.exchangeTitle.replace('{name}', ex.name)}</h3>
+          </header>
+
+          {(fd.exchange_rfb_reports ?? []).length === 0
+            ? (
+              <div class="obligation-empty obligation-empty--warn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path d="M10 3L18 17H2L10 3z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M10 9v4M10 15h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <p>{t.obligations.exchangeNone}</p>
+              </div>
+            )
+            : (
+              <ul class="obligation-list">
+                {(fd.exchange_rfb_reports ?? []).map((r: string) => (
+                  <li class="obligation-item obligation-item--ok">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="obligation-item__icon">
+                      <path d="M3 8l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>{rfbReportLabel(r)}</span>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+
+        <div class="obligation-card obligation-card--investor">
+          <header class="obligation-card__header">
+            <div class="obligation-card__badge obligation-card__badge--investor">{t.obligations.investorCard}</div>
+            <!-- H3: paralelo ao anterior no mesmo grid -->
+            <h3 class="obligation-card__title">{t.obligations.investorTitle}</h3>
+          </header>
+
+          {(fd.user_rfb_action_monthly ?? []).length === 0
+            ? (
+              <div class="obligation-empty obligation-empty--ok">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M6.5 10l2.5 2.5 4.5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p>{t.obligations.investorNone}</p>
+              </div>
+            )
+            : (
+              <ul class="obligation-list">
+                {(fd.user_rfb_action_monthly ?? []).map((a: string) => (
+                  <li class="obligation-item obligation-item--warn">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="obligation-item__icon">
+                      <path d="M8 2L14 13H2L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                      <path d="M8 7v3M8 12h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                    </svg>
+                    <span set:html={userActionLabel(a, fd.tax_regime ?? '')} />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+
+      </div>
+
+      <div class="obligation-calendar">
+        <!-- H3: subitem dentro da section#obligations que tem H2 -->
+        <h3 class="obligation-calendar__title">{t.obligations.calendarTitle}</h3>
+        <div class="calendar-grid">
+
+          <div class="calendar-item">
+            <div class="calendar-item__period">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                <path d="M1 5h12M4.5 1v2M9.5 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+              </svg>
+              {t.obligations.calendarMensal}
+            </div>
+            {isDomestic
+              ? <p class="calendar-item__desc calendar-item__desc--ok">{t.obligations.calendarMensalDomestic}</p>
+              : <p class="calendar-item__desc calendar-item__desc--warn" set:html={t.obligations.calendarMensalOffshore} />
+            }
+          </div>
+
+          <div class="calendar-item">
+            <div class="calendar-item__period">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+              </svg>
+              {t.obligations.calendarAnualIrpf}
+            </div>
+            <p class="calendar-item__desc">
+              {t.obligations.calendarAnualIrpfDesc}
+            </p>
+          </div>
+
+          {(fd.exchange_rfb_reports ?? []).includes('decripto_annually') && (
+            <div class="calendar-item">
+              <div class="calendar-item__period">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M2 3h10M2 7h7M2 11h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+                {t.obligations.calendarAnualDec}
+              </div>
+              <p class="calendar-item__desc">
+                {t.obligations.calendarAnualDecDesc.replace('{name}', ex.name)}
+              </p>
+            </div>
+          )}
+
+        </div>
+      </div>
+
+      {isOffshore && (
+        <p class="section-footer-note">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" class="section-footer-note__icon">
+            <path d="M6 1L11 10H1L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M6 5v2.5M6 9h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+          {t.obligations.footerNote}
+          <a href="/exchanges/decripto" class="section-footer-note__link">{t.obligations.footerLink}</a>
+        </p>
+      )}
+
+    </div>
+  </section>
+
+  <!-- ── FAQ (perguntas profundas - não duplicam o que já é visível) ── -->
+  <section class="section section--surface" id="faq" aria-labelledby="faq-heading">
+    <div class="container faq-wrap">
+
+      <header class="section-header">
+        <h2 id="faq-heading" class="section-header__title">{t.faq.title}</h2>
+        <p class="section-header__sub">{t.faq.sub.replace('{name}', ex.name)}</p>
+      </header>
+
+      <div class="faq-list">
+
+        <details class="faq-item">
+          <summary>{fillName(t.faqQuestions.rfbReportShort)}</summary>
+          <div class="faq-answer">
+            <p>{txtRfbReport}</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>{fillName(t.faqQuestions.irpf)}</summary>
+          <div class="faq-answer">
+            <p>{txtIRPF}</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>{fillName(t.faqQuestions.cnpj)}</summary>
+          <div class="faq-answer">
+            <p>{txtCNPJ}</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>{fillName(t.faqQuestions.bcb)}</summary>
+          <div class="faq-answer">
+            <p>{txtBCB}</p>
+          </div>
+        </details>
+
+        <details class="faq-item">
+          <summary>{fillName(t.faqQuestions.pix)}</summary>
+          <div class="faq-answer">
+            <p>{txtPix}</p>
+          </div>
+        </details>
+
+        {isOffshore && (
+          <details class="faq-item">
+            <summary>{fillName(t.faqQuestions.lei14754)}</summary>
+            <div class="faq-answer">
+              <p>{txtLei14754}</p>
+            </div>
+          </details>
+        )}
+
+        <details class="faq-item">
+          <summary>{fillName(t.faqQuestions.decripto)}</summary>
+          <div class="faq-answer">
+            <p>{txtDeCriptoFAQ} <a href="/exchanges/decripto">{t.learnDecriptoCta}</a></p>
+          </div>
+        </details>
+
+        <details class="faq-item faq-item--feedback">
+          <summary>
+            <span class="faq-feedback-summary">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4M12 16h.01"/>
+              </svg>
+              {t.faq.feedbackTitle}
+            </span>
+          </summary>
+          <div class="faq-answer">
+            <p>
+              {t.faq.feedbackDesc}
+            </p>
+            <button
+              type="button"
+              id="open-feedback-btn-faq"
+              class="btn btn-secondary btn-sm faq-feedback-btn"
+              aria-haspopup="dialog"
+              aria-controls="feedback-modal"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+              {t.faq.feedbackCta}
+            </button>
+          </div>
+        </details>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── API CTA ─────────────────────────────────────────────── -->
+  <section class="section" id="api" aria-labelledby="api-heading">
+    <div class="container">
+      <div class="api-cta">
+        <div class="api-cta__content">
+          <p class="eyebrow">{t.api.eyebrow}</p>
+          <!-- H2: seção final independente -->
+          <h2 id="api-heading" class="api-cta__title">{t.api.title.replace('{name}', ex.name)}</h2>
+          <p class="api-cta__sub">
+            {t.api.sub}
+          </p>
+          <div class="api-cta__actions">
+            <a
+              href={`https://api.bitsark.com/v1/exchanges/${ex.slug}`}
+              class="btn btn-primary"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={fillName(t.a11y.viewJson)}
+            >
+              {t.api.ctaJson}
+            </a>
+            <a href="/exchanges/api" class="btn btn-secondary">{t.api.ctaDocs}</a>
+          </div>
+        </div>
+
+        <div class="api-cta__preview" aria-hidden="true">
+          <div class="code-preview">
+            <div class="code-preview__bar">
+              <span class="code-preview__dot"></span>
+              <span class="code-preview__dot"></span>
+              <span class="code-preview__dot"></span>
+              <span class="code-preview__url">GET /v1/exchanges/{ex.slug}</span>
+            </div>
+            <pre class="code-preview__body"><code><span class="c-brace">{"{"}</span>
+  <span class="c-key">"name"</span><span class="c-colon">:</span> <span class="c-str">"{ex.name}"</span>,
+  <span class="c-key">"cnpj"</span><span class="c-colon">:</span> <span class="c-str">"{op.cnpj ?? 'null'}"</span>,
+  <span class="c-key">"bcb_authorized"</span><span class="c-colon">:</span> <span class="c-bool">{op.bcb_authorized ? 'true' : 'false'}</span>,
+  <span class="c-key">"accepts_pix"</span><span class="c-colon">:</span> <span class="c-bool">{op.accepts_pix ? 'true' : 'false'}</span>,
+  <span class="c-key">"maker"</span><span class="c-colon">:</span> <span class="c-num">{fees.maker ?? 'null'}</span>,
+  <span class="c-key">"taker"</span><span class="c-colon">:</span> <span class="c-num">{fees.taker ?? 'null'}</span>
+<span class="c-brace">{"}"}</span></code></pre>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Modal de Feedback ───────────────────────────────────── -->
+  <div
+    id="feedback-modal"
+    class="feedback-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="feedback-title"
+    hidden
+  >
+    <div class="feedback-modal-box">
+      <button
+        class="feedback-close"
+        id="close-feedback-btn"
+        aria-label={t.a11y.closeFeedbackModal}
+      >✕</button>
+      <h2 id="feedback-title" class="feedback-title">{i18n.exchanges.feedback.title}</h2>
+      <p class="feedback-subtitle">{i18n.exchanges.feedback.context.replace('Exchanges List', ex.name)}</p>
+
+      <div class="feedback-types" role="group" aria-label={t.a11y.problemType}>
+        <button type="button" class="feedback-type-btn" data-type="taxa">{i18n.exchanges.feedback.typeFee}</button>
+        <button type="button" class="feedback-type-btn" data-type="cnpj">{i18n.exchanges.feedback.typeCnpj}</button>
+        <button type="button" class="feedback-type-btn" data-type="regulacao">{i18n.exchanges.feedback.typeRfb}</button>
+        <button type="button" class="feedback-type-btn" data-type="outro">{i18n.exchanges.feedback.typeOther}</button>
+      </div>
+
+      <!-- Honeypot anti-bot -->
+      <input type="text" id="feedback-hp" name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+      <textarea
+        id="feedback-message"
+        class="feedback-textarea"
+        placeholder={i18n.exchanges.feedback.placeholderMessage}
+        rows="3"
+        maxlength="500"
+        aria-label={i18n.exchanges.feedback.placeholderMessage}
+      ></textarea>
+
+      <input
+        type="email"
+        id="feedback-email"
+        class="feedback-email"
+        placeholder={i18n.exchanges.feedback.placeholderEmail}
+        autocomplete="email"
+        aria-label={i18n.exchanges.feedback.placeholderEmail}
+      />
+
+      <div id="feedback-status" class="feedback-status" role="status" aria-live="polite" hidden></div>
+
+      <button class="feedback-submit" id="feedback-submit-btn" disabled>
+        {i18n.exchanges.feedback.cta}
+      </button>
+    </div>
+  </div>
+  <div id="feedback-backdrop" class="feedback-backdrop" hidden></div>
+
+</Base>
+
+<style>
+  /* ── Visually hidden (acessibilidade) ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .container {
+    width: 100%;
+    max-width: var(--container-width, 1200px);
+    margin-inline: auto;
+    padding-inline: var(--container-px, clamp(1rem, 4vw, 2.5rem));
+  }
+  .mono { font-family: var(--font-mono); }
+  .eyebrow {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-faint);
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── Breadcrumb ── */
+  .breadcrumb {
+    padding-block: 0.65rem;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .breadcrumb .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .breadcrumb__list {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .breadcrumb__link {
+    color: var(--color-text-faint);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+  .breadcrumb__link:hover { color: var(--color-text-muted); }
+  .breadcrumb__link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  .breadcrumb__sep     { opacity: 0.5; }
+  .breadcrumb__current { color: var(--color-text-muted); }
+  .breadcrumb__updated {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    font-family: var(--font-mono);
+  }
+  .breadcrumb__meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .breadcrumb__reviewed {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+  }
+  .breadcrumb__reviewed svg { color: var(--color-success); flex-shrink: 0; }
+  .breadcrumb__reviewed-link {
+    color: var(--color-text-faint);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+  .breadcrumb__reviewed-link:hover { color: var(--color-primary); }
+
+  /* ── Hero ── */
+  .ex-hero {
+    position: relative;
+    padding-block: clamp(2rem, 5vw, 3.5rem);
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+  .ex-hero__glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .ex-hero--domestic .ex-hero__glow {
+    background: radial-gradient(60% 140% at 80% -20%, rgba(16,185,129,0.07) 0%, transparent 70%);
+  }
+  .ex-hero--offshore .ex-hero__glow {
+    background: radial-gradient(60% 140% at 80% -20%, rgba(245,158,11,0.07) 0%, transparent 70%);
+  }
+  .ex-hero .container { position: relative; z-index: 1; }
+  .ex-hero__layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+  .ex-hero__identity {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex: 1;
+    min-width: 240px;
+  }
+  .ex-hero__logo-wrap {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .ex-hero__logo { width: 100%; height: 100%; object-fit: contain; }
+  .ex-hero__name {
+    font-size: clamp(1.6rem, 1rem + 2vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-bottom: 0.6rem;
+    color: var(--color-text);
+  }
+  .ex-hero__badges { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .ex-hero__actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  @media (max-width: 520px) {
+    .ex-hero__actions { margin-left: 0; width: 100%; }
+    .ex-hero__actions .btn { flex: 1; justify-content: center; }
+  }
+  .ex-hero__cta { align-items: center; gap: 0.4rem; white-space: nowrap; flex-shrink: 0; }
+
+  /* ── Hero Verdict (resposta direta absorvida no Hero) ── */
+  .ex-hero__verdict-box {
+    margin: 1.5rem 0 1.25rem;
+    max-width: 720px;
+  }
+  .ex-hero__verdict-q {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: -0.005em;
+  }
+  .ex-hero__verdict-a {
+    margin: 0 0 0.6rem;
+  }
+  .ex-hero__verdict-badge {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-primary-highlight);
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.01em;
+  }
+  .ex-hero--offshore .ex-hero__verdict-badge {
+    background: rgba(255, 170, 90, 0.12);
+    color: var(--color-warning);
+  }
+  .ex-hero__verdict {
+    margin: 0;
+    padding: 0.95rem 1.1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+  .ex-hero--offshore .ex-hero__verdict {
+    border-left-color: var(--color-warning);
+  }
+  .ex-hero__verdict strong {
+    color: var(--color-text);
+    font-weight: 700;
+  }
+
+  /* ── Hero Stats (compactos: só maker/taker/jurisdição) ── */
+  .ex-hero__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface);
+    max-width: 720px;
+  }
+  .ex-hero__stats .stat-chip:nth-child(3) { border-right: none; }
+  .stat-chip--jurisdiction .stat-chip__value {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+  .stat-chip__country { font-weight: 600; }
+  @media (max-width: 540px) {
+    .ex-hero__stats { grid-template-columns: 1fr 1fr; }
+    .ex-hero__stats .stat-chip:nth-child(2) { border-right: none; }
+    .ex-hero__stats .stat-chip:nth-child(3) {
+      grid-column: 1 / -1;
+      border-top: 1px solid var(--color-border);
+    }
+  }
+  .ex-hero__report {
+    color: var(--color-text-faint);
+    font-size: var(--text-xs);
+    background: transparent;
+    border-color: transparent;
+    gap: 0.35rem;
+  }
+  .ex-hero__report:hover {
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
+    background: var(--color-surface-2);
+  }
+
+  /* ── Badges ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: 0.2em 0.65em;
+    border-radius: 100px;
+    white-space: nowrap;
+    letter-spacing: 0.01em;
+  }
+  .badge--success {
+    background: rgba(16,185,129,0.12);
+    color: var(--color-success);
+    border: 1px solid rgba(16,185,129,0.25);
+  }
+  .badge--warning {
+    background: rgba(245,158,11,0.12);
+    color: var(--color-warning);
+    border: 1px solid rgba(245,158,11,0.25);
+  }
+  .badge--neutral {
+    background: rgba(122,147,173,0.1);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  /* ── Stat Chips (usados em .ex-hero__stats) ── */
+  .stat-chip {
+    padding: 0.9rem 1.1rem;
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+  }
+  .stat-chip:last-child { border-right: none; }
+  .stat-chip__label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--color-text-faint);
+    font-weight: 700;
+  }
+  .stat-chip__value {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--color-text);
+  }
+  .stat-chip__value.mono { font-family: var(--font-mono); font-size: 1.05rem; }
+  .stat-chip__sub { font-size: 0.65rem; color: var(--color-text-faint); margin-top: 0.1rem; }
+  .stat-chip__na  { color: var(--color-text-faint); }
+
+  /* ── Page Nav ── */
+  .page-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .page-nav__list {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .page-nav__list::-webkit-scrollbar { display: none; }
+  .page-nav__link {
+    display: block;
+    padding: 0.7rem 1rem;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    color: var(--color-text-faint);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color var(--transition), border-color var(--transition);
+  }
+  .page-nav__link:hover {
+    color: var(--color-text-muted);
+    border-bottom-color: var(--color-border);
+  }
+  .page-nav__link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+
+  /* ── Sections ── */
+  .section { padding-block: clamp(2.5rem, 6vw, 4.5rem); }
+  .section--surface {
+    background: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .section-header { margin-bottom: 2rem; }
+  .section-header__title {
+    font-size: clamp(1.2rem, 0.9rem + 1vw, 1.6rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .section-header__sub {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 700px) { .two-col-grid { grid-template-columns: 1fr; } }
+
+  /* ── Data Card ── */
+  .data-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .data-card__header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+  }
+  .data-card__icon  { color: var(--color-primary); flex-shrink: 0; }
+  .data-card__title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-muted);
+  }
+  .field-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 1.25rem;
+    margin: 0;
+  }
+  .field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-block: 0.65rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .field-row:last-child { border-bottom: none; }
+  .field-label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    color: var(--color-text-faint);
+    flex-shrink: 0;
+  }
+  .field-value { text-align: right; font-size: var(--text-sm); }
+  .cnpj-code {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    letter-spacing: 0.04em;
+    background: var(--color-surface-2);
+    padding: 0.15em 0.5em;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    user-select: all;
+  }
+  .field-na      { color: var(--color-text-faint); font-size: var(--text-xs); }
+  .field-ok      { color: var(--color-success); font-weight: 500; }
+  .field-neutral { color: var(--color-text-muted); }
+  .bcb-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity var(--transition);
+  }
+  .bcb-link--ok { color: var(--color-success); }
+  .bcb-link:hover { opacity: 0.75; }
+  .jurisdiction { display: inline-flex; align-items: center; gap: 0.4rem; font-size: var(--text-sm); }
+  /* ── Fee Display ── */
+  .fee-color--zero   { color: var(--color-fee-zero); }
+  .fee-color--green  { color: var(--color-fee-green); }
+  .fee-color--yellow { color: var(--color-fee-yellow); }
+  .fee-color--orange { color: var(--color-fee-orange); }
+  .fee-color--red    { color: var(--color-fee-red); }
+  .fee-color--na     { color: var(--color-text-faint); }
+  .fee-bar--zero   { background: var(--color-fee-zero); }
+  .fee-bar--green  { background: linear-gradient(90deg, var(--color-fee-green-bar-start),  var(--color-fee-green-bar-end)); }
+  .fee-bar--yellow { background: linear-gradient(90deg, var(--color-fee-yellow-bar-start), var(--color-fee-yellow-bar-end)); }
+  .fee-bar--orange { background: linear-gradient(90deg, var(--color-fee-orange-bar-start), var(--color-fee-orange-bar-end)); }
+  .fee-bar--red    { background: linear-gradient(90deg, var(--color-fee-red-bar-start),    var(--color-fee-red-bar-end)); }
+  .fee-bar--na     { background: var(--color-border); }
+  .fee-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15em 0.5em;
+    border-radius: 100px;
+    border: 1px solid currentColor;
+    opacity: 0.85;
+    margin-left: auto;
+  }
+  .fee-display {
+    padding: 1.25rem 1.25rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+  .fee-item__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+  }
+  .fee-item__label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 700;
+    color: var(--color-text-faint);
+  }
+  .fee-item__hint { font-size: var(--text-xs); color: var(--color-text-faint); opacity: 0.6; }
+  .fee-item__bar-row { display: flex; align-items: center; gap: 1rem; }
+  .fee-bar-track {
+    flex: 1;
+    height: 7px;
+    background: var(--color-surface-2);
+    border-radius: 100px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+  .fee-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.4s ease;
+    min-width: 0;
+  }
+  .fee-bar-fill.fee-bar--zero { min-width: 6px; }
+  .fee-item__value {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+    font-weight: 800;
+    min-width: 3.5rem;
+    text-align: right;
+  }
+  .fee-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 0 1.25rem 0.5rem;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    padding: 0.75rem;
+    background: var(--color-surface-2);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+  .fee-note__icon { color: var(--color-primary); flex-shrink: 0; margin-top: 0.1rem; }
+  .fee-table-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0.5rem 1.25rem 0.75rem;
+  }
+  .fee-legend { padding: 0.75rem 1.25rem; border-top: 1px solid var(--color-border); }
+  .fee-legend__label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    color: var(--color-text-faint);
+    display: block;
+    margin-bottom: 0.45rem;
+  }
+  .fee-legend__scale { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.35rem; }
+  .fee-legend__low,
+  .fee-legend__high {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    flex-shrink: 0;
+  }
+  .fee-legend__bar {
+    flex: 1; height: 5px; border-radius: 100px;
+    overflow: hidden; border: 1px solid var(--color-border);
+  }
+  .fee-legend__bar-fill {
+    height: 100%; width: 100%;
+    background: linear-gradient(to right, #22c55e 0%, #4ade80 15%, #facc15 40%, #fb923c 65%, #ef4444 85%, #b91c1c 100%);
+  }
+  .fee-legend__ticks { display: flex; justify-content: space-between; margin-top: 0.3rem; }
+  .fee-legend__tick {
+    font-size: 0.6rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .fee-legend__tick--green  { color: var(--color-fee-green); }
+  .fee-legend__tick--yellow { color: var(--color-fee-yellow); }
+  .fee-legend__tick--orange { color: var(--color-fee-orange); }
+  .fee-legend__tick--red    { color: var(--color-fee-red); }
+
+  /* ── Regime Banner ── */
+  .regime-section { position: relative; }
+  .regime-section--domestic {
+    background: linear-gradient(135deg, var(--color-surface) 0%, rgba(16,185,129,0.04) 100%);
+    border-top: 1px solid rgba(16,185,129,0.15);
+    border-bottom: 1px solid rgba(16,185,129,0.15);
+  }
+  .regime-section--offshore {
+    background: linear-gradient(135deg, var(--color-surface) 0%, rgba(245,158,11,0.04) 100%);
+    border-top: 1px solid rgba(245,158,11,0.15);
+    border-bottom: 1px solid rgba(245,158,11,0.15);
+  }
+  .regime-banner { display: flex; gap: 2rem; align-items: flex-start; }
+  .regime-banner__icon-col { flex-shrink: 0; padding-top: 0.25rem; }
+  .regime-icon--ok   { color: var(--color-success); }
+  .regime-icon--warn { color: var(--color-warning); }
+  .regime-banner__content { flex: 1; }
+  .regime-banner__eyebrow {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-faint);
+    margin-bottom: 0.4rem;
+  }
+  .regime-banner__regime {
+    font-size: clamp(1.2rem, 0.8rem + 1.5vw, 1.8rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+  .regime-section--domestic .regime-banner__regime { color: var(--color-success); }
+  .regime-section--offshore .regime-banner__regime { color: var(--color-warning); }
+  .regime-banner__desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.75;
+    max-width: 680px;
+  }
+  .exemption-callout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    padding: 0.6rem 1rem;
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: var(--radius-md);
+  }
+  .exemption-callout__label {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    font-weight: 600;
+    color: var(--color-success);
+  }
+  .exemption-callout__value {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-success);
+  }
+  @media (max-width: 560px) {
+    .regime-banner { flex-direction: column; gap: 1rem; }
+    .regime-banner__icon-col { padding-top: 0; }
+  }
+
+  /* ── Obligations ── */
+  .obligations-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+  @media (max-width: 640px) { .obligations-grid { grid-template-columns: 1fr; } }
+  .obligation-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .obligation-card--exchange { border-top: 3px solid var(--color-primary); }
+  .obligation-card--investor { border-top: 3px solid var(--color-accent); }
+  .obligation-card__header {
+    padding: 1rem 1.25rem 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .obligation-card__badge {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.2em 0.6em;
+    border-radius: var(--radius-sm);
+    background: rgba(6,182,212,0.12);
+    color: var(--color-primary);
+    border: 1px solid rgba(6,182,212,0.25);
+    flex-shrink: 0;
+  }
+  .obligation-card__badge--investor {
+    background: rgba(16,185,129,0.12);
+    color: var(--color-accent);
+    border-color: rgba(16,185,129,0.25);
+  }
+  .obligation-card__title { font-size: var(--text-sm); font-weight: 600; color: var(--color-text); }
+  .obligation-empty {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    font-size: var(--text-sm);
+    line-height: 1.65;
+  }
+  .obligation-empty svg { flex-shrink: 0; margin-top: 0.1rem; }
+  .obligation-empty--ok   { color: var(--color-success); }
+  .obligation-empty--warn { color: var(--color-warning); }
+  .obligation-empty p { color: inherit; opacity: 0.85; }
+  .obligation-list {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 1.25rem;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+  }
+  .obligation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+  .obligation-item__icon { flex-shrink: 0; margin-top: 0.15rem; }
+  .obligation-item--ok   .obligation-item__icon { color: var(--color-success); }
+  .obligation-item--warn .obligation-item__icon { color: var(--color-warning); }
+  .obligation-item--ok   span:not(.obligation-item__icon) { color: var(--color-text-muted); }
+  .obligation-item--warn span:not(.obligation-item__icon) { color: var(--color-text); }
+  .obligation-calendar {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    overflow: hidden;
+  }
+  .obligation-calendar__title {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--color-text-faint);
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+  }
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 0;
+  }
+  .calendar-item {
+    padding: 1.1rem 1.25rem;
+    border-right: 1px solid var(--color-border);
+  }
+  .calendar-item:last-child { border-right: none; }
+  .calendar-item__period {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-primary);
+    margin-bottom: 0.6rem;
+  }
+  .calendar-item__desc { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; }
+  .calendar-item__desc--ok   { color: var(--color-success); opacity: 0.9; }
+  .calendar-item__desc--warn { color: var(--color-warning); opacity: 0.9; }
+  @media (max-width: 640px) {
+    .calendar-grid { grid-template-columns: 1fr; }
+    .calendar-item { border-right: none; border-bottom: 1px solid var(--color-border); }
+    .calendar-item:last-child { border-bottom: none; }
+  }
+
+  /* ── Section footer note (ex: DeCripto alerta offshore) ── */
+  .section-footer-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    margin-top: 1.25rem;
+    padding: 0.75rem 1rem;
+    background: rgba(232, 175, 52, 0.06);
+    border: 1px solid rgba(232, 175, 52, 0.18);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .section-footer-note__icon {
+    color: var(--color-warning);
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+  }
+  .section-footer-note__link {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: color var(--transition);
+  }
+  .section-footer-note__link:hover { color: var(--color-primary-hover); }
+
+  .faq-wrap .section-header {
+    max-width: 800px;
+    margin-inline: auto;
+    margin-bottom: var(--space-8);
+  }
+  .faq-item--feedback {
+    border-style: dashed;
+    border-color: var(--color-border);
+  }
+  .faq-item--feedback summary { color: var(--color-text-muted); font-weight: 500; }
+  .faq-item--feedback summary:hover { color: var(--color-primary); }
+  .faq-feedback-summary { display: flex; align-items: center; gap: 0.5rem; }
+  .faq-feedback-summary svg { color: var(--color-text-faint); flex-shrink: 0; }
+  .faq-feedback-btn { margin-top: var(--space-4); display: inline-flex; }
+
+  /* ── API CTA ── */
+  .api-cta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    border: 1px solid rgba(6,182,212,0.25);
+    border-radius: var(--radius-xl);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: rgba(6,182,212,0.04);
+    overflow: hidden;
+  }
+  @media (max-width: 740px) { .api-cta { grid-template-columns: 1fr; gap: 2rem; } }
+  .api-cta__content .eyebrow {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+  }
+  .api-cta__title {
+    font-size: clamp(1.2rem, 0.8rem + 1.5vw, 1.7rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.6rem;
+  }
+  .api-cta__sub {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .api-cta__actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .code-preview {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-2);
+    overflow: hidden;
+    font-family: var(--font-mono);
+  }
+  .code-preview__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .code-preview__dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--color-border);
+    flex-shrink: 0;
+  }
+  .code-preview__url {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    margin-left: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .code-preview__body { padding: 1rem; margin: 0; font-size: var(--text-xs); line-height: 1.8; overflow-x: auto; }
+  .code-preview__body code { font-family: var(--font-mono); }
+  .c-brace { color: var(--color-text-faint); }
+  .c-key   { color: var(--color-primary); }
+  .c-colon { color: var(--color-text-faint); }
+  .c-str   { color: var(--color-accent); }
+  .c-bool  { color: var(--color-warning); }
+  .c-num   { color: #f59e0b; }
+
+    /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    padding: 0.55em 1.1em;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition),
+                border-color var(--transition), opacity var(--transition);
+    white-space: nowrap;
+    line-height: 1.4;
+    font-family: inherit;
+  }
+  .btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  .btn-primary {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary {
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+  .btn-secondary:hover {
+    background: var(--color-surface);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-text-muted);
+    border-color: transparent;
+  }
+  .btn-ghost:hover { background: var(--color-surface-2); border-color: var(--color-border); }
+  .btn-sm { font-size: var(--text-xs); padding: 0.4em 0.85em; }
+
+  /* ── Feedback Modal ── */
+  .feedback-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 100;
+  }
+  .feedback-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 101;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    pointer-events: none;
+  }
+  .feedback-modal:not([hidden]) { pointer-events: auto; }
+  .feedback-modal-box {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+  }
+  .feedback-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-faint);
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: color var(--transition), background var(--transition);
+  }
+  .feedback-close:hover { color: var(--color-text); background: var(--color-surface); }
+  .feedback-close:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+  .feedback-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+    padding-right: 2rem;
+  }
+  .feedback-subtitle {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    margin-bottom: 1.25rem;
+  }
+  .feedback-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .feedback-type-btn {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: 0.35em 0.85em;
+    border-radius: 100px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all var(--transition);
+    font-family: inherit;
+  }
+  .feedback-type-btn:hover,
+  .feedback-type-btn.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+  }
+  .feedback-type-btn:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  .feedback-textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 80px;
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color var(--transition);
+    box-sizing: border-box;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+  .feedback-textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+  }
+  .feedback-email {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    transition: border-color var(--transition);
+    box-sizing: border-box;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .feedback-email:focus { outline: none; border-color: var(--color-primary); }
+  .feedback-status {
+    font-size: var(--text-sm);
+    padding: 0.65rem 0.85rem;
+    border-radius: var(--radius-md);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+  .feedback-status--ok {
+    background: rgba(16,185,129,0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(16,185,129,0.2);
+  }
+  .feedback-status--err {
+    background: rgba(239,68,68,0.1);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+  .feedback-submit {
+    width: 100%;
+    padding: 0.7rem;
+    border-radius: var(--radius-md);
+    border: none;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity var(--transition);
+  }
+  .feedback-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .feedback-submit:not(:disabled):hover { opacity: 0.85; }
+  .feedback-submit:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+</style>
+
+<script>
+  // ── Feedback Modal ────────────────────────────────────────────────
+  (function () {
+    const modal     = document.getElementById('feedback-modal');
+    const backdrop  = document.getElementById('feedback-backdrop');
+    const statusEl  = document.getElementById('feedback-status');
+    const submitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement | null;
+    const msgEl     = document.getElementById('feedback-message')   as HTMLTextAreaElement | null;
+    const emailEl   = document.getElementById('feedback-email')     as HTMLInputElement | null;
+    const hpEl      = document.getElementById('feedback-hp')        as HTMLInputElement | null;
+
+    if (!modal || !backdrop) return;
+
+    let selectedType: string | null = null;
+
+    // Botão único que abre o modal (Hero)
+    const openers = document.querySelectorAll('#open-feedback-btn');
+
+    function openModal() {
+      modal!.hidden    = false;
+      backdrop!.hidden = false;
+      document.body.style.overflow = 'hidden';
+      // Foco no primeiro botão de tipo para acessibilidade
+      const firstType = modal!.querySelector<HTMLButtonElement>('.feedback-type-btn');
+      if (firstType) firstType.focus();
+    }
+
+    function closeModal() {
+      modal!.hidden    = true;
+      backdrop!.hidden = true;
+      document.body.style.overflow = '';
+      // Reset
+      selectedType = null;
+      if (msgEl)   msgEl.value = '';
+      if (emailEl) emailEl.value = '';
+      if (statusEl) { statusEl.hidden = true; statusEl.className = 'feedback-status'; statusEl.textContent = ''; }
+      if (submitBtn) submitBtn.disabled = true;
+      modal!.querySelectorAll('.feedback-type-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    openers.forEach(btn => btn?.addEventListener('click', openModal));
+    document.getElementById('close-feedback-btn')?.addEventListener('click', closeModal);
+    backdrop.addEventListener('click', closeModal);
+
+    // Fechar com Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal!.hidden) closeModal();
+    });
+
+    // Trap focus no modal
+    modal.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key !== 'Tab') return;
+      const focusable = Array.from(
+        modal!.querySelectorAll<HTMLElement>('button:not([disabled]), textarea, input, [tabindex]:not([tabindex="-1"])')
+      ).filter(el => !el.closest('[aria-hidden="true"]'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+      if ((e as KeyboardEvent).shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+      } else if (!(e as KeyboardEvent).shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+      }
+    });
+
+    // Seleção de tipo
+    modal.querySelectorAll<HTMLButtonElement>('.feedback-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        modal!.querySelectorAll('.feedback-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = btn.dataset.type ?? null;
+        if (submitBtn) submitBtn.disabled = false;
+      });
+    });
+
+    // Submit
+    submitBtn?.addEventListener('click', async () => {
+      // Honeypot check
+      if (hpEl?.value) return;
+      if (!selectedType) return;
+
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = (window as any)._t?.sending || 'Sending...';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      try {
+        const payload = {
+          page: location.pathname,
+          type: selectedType,
+          message: msgEl?.value?.trim() ?? '',
+          email: emailEl?.value?.trim() ?? '',
+          hp: hpEl?.value ?? '',
+          exchange_slug: location.pathname.split('/').filter(Boolean).pop(),
+        };
+
+        const res = await fetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        if (statusEl) {
+          statusEl.textContent = (window as any)._t?.success || '✓ Thank you!';
+          statusEl.className   = 'feedback-status feedback-status--ok';
+          statusEl.hidden      = false;
+        }
+        submitBtn.textContent = (window as any)._t?.sent || 'Sent ✓';
+        setTimeout(closeModal, 2200);
+
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.error('[Feedback] error:', err);
+
+        let errorMsg = (window as any)._t?.error || 'Error.';
+        if ((err as any).name === 'AbortError') errorMsg = 'Timeout: request took too long.';
+
+        if (statusEl) {
+          statusEl.textContent = errorMsg;
+          statusEl.className   = 'feedback-status feedback-status--err';
+          statusEl.hidden      = false;
+        }
+        submitBtn.disabled     = false;
+        submitBtn.textContent  = originalText;
+      }
+    });
+
+    // ── Page Nav: active link com IntersectionObserver ──────────────
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.page-nav__link');
+    if (sections.length && navLinks.length) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach(link => {
+              link.classList.toggle(
+                'page-nav__link--active',
+                link.getAttribute('href') === `#${entry.target.id}`
+              );
+            });
+          });
+        },
+        { rootMargin: '-30% 0px -65% 0px' }
+      );
+      sections.forEach(s => observer.observe(s));
+    }
+  })();
+</script>
+
+<script is:inline define:vars={{
+  sending: i18n.exchanges.feedback.sending,
+  sent: i18n.exchanges.feedback.cta,
+  submit: i18n.exchanges.feedback.cta,
+  success: i18n.exchanges.feedback.success,
+  error: 'Error.'
+}}>
+  window._t = { sending, sent, submit, success, error };
+</script>

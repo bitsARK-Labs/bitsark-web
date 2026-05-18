@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><style>
+    #light-icon {
+      display: inline;
+    }
+    #dark-icon {
+      display: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #light-icon {
+        display: none;
+      }
+      #dark-icon {
+        display: inline;
+      }
+    }
+  </style><g id="light-icon"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g clip-path="url(#SvgjsClipPath1085)"><rect width="1000" height="1000" fill="#080d12"></rect><g transform="matrix(2,0,0,2,100,100)"><svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none"><g clip-path="url(#clip0_1_2)">
+<path d="M49.4907 342.5V-2.50003H120.791V112.5H293.291V170H350.791V342.5H293.291V400H106.991V342.5H49.4907ZM120.791 328.125H279.491V184.375H120.791V328.125Z" fill="white"></path>
+</g><defs>
+<clipPath id="clip0_1_2">
+<rect width="400" height="400" fill="white"></rect>
+</clipPath>
+<clipPath id="SvgjsClipPath1085"><rect width="1000" height="1000" x="0" y="0" rx="100" ry="100"></rect></clipPath></defs></svg></g></g></svg></g><g id="dark-icon"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="1000" height="1000"><g><g transform="matrix(2.5,0,0,2.5,0,0)"><svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" fill="none"><g clip-path="url(#clip0_1_2)">
+<path d="M49.4907 342.5V-2.50003H120.791V112.5H293.291V170H350.791V342.5H293.291V400H106.991V342.5H49.4907ZM120.791 328.125H279.491V184.375H120.791V328.125Z" fill="white"></path>
+</g><defs>
+<clipPath id="clip0_1_2">
+<rect width="400" height="400" fill="white"></rect>
+</clipPath>
+</defs></svg></g></g></svg></g></svg>

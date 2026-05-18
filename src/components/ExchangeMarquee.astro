@@ -1,0 +1,215 @@
+---
+const logos = [
+  { name: "Binance", slug: "binance", url: "https://assets.bitsark.com/logos/binance.svg" },
+  { name: "OKX", slug: "okx", url: "https://assets.bitsark.com/logos/okx.svg" },
+  { name: "Bybit", slug: "bybit", url: "https://assets.bitsark.com/logos/bybit.svg" },
+  { name: "Bitget", slug: "bitget", url: "https://assets.bitsark.com/logos/bitget.svg" },
+  { name: "KuCoin", slug: "kucoin", url: "https://assets.bitsark.com/logos/kucoin.svg" },
+  { name: "MEXC", slug: "mexc", url: "https://assets.bitsark.com/logos/mexc.svg" },
+  { name: "Foxbit", slug: "foxbit", url: "https://assets.bitsark.com/logos/foxbit.svg" },
+  { name: "Novadax", slug: "novadax", url: "https://assets.bitsark.com/logos/novadax.svg" },
+  { name: "Brasil Bitcoin", slug: "brasil-bitcoin", url: "https://assets.bitsark.com/logos/brasil-bitcoin.svg" },
+  { name: "Coinext", slug: "coinext", url: "https://assets.bitsark.com/logos/coinext.svg" },
+  { name: "Bitso", slug: "bitso", url: "https://assets.bitsark.com/logos/bitso.svg" },
+  { name: "Mercado Bitcoin", slug: "mercado-bitcoin", url: "https://assets.bitsark.com/logos/mercado-bitcoin.svg" },
+  { name: "Bitypreço", slug: "bitypreco", url: "https://assets.bitsark.com/logos/bitypreco.svg" },
+  { name: "Coinbase", slug: "coinbase", url: "https://assets.bitsark.com/logos/coinbase.svg" },
+  { name: "Kraken", slug: "kraken", url: "https://assets.bitsark.com/logos/kraken.svg" },
+  { name: "Gate.io", slug: "gate-io", url: "https://assets.bitsark.com/logos/gate-io.svg" },
+  { name: "HTX", slug: "htx", url: "https://assets.bitsark.com/logos/htx.svg" },
+  { name: "Crypto.com", slug: "crypto-com", url: "https://assets.bitsark.com/logos/crypto-com.svg" },
+  { name: "BingX", slug: "bingx", url: "https://assets.bitsark.com/logos/bingx.svg" },
+  { name: "BitMart", slug: "bitmart", url: "https://assets.bitsark.com/logos/bitmart.svg" },
+  { name: "Nubank Cripto", slug: "nubank", url: "https://assets.bitsark.com/logos/nubank.svg" },
+  { name: "Mercado Pago", slug: "mercado-pago", url: "https://assets.bitsark.com/logos/mercado-pago.svg" },
+  { name: "Mynt", slug: "mynt", url: "https://assets.bitsark.com/logos/mynt.svg" },
+  { name: "Bipa", slug: "bipa", url: "https://assets.bitsark.com/logos/bipa.svg" },
+];
+---
+
+<div class="marquee-wrapper" role="region" aria-label="Listed Exchanges">
+  <div class="marquee-track">
+    {[...logos, ...logos].map(({ name, slug, url }) => (
+      <a href={`/exchanges/${slug}`} class="marquee-item" title={name} aria-label={name}>
+        <img src={url} alt={name} width="24" height="24" loading="lazy" draggable="false" />
+      </a>
+    ))}
+  </div>
+</div>
+
+<style>
+/*
+  Marquee - gold-standard hover sem layout shift.
+
+  Estratégia:
+  1. A linha tem altura RESERVADA pelo logo crescido (--mq-row-h) desde o
+     primeiro paint. Hover não muda o tamanho da linha → zero shift no card
+     de Exchanges na home, e zero shift na página vizinha.
+  2. overflow-x: clip (com fallback hidden) corta os logos no eixo X (a
+     máscara horizontal continua funcionando), mas overflow-y: visible
+     permite o halo glow estourar verticalmente sem ser ceifado.
+  3. Hover combina scale + lift (translateY) + saturação + halo radial
+     na cor do brand (--color-primary). O halo é um pseudo-elemento por
+     trás do logo, então não afeta o layout flex.
+  4. Logos vizinhos sutilmente desbotam ainda mais (--mq-fade-others),
+     dando foco ao logo ativo - efeito "spotlight" premium.
+*/
+
+.marquee-wrapper {
+  --mq-logo-h: 21px;          /* altura base do logo */
+  --mq-scale: 1.4;             /* fator de hover */
+  /* +24px de breath: acomoda o lift (-2px), o glow elíptico, e impede
+     clipping pelo .product-card (que usa overflow: hidden). */
+  --mq-row-h: calc(var(--mq-logo-h) * var(--mq-scale) + 24px);
+
+  position: relative;
+  width: 100%;
+  height: var(--mq-row-h);     /* reserva o espaço final desde o início */
+  overflow-x: clip;            /* moderno: clip não impede overflow-y visible */
+  overflow-y: visible;         /* deixa o halo escapar verticalmente */
+  /* Fallback para browsers sem overflow: clip */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%);
+}
+
+@supports not (overflow-x: clip) {
+  .marquee-wrapper { overflow: hidden; }
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  width: max-content;
+  animation: marquee 36s linear infinite;
+  /* Pequeno performance-hint para evitar repaint em translateX */
+  will-change: transform;
+}
+
+.marquee-wrapper:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/*
+  Quando o usuário tem o mouse no marquee, todos os logos descem mais um
+  ponto de saturação - o item :hover sobe ainda mais, criando contraste.
+  Isso é o "spotlight effect": tudo escurece menos o foco.
+*/
+.marquee-wrapper:hover .marquee-item:not(:hover) {
+  opacity: 0.18;
+  filter: grayscale(1) brightness(0.85);
+}
+
+.marquee-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.45;
+  filter: grayscale(1) brightness(1.1);
+  text-decoration: none;
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  /* Padding cria área de mira maior + acomoda o glow sem encostar nas bordas */
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-md, 0.5rem);
+  /* Spring easing: leve overshoot dá vida sem ser brincadeira */
+  transition:
+    opacity 380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter  380ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 380ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/*
+  Halo glow ELÍPTICO - formato widescreen casa naturalmente com a linha
+  horizontal do marquee, evitando o "corte" topo/base que um circle gera
+  quando o pai tem overflow: hidden (caso do .product-card na home).
+
+   - ::after  = glow radial elíptico mais largo, brilho difuso (pode
+     estourar lateralmente onde a máscara horizontal lida com isso).
+*/
+
+.marquee-item::after {
+  content: '';
+  position: absolute;
+  /* Elipse larga mas baixa: formato widescreen 3:1 que cabe na altura da linha */
+  inset: 5px -5px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 70% 100% at center,
+    rgba(var(--color-primary-rgb), 0.30) 0%,
+    rgba(var(--color-primary-rgb), 0.10) 45%,
+    transparent 75%
+  );
+  opacity: 0;
+  transform: scaleX(0.2);
+  transform-origin: center;
+  transition:
+    opacity 420ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  z-index: -2;
+  filter: blur(4px);
+}
+
+.marquee-item:hover {
+  opacity: 1;
+  filter: grayscale(0) brightness(1) saturate(1.2);
+  /* translateY -2px dá a sensação de "lift" - combinado com scale 1.4 fica premium */
+  transform: scale(var(--mq-scale)) translateY(-2px);
+  z-index: 10;
+}
+
+
+.marquee-item:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.marquee-item:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.marquee-item img {
+  display: block;
+  height: var(--mq-logo-h);
+  width: auto;
+  max-width: 68px;
+  object-fit: contain;
+  transition: filter 380ms ease;
+}
+
+.marquee-item:hover img {
+  filter: drop-shadow(0 6px 14px rgba(var(--color-primary-rgb), 0.35))
+          drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-wrapper {
+    height: auto;
+  }
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .marquee-item,
+  .marquee-item::after {
+    transition: none !important;
+    transform: none !important;
+    opacity: 0.8 !important;
+  }
+  .marquee-item:hover {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+</style>

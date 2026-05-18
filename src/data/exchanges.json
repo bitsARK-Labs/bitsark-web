@@ -1,0 +1,626 @@
+[
+  {
+    "id": "binance",
+    "name": "Binance",
+    "slug": "binance",
+    "website": "https://www.binance.com",
+    "logo_url": "https://assets.bitsark.com/logos/binance.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "45.165.233/0001-82",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "SC"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": ["decripto_annually"],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.binance.com/pt-BR/fee/schedule",
+      "note": "25% discount when paying fees with BNB."
+    }
+  },
+  {
+    "id": "okx",
+    "name": "OKX Brasil",
+    "slug": "okx",
+    "website": "https://www.okx.com",
+    "logo_url": "https://assets.bitsark.com/logos/okx.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "50.459.025/0001-26",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange_foreign_origin",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.0008,
+      "taker": 0.001,
+      "fee_url": "https://www.okx.com/fees",
+      "note": "Tiered fee structure based on 30-day volume and OKB holdings."
+    }
+  },
+  {
+    "id": "bybit",
+    "name": "Bybit",
+    "slug": "bybit",
+    "website": "https://www.bybit.com",
+    "logo_url": "https://assets.bitsark.com/logos/bybit.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "35.491.577/0001-28",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "VG"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange_foreign_origin",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.bybit.com/en/help-center/article/Trading-Fee-Structure",
+      "note": "Spot maker/taker 0.1%. Futures fees differ."
+    }
+  },
+  {
+    "id": "bitget",
+    "name": "Bitget",
+    "slug": "bitget",
+    "website": "https://www.bitget.com",
+    "logo_url": "https://assets.bitsark.com/logos/bitget.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": false,
+      "main_jurisdiction_iso": "SC"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.bitget.com/en/rate/fee",
+      "note": "BGB token holders receive fee discounts."
+    }
+  },
+  {
+    "id": "kucoin",
+    "name": "KuCoin",
+    "slug": "kucoin",
+    "website": "https://www.kucoin.com",
+    "logo_url": "https://assets.bitsark.com/logos/kucoin.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "SC"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.kucoin.com/announcement/en-fee",
+      "note": "KCS holders receive up to 20% fee discount."
+    }
+  },
+  {
+    "id": "mexc",
+    "name": "MEXC",
+    "slug": "mexc",
+    "website": "https://www.mexc.com",
+    "logo_url": "https://assets.bitsark.com/logos/mexc.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": false,
+      "main_jurisdiction_iso": "SC"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.0,
+      "taker": 0.0,
+      "fee_url": "https://www.mexc.com/fee",
+      "note": "Spot maker/taker currently 0%. Futures fees apply separately."
+    }
+  },
+  {
+    "id": "foxbit",
+    "name": "Foxbit",
+    "slug": "foxbit",
+    "website": "https://foxbit.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/foxbit.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "21.246.584/0002-30",
+      "bcb_authorized": true,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.003,
+      "taker": 0.005,
+      "fee_url": "https://foxbit.com.br/taxas/",
+      "note": "Fees vary by trading volume. Pix deposits free; BRL withdrawals may incur a small fee."
+    }
+  },
+  {
+    "id": "novadax",
+    "name": "NovaDAX",
+    "slug": "novadax",
+    "website": "https://www.novadax.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/novadax.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "31.745.082/0001-27",
+      "bcb_authorized": true,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.003,
+      "taker": 0.005,
+      "fee_url": "https://www.novadax.com.br/taxas-e-limites",
+      "note": "ONG token holders receive fee discounts. Pix available for BRL operations."
+    }
+  },
+  {
+    "id": "brasil-bitcoin",
+    "name": "Brasil Bitcoin",
+    "slug": "brasil-bitcoin",
+    "website": "https://brasilbitcoin.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/brasil-bitcoin.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "29.519.837/0001-23",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.005,
+      "taker": 0.005,
+      "fee_url": "https://brasilbitcoin.com.br/taxas",
+      "note": "Flat 0.5% trading fee. Pix available for BRL deposits and withdrawals."
+    }
+  },
+  {
+    "id": "coinext",
+    "name": "Coinext",
+    "slug": "coinext",
+    "website": "https://coinext.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/coinext.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "29.242.868/0001-80",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.0025,
+      "taker": 0.005,
+      "fee_url": "https://coinext.com.br/taxas-limites-prazos",
+      "note": "Pix available for BRL deposits and withdrawals."
+    }
+  },
+  {
+    "id": "bitso",
+    "name": "Bitso",
+    "slug": "bitso",
+    "website": "https://bitso.com",
+    "logo_url": "https://assets.bitsark.com/logos/bitso.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "35.136.120/0001-03",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange_foreign_origin",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.005,
+      "taker": 0.005,
+      "fee_url": "https://bitso.com/fees",
+      "note": "Tiered maker/taker based on 30-day volume. Pix available in Brazil."
+    }
+  },
+  {
+    "id": "mercado-bitcoin",
+    "name": "Mercado Bitcoin",
+    "slug": "mercado-bitcoin",
+    "website": "https://www.mercadobitcoin.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/mercado-bitcoin.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "18.213.434/0001-35",
+      "bcb_authorized": true,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.003,
+      "taker": 0.007,
+      "fee_url": "https://www.mercadobitcoin.com.br/taxas-contas-limites",
+      "note": "Largest Brazilian exchange by volume. Pix fully supported. Volume-based tiers."
+    }
+  },
+  {
+    "id": "bitypreco",
+    "name": "BityPreço",
+    "slug": "bitypreco",
+    "website": "https://bitypreco.com",
+    "logo_url": "https://assets.bitsark.com/logos/bitypreco.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "29.947.180/0001-03",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.003,
+      "taker": 0.005,
+      "fee_url": "https://suporte.bity.com.br/pt-BR/articles/6967815-taxas",
+      "note": "Brazilian retail-focused exchange. Pix available for BRL."
+    }
+  },
+  {
+    "id": "coinbase",
+    "name": "Coinbase",
+    "slug": "coinbase",
+    "website": "https://www.coinbase.com",
+    "logo_url": "https://assets.bitsark.com/logos/coinbase.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "22.268.814/0001-44",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange_foreign_origin",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.004,
+      "taker": 0.006,
+      "fee_url": "https://help.coinbase.com/en/exchange/trading-and-funding/exchange-fees",
+      "note": "Advanced Trade fees. Simple Buy/Sell fees are higher."
+    }
+  },
+  {
+    "id": "kraken",
+    "name": "Kraken",
+    "slug": "kraken",
+    "website": "https://www.kraken.com",
+    "logo_url": "https://assets.bitsark.com/logos/kraken.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange_foreign_origin",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.0016,
+      "taker": 0.0026,
+      "fee_url": "https://www.kraken.com/features/fee-schedule",
+      "note": "Tiered maker/taker. Pro fees lower than retail."
+    }
+  },
+  {
+    "id": "gate-io",
+    "name": "Gate.io",
+    "slug": "gate-io",
+    "website": "https://www.gate.io",
+    "logo_url": "https://assets.bitsark.com/logos/gate-io.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": false,
+      "main_jurisdiction_iso": "KY"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.gate.com/fee",
+      "note": "GT token holders receive fee discounts."
+    }
+  },
+  {
+    "id": "htx",
+    "name": "HTX",
+    "slug": "htx",
+    "website": "https://www.htx.com",
+    "logo_url": "https://assets.bitsark.com/logos/htx.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": false,
+      "main_jurisdiction_iso": "SC"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.002,
+      "taker": 0.002,
+      "fee_url": "https://www.htx.com/fee/",
+      "note": "Formerly Huobi. HT token holders receive discounts."
+    }
+  },
+  {
+    "id": "crypto-com",
+    "name": "Crypto.com",
+    "slug": "crypto-com",
+    "website": "https://crypto.com",
+    "logo_url": "https://assets.bitsark.com/logos/crypto-com.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "39.977.273/0001-26",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange_foreign_origin",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": 0.004,
+      "taker": 0.004,
+      "fee_url": "https://crypto.com/exchange/document/fees-limits",
+      "note": "CRO staking reduces fees significantly. Exchange and App are separate platforms."
+    }
+  },
+  {
+    "id": "bingx",
+    "name": "BingX",
+    "slug": "bingx",
+    "website": "https://bingx.com",
+    "logo_url": "https://assets.bitsark.com/logos/bingx.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": false,
+      "main_jurisdiction_iso": "SC"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.bingx.com/en/support/articles/360027240173",
+      "note": "Copy trading fees may differ from standard spot fees."
+    }
+  },
+  {
+    "id": "bitmart",
+    "name": "BitMart",
+    "slug": "bitmart",
+    "website": "https://www.bitmart.com",
+    "logo_url": "https://assets.bitsark.com/logos/bitmart.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": null,
+      "bcb_authorized": false,
+      "accepts_pix": false,
+      "main_jurisdiction_iso": "KY"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "offshore_law_14754",
+      "monthly_brl_trade_exemption": 0,
+      "exchange_rfb_reports": [],
+      "user_rfb_action_monthly": ["report_in1888_if_traded_over_30k", "pay_darf_if_profit"]
+    },
+    "fees": {
+      "maker": 0.001,
+      "taker": 0.001,
+      "fee_url": "https://www.bitmart.com/fee/en",
+      "note": "BMX token holders receive fee discounts."
+    }
+  },
+  {
+    "id": "nubank",
+    "name": "Nubank Cripto",
+    "slug": "nubank",
+    "website": "https://nubank.com.br/cripto",
+    "logo_url": "https://assets.bitsark.com/logos/nubank.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "44.342.498/0001-46",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": null,
+      "taker": 0.006,
+      "fee_url": "https://nubank.com.br/nu/nubankmoeda",
+      "note": "Spread embedded in execution price. Integrated into the Nubank app."
+    }
+  },
+  {
+    "id": "mercado-pago",
+    "name": "Mercado Pago",
+    "slug": "mercado-pago",
+    "website": "https://www.mercadopago.com.br/cripto",
+    "logo_url": "https://assets.bitsark.com/logos/mercado-pago.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "10.573.521/0001-91",
+      "bcb_authorized": true,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": null,
+      "taker": 0.015,
+      "fee_url": "https://www.mercadopago.com.br/cripto",
+      "note": "Spread embedded in quote. Integrated into Mercado Pago account."
+    }
+  },
+  {
+    "id": "mynt",
+    "name": "Mynt BTG Pactual",
+    "slug": "mynt",
+    "website": "https://www.mynt.com.br",
+    "logo_url": "https://assets.bitsark.com/logos/mynt.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "44.364.466/0001-41",
+      "bcb_authorized": true,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": null,
+      "taker": 0.005,
+      "fee_url": "https://www.mynt.com.br",
+      "note": "Spread embedded in quote; no explicit brokerage fee. Operated by BTG Pactual, BCB-authorized."
+    }
+  },
+  {
+    "id": "bipa",
+    "name": "Bipa",
+    "slug": "bipa",
+    "website": "https://bipa.app",
+    "logo_url": "https://assets.bitsark.com/logos/bipa.svg",
+    "updated_at": "2026-04-22T21:56:00Z",
+    "operational_details_br": {
+      "cnpj": "37.008.710/0001-78",
+      "bcb_authorized": false,
+      "accepts_pix": true,
+      "main_jurisdiction_iso": "BR"
+    },
+    "fiscal_details_br": {
+      "tax_regime": "domestic_exchange",
+      "monthly_brl_trade_exemption": 35000,
+      "exchange_rfb_reports": ["in_1888_monthly"],
+      "user_rfb_action_monthly": []
+    },
+    "fees": {
+      "maker": null,
+      "taker": 0.02,
+      "fee_url": "https://suporte.bipa.app/hc/pt-br/articles/30249970786587-Quais-sao-as-taxas-de-negociacao-de-Bitcoin-e-USDT-na-Bipa",
+      "note": "Zero fee on recurring purchases. Spread embedded on operations. BTC cashback card available."
+    }
+  }
+]

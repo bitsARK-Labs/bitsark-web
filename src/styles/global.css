@@ -1,0 +1,1550 @@
+/* ============================================================
+   bitsARK Design System - global.css
+   ============================================================ */
+
+@layer reset, tokens, components;
+
+
+/* ── Fonts (self-hosted - Geist by Vercel, MIT License) ──── */
+/* Arquivos em /public/fonts/                                  */
+/* preload declarado no Base.astro                             */
+
+@font-face {
+  font-family: 'Geist';
+  src: url('/fonts/GeistVF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Geist Mono';
+  src: url('/fonts/GeistMonoVF.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+/* ── Design Tokens ────────────────────────────────────────── */
+:root {
+  /* ── Color scheme nativo (scrollbars, inputs em dark mode) ── */
+  color-scheme: dark;
+
+  /* ── Backgrounds ── */
+  --color-bg:             #0f1012;
+  --color-surface:        #161719;
+  --color-surface-2:      #1c1e21;
+  --color-surface-offset: #232629;
+  --color-divider:        var(--color-surface-offset);
+  --color-border:         rgba(79, 152, 163, 0.18);
+
+  /* ── Spacing ── */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-7:  1.75rem;
+  --space-8:  2rem;
+  --space-9:  2.25rem;
+  --space-10: 2.5rem;
+  --content-wide: 1200px;
+
+  /* ── Texto ── */
+  --color-text:         #d8d9db;
+  --color-text-muted:   #949ba6;
+  --color-text-faint:   #5a6070;
+  --color-text-inverse: #0f1012;
+
+  /* ── Primary: Teal ── */
+  --color-primary:           #4f98a3;
+  --color-primary-hover:     #62b0bc;
+  --color-primary-active:    #458791;
+  --color-primary-highlight: rgba(79, 152, 163, 0.08);
+  --color-primary-border:    rgba(79, 152, 163, 0.20);
+  --color-primary-rgb:       79, 152, 163;
+
+  /* ── Accent: Gold - elementos monetários ── */
+  --color-accent:       #e8af34;
+  --color-accent-hover: #f4c35e;
+
+  /* ── Semantic ── */
+  --color-success:           #6daa45;
+  --color-success-rgb:       109, 170, 69;
+  --color-success-highlight: rgba(var(--color-success-rgb), 0.08);
+
+  --color-warning:           #e8af34;
+  --color-warning-rgb:       232, 175, 52;
+  --color-warning-highlight: rgba(var(--color-warning-rgb), 0.08);
+
+  --color-error:             #dd6974;
+  --color-error-rgb:         221, 105, 116;
+  --color-error-highlight:   rgba(var(--color-error-rgb), 0.08);
+
+  /* ── Fee Scale (5 níveis: zero → muito alta) ──
+     Usado em /exchanges/[slug] para sinalizar a magnitude das taxas
+     maker/taker. Mantém semântica de gradient verde→amarelo→vermelho
+     mas isolado dos tokens success/warning/error (que carregam outra
+     conotação semântica em outros contextos). */
+  --color-fee-zero:    #22c55e;
+  --color-fee-green:   #4ade80;
+  --color-fee-yellow:  #facc15;
+  --color-fee-orange:  #fb923c;
+  --color-fee-red:     #f87171;
+
+  /* Pares (start, end) para gradients lineares das barras de taxa */
+  --color-fee-zero-bar-start:    #16a34a;
+  --color-fee-zero-bar-end:      #22c55e;
+  --color-fee-green-bar-start:   #16a34a;
+  --color-fee-green-bar-end:     #22c55e;
+  --color-fee-yellow-bar-start:  #ca8a04;
+  --color-fee-yellow-bar-end:    #facc15;
+  --color-fee-orange-bar-start:  #ea580c;
+  --color-fee-orange-bar-end:    #fb923c;
+  --color-fee-red-bar-start:     #dc2626;
+  --color-fee-red-bar-end:       #f87171;
+
+  /* ── Typography ── */
+  --font-display: 'Geist', 'Inter', sans-serif;
+  --font-body:    'Geist', 'Inter', sans-serif;
+  --font-mono:    'Geist Mono', 'Fira Code', monospace;
+
+  /* ── Fluid type scale ── */
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.95rem + 0.25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem    + 0.75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1.2rem  + 1.25vw, 2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+  --text-3xl:  clamp(2.5rem,   1rem    + 4vw,    5rem);
+
+  /* ── Radius ── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-full: 9999px;
+
+  /* ── Motion ── */
+  --transition: 200ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+
+  /* ── Glow ── */
+  --glow-primary:        0 0 24px rgba(79, 152, 163, 0.18);
+  --glow-primary-strong: 0 8px 32px rgba(79, 152, 163, 0.25);
+
+  /* ── bitsARK Logo ── */
+  --logo-bits-color:            var(--color-text);
+  --logo-ark-color:             var(--color-primary);
+  --logo-labs-color:            var(--color-text-muted);
+  --logo-bracket-color:         var(--color-primary);
+  --logo-bracket-opacity:       0.35;
+  --logo-bracket-hover-base-opacity: 0.44;
+  --logo-bracket-hover-opacity: 0.96;
+  --logo-bracket-fade-duration: 240ms;
+  --logo-bracket-reveal-duration: 580ms;
+  --logo-bracket-fade-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --logo-bracket-reveal-ease: cubic-bezier(0.19, 1, 0.22, 1);
+  --logo-bracket-sheen-edge: var(--logo-bracket-color);
+  --logo-bracket-sheen-fill: #6fb7c0;
+  --logo-bracket-sheen-core: #d8c083;
+}
+
+
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+  scroll-behavior: smooth movido para prefers-reduced-motion: no-preference.
+  Aplicar smooth globalmente por padrão e depois tentar reverter com !important
+  é a ordem errada - melhor não aplicar e só ativar para quem não tem restrições.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Sticky nav (~64px) + breathing room so anchor links land below the chrome */
+  scroll-padding-top: 88px;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: 1.65;
+  overflow-x: hidden;
+  /*
+    background-attachment: fixed REMOVIDO.
+    Desativava composição por GPU no iOS Safari e Android Chrome.
+    Em dispositivos mid-range (Moto G, Samsung A-series) causava scroll
+    janky e derrubava Lighthouse mobile abaixo de 80.
+    Gradiente mantido sem fixed - imperceptível visualmente, crítico em perf.
+  */
+  background-image:
+    radial-gradient(circle at 50% -20%, rgba(79, 152, 163, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 0% 100%,  rgba(79, 152, 163, 0.02) 0%, transparent 30%);
+}
+
+img, svg  { display: block; max-width: 100%; }
+a         { color: inherit; text-decoration: none; }
+button    { cursor: pointer; border: none; background: none; font: inherit; }
+ul        { list-style: none; }
+
+
+/* ── Skip Link - WCAG 2.4.1 ──────────────────────────────── */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.6rem 1.2rem;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+  outline: 2px solid var(--color-text);
+  outline-offset: 2px;
+}
+
+
+/* ── Focus-visible ────────────────────────────────────────── */
+/*
+  SEM :focus { outline: none } global.
+  :focus-visible é suficiente e correto - browsers que não suportam
+  :focus-visible (< 1% de share) ainda mostram o outline nativo.
+  WCAG 2.4.7 exige indicação de foco visível em 100% dos casos.
+*/
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 4px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-2);
+  border-radius: 4px;
+}
+
+
+/* ── Typography ───────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--color-text);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+h4 { font-size: var(--text-base); font-weight: 600; }
+
+
+/* ── Layout ───────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 5vw, 2rem);
+}
+
+
+/* ── Navigation ───────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 16, 18, 0.65);
+  backdrop-filter: saturate(180%) blur(22px);
+  -webkit-backdrop-filter: saturate(180%) blur(22px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.nav.is-scrolled {
+  background: rgba(15, 16, 18, 0.92);
+  border-bottom-color: var(--color-border);
+}
+
+.nav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1rem;
+}
+
+/* Logo global (home) */
+.nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+.nav__logo-bits { color: var(--color-text); }
+.nav__logo-ark  { color: var(--color-primary); }
+.nav__logo-labs {
+  font-size: 0.6rem;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  align-self: flex-end;
+  margin-bottom: 2px;
+  margin-left: 2px;
+}
+
+/* ── Sub-brand logo (produto / bitsARK) ───────────────────── */
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.nav__product-logo {
+  display: flex;
+  align-items: center;
+}
+
+.nav__product-text {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.nav__brand-divider {
+  color: var(--color-text-faint);
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 300;
+  line-height: 1;
+  user-select: none;
+}
+
+.nav__parent-logo {
+  display: flex;
+  align-items: center;
+  opacity: 0.55;
+  transition: opacity var(--transition);
+}
+.nav__parent-logo:hover { opacity: 1; }
+
+
+/* ── Nav links ────────────────────────────────────────────── */
+.nav__links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav__link {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-primary);
+  transition: width var(--transition);
+}
+
+.nav__link:hover          { color: var(--color-text); }
+.nav__link:hover::after,
+.nav__link.active::after  { width: 100%; }
+.nav__link.active         { color: var(--color-text); }
+
+
+/* ── CTA nav ──────────────────────────────────────────────── */
+.nav__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 1rem;
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-border);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all var(--transition);
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.nav__cta:hover {
+  background: var(--color-primary-highlight);
+  border-color: var(--color-primary);
+  box-shadow: var(--glow-primary);
+}
+
+
+/* ── Hamburger ────────────────────────────────────────────── */
+.nav__hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.nav__hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--color-text-muted);
+  transition: var(--transition);
+  border-radius: 2px;
+}
+
+.nav__hamburger[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(6.5px) rotate(45deg);
+}
+.nav__hamburger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.nav__hamburger[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-6.5px) rotate(-45deg);
+}
+
+
+/* ── Mobile menu ──────────────────────────────────────────── */
+.mobile-menu {
+  display: none;
+  border-top: 1px solid var(--color-border);
+  background: rgba(15, 16, 18, 0.98);
+  padding: 1.25rem;
+}
+
+.mobile-menu.open { display: block; }
+
+.mobile-menu__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.mobile-menu__link {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  font-weight: 500;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding-inline: 0.25rem;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition);
+}
+
+.mobile-menu__link:hover { color: var(--color-text); }
+
+.mobile-menu__link--cta {
+  margin-top: 0.75rem;
+  color: var(--color-primary);
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.75rem;
+}
+
+
+/* ── Language Picker ──────────────────────────────────────── */
+.nav__lang-picker {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-right: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.nav__lang-picker svg {
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-faint);
+}
+
+.nav__lang-link {
+  text-decoration: none;
+  color: var(--color-text-faint);
+  transition: color var(--transition);
+  padding: 0.2rem 0.3rem;
+  border-radius: var(--radius-sm);
+}
+
+.nav__lang-link:hover { color: var(--color-primary); }
+
+.nav__lang-link.active {
+  color: var(--color-primary);
+  font-weight: 700;
+  background: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.desktop-only-flex { display: flex; }
+
+@media (max-width: 768px) {
+  .nav__links            { display: none; }
+  .nav__cta.desktop-only { display: none; }
+  .nav__hamburger        { display: flex; }
+  .desktop-only-flex     { display: none; }
+}
+
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all var(--transition);
+  white-space: nowrap;
+  cursor: pointer;
+  min-height: 44px;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--glow-primary-strong);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary-border);
+  color: var(--color-primary);
+  background: var(--color-primary-highlight);
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: var(--text-xs);
+  min-height: 36px;
+}
+
+
+/* ── Badges ───────────────────────────────────────────────── */
+/*
+  border: none removido da base - conflitava com as variantes que
+  redeclaram border com cor. Cada variante é autossuficiente.
+*/
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-md);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.badge-success {
+  background: var(--color-success-highlight);
+  color: var(--color-success);
+  border: 1px solid rgba(var(--color-success-rgb), 0.18);
+}
+
+.badge-warning {
+  background: var(--color-warning-highlight);
+  color: var(--color-warning);
+  border: 1px solid rgba(var(--color-warning-rgb), 0.18);
+}
+/*
+  ATENÇÃO: se você usar .badge-warning em index.astro com rgba(245,158,11,0.10)
+  ou color: #f59e0b hardcoded, as cores vão divergir do token --color-warning (#e8af34).
+  Use sempre var(--color-warning) e var(--color-warning-highlight).
+*/
+
+.badge-error {
+  background: var(--color-error-highlight);
+  color: var(--color-error);
+  border: 1px solid rgba(var(--color-error-rgb), 0.18);
+}
+
+.badge-neutral {
+  background: rgba(74, 102, 128, 0.12);
+  color: var(--color-text-muted);
+  border: 1px solid rgba(74, 102, 128, 0.18);
+}
+
+.badge-primary {
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary-border);
+}
+
+
+/* ── Cards ────────────────────────────────────────────────── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid rgba(79, 152, 163, 0.12);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  /*
+    will-change: transform pré-promove o card para camada própria de composição.
+    Evita que o browser recalcule layout de elementos vizinhos a cada frame
+    do hover translateY. Remover se o número de cards na página for > 20
+    (custo de memória de GPU supera o benefício).
+  */
+  will-change: transform;
+}
+
+.card:hover {
+  border-color: var(--color-primary-border);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), var(--glow-primary);
+  transform: translateY(-2px);
+}
+
+/* ── Status Modifiers for Cards ── */
+.card--status-success { border-top: 3px solid var(--color-success); }
+.card--status-warning { border-top: 3px solid var(--color-warning); }
+.card--status-error   { border-top: 3px solid var(--color-error); }
+
+.card-body { padding: 1.25rem; }
+
+
+/* ── Divider ──────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--color-border);
+  margin-block: 1.5rem;
+}
+
+
+/* ── Eyebrow ──────────────────────────────────────────────── */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  opacity: 0.85;
+}
+
+/* ── Centered ──────────────────────────────────────────────── */
+.centered {
+    text-align: center;
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer {
+  /* border-top removed - previous section already provides the hairline */
+  /* margin-top removed - footer is flush for premium continuity */
+  padding: 3.5rem 0 2rem;
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+}
+
+.footer__grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 2.5rem 3rem;
+  margin-bottom: 3rem;
+}
+
+/* 5ª coluna quando DolarMap está ativo */
+.footer--product .footer__grid {
+  grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+}
+
+/* ── Uptime Badge ─────────────────────────────────────────── */
+.footer__uptime-badge {
+  display: inline-flex;
+  margin-top: 0.5rem;
+  opacity: 0.65;
+  transition: opacity var(--transition);
+  width: fit-content;
+}
+
+.footer__uptime-badge:hover { opacity: 1; }
+
+/* Brand */
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer__logo {
+  display: inline-flex;
+  opacity: 0.85;
+  transition: opacity var(--transition);
+}
+.footer__logo:hover { opacity: 1; }
+
+.footer__tagline {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  max-width: 24ch;
+}
+
+.footer__contact {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+  text-decoration: none;
+  width: fit-content;
+  transition: color var(--transition);
+  cursor: pointer;
+}
+.footer__contact:hover { color: var(--color-primary); }
+
+/* Colunas */
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+/* Coluna DolarMap: borda esquerda sutil */
+.footer__col--app {
+  border-left: 1px solid var(--color-primary-border);
+  padding-left: 1.5rem;
+}
+
+/* Headings */
+.footer__heading {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-faint);
+  margin-bottom: 0.35rem;
+}
+
+/* DolarMap column heading - echo the wordmark gradient for brand cohesion */
+.footer__col--app .footer__heading {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  margin-bottom: 0.6rem;
+  background: linear-gradient(
+    90deg,
+    var(--color-text)   0%,
+    var(--color-text)   55%,
+    #2a6c8c             62%,
+    #20a48f             100%
+  );
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  isolation: isolate;
+}
+
+/* Links */
+.footer__link {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  width: fit-content;
+  transition: color var(--transition);
+}
+.footer__link:hover { color: var(--color-text); }
+
+/* Sub-link: Google Play, abaixo do DolarMap */
+.footer__link--sub {
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+  margin-top: -0.3rem;
+  margin-bottom: 0.4rem;
+}
+.footer__link--sub:hover { color: var(--color-primary); }
+
+/* Legal bar */
+.footer__legal {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.footer__legal p {
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+}
+.footer__cnpj {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+/* ── Responsive Footer ────────────────────────────────────── */
+@media (max-width: 900px) {
+  .footer__grid,
+  .footer--product .footer__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer__brand {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 520px) {
+  .footer__grid,
+  .footer--product .footer__grid {
+    grid-template-columns: 1fr;
+  }
+  .footer__brand {
+    grid-column: span 1;
+  }
+  .footer__col--app {
+    border-left: none;
+    border-top: 1px solid var(--color-primary-border);
+    padding-left: 0;
+    padding-top: 1rem;
+  }
+}
+
+
+/* ── Skeleton ─────────────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface)   25%,
+    var(--color-surface-2) 50%,
+    var(--color-surface)   75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+
+/* ── Code block ───────────────────────────────────────────── */
+.code-block {
+  position: relative;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.7;
+  border-left: 3px solid var(--color-primary);
+}
+
+.code-block .key    { color: #67e8f9; }
+.code-block .string { color: #a5f3fc; }
+.code-block .number { color: #34d399; }
+.code-block .bool   { color: var(--color-primary); }
+.code-block .null   { color: var(--color-text-faint); }
+
+/* Shiki output inside .code-block */
+.code-block pre.shiki {
+  background: transparent !important;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  overflow: visible;
+  white-space: pre;
+}
+.code-block pre.shiki code {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Copy button */
+.copy-btn {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-faint);
+  padding: 0.22rem 0.55rem;
+  font-size: 0.62rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  line-height: 1.4;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+  user-select: none;
+}
+.copy-btn:hover {
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+  background: var(--color-primary-highlight);
+}
+.copy-btn--copied {
+  color: var(--color-success);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+
+/* ── Inline code ──────────────────────────────────────────── */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--color-surface-2);
+  color: var(--color-primary);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+
+/* ── Table ────────────────────────────────────────────────── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.data-table th {
+  text-align: left;
+  font-weight: 600;
+  /* era 11px hardcoded - substituído por token fluido */
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-faint);
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  background: var(--color-surface);
+}
+
+.data-table td {
+  padding: 1rem 0.5rem;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid rgba(30, 45, 66, 0.6);
+  vertical-align: top;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table td:first-child    { padding-left: 1rem; }
+.data-table tr:last-child td  { border-bottom: none; }
+.data-table tbody tr:hover td { background: var(--color-surface-offset); }
+
+
+/* ── Fade animation ───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fadeUp 0.45s ease forwards; }
+
+
+/* ── Tooltips CSS ─────────────────────────────────────────── */
+[data-tooltip] { position: relative; cursor: help; }
+
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: 0.72rem;
+  font-family: var(--font-body);
+  white-space: normal;
+  max-width: 260px;
+  width: max-content;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--transition);
+  z-index: 100;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.data-table th[data-tooltip]::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+
+/*
+  Tooltip acessível por teclado: ativa em :focus e :focus-within
+  além de :hover - usuários que navegam com Tab agora veem o tooltip.
+  tabindex="0" necessário no elemento pai para :focus funcionar.
+*/
+[data-tooltip]:hover::after,
+[data-tooltip]:focus::after,
+[data-tooltip]:focus-within::after { opacity: 1; }
+
+
+/* ── Status dot ───────────────────────────────────────────── */
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-success);
+  box-shadow: 0 0 0 2px rgba(var(--color-success-rgb), 0.2);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+.status-dot--warn {
+  background: var(--color-warning);
+  box-shadow: 0 0 0 2px rgba(var(--color-warning-rgb), 0.2);
+}
+
+.status-dot--err {
+  background: var(--color-error);
+  box-shadow: 0 0 0 2px rgba(var(--color-error-rgb), 0.2);
+  animation: none;
+}
+
+@keyframes pulse-dot {
+  /*
+    translateX(-50%) REMOVIDO.
+    O status-dot é display: inline-block sem posicionamento relativo ao pai.
+    O translateX na animação deslocava o ponto para a esquerda a cada frame,
+    causando um micro-shift visual perceptível em telas de alta DPI.
+    Apenas scale() é necessário aqui.
+  */
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.7); }
+}
+
+
+/* ── Pill ─────────────────────────────────────────────────── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 500;
+  font-family: var(--font-mono);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  transition: all var(--transition);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.pill:hover,
+.pill.active {
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
+  border-color: var(--color-primary-border);
+}
+
+
+/* ── Stat block ───────────────────────────────────────────── */
+.stat__value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__label {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 0.25rem;
+}
+
+
+/* ── Section ──────────────────────────────────────────────── */
+.section {
+  padding-block: clamp(4rem, 8vw, 6rem);
+}
+
+.section--alt:not(:last-child) {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+
+/* ── FAQ accordion (global gold standard) ─────────────────── */
+/*
+  Chevron-style indicator (CSS border trick), gradient on open,
+  dashed separator - matches the DolarMap premium FAQ design.
+  Use: wrap items in .faq-list, each <details> gets .faq-item.
+*/
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.faq-item {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 200ms;
+}
+
+.faq-item[open] {
+  border-color: var(--color-primary-border);
+  background: linear-gradient(
+    180deg,
+    var(--color-primary-highlight) 0%,
+    var(--color-surface) 100%
+  );
+}
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 1.1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-text);
+  user-select: none;
+  min-height: 44px;
+  transition: color 200ms;
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border-right: 2px solid var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform var(--transition);
+}
+
+.faq-item[open] summary::after {
+  transform: rotate(225deg) translate(-2px, -2px);
+}
+
+.faq-item summary:hover { color: var(--color-primary); }
+
+.faq-answer {
+  padding: 0 1.4rem 1.2rem;
+}
+
+.faq-answer p {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  padding-top: 0.6rem;
+  border-top: 1px dashed var(--color-primary-border);
+}
+
+.faq-answer a { color: var(--color-primary); }
+.faq-answer a:hover { text-decoration: underline; }
+.faq-answer strong { color: var(--color-text); }
+
+/*
+  .section__title: hack anterior usava position: relative + left: 50% +
+  translateX(-50%) para centralizar com display: inline-block.
+  Isso causava overflow horizontal em viewports pequenas com texto longo.
+  Solução: display: table cria um block que encolhe ao conteúdo,
+  margin-inline: auto centraliza sem precisar de position tricks.
+*/
+.section__title {
+  display: table;
+  margin-inline: auto;
+  position: relative;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+
+/* ── Premium Table (editorial, shared) ───────────────────────
+   Baseline premium para tabelas editoriais. Cada página pode
+   tonalizar a coluna highlight redeclarando background/cor sem
+   reescrever o esqueleto. Usado em /pt/exchanges/decripto e
+   /pt/stablecoins-brasil/receber-exterior-pj.
+   Convenção: usar junto com .data-table (que provê reset) OU
+   isoladamente quando a página define seu próprio reset.
+*/
+.premium-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+.premium-table thead th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  padding: 0.9rem 1.1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  white-space: nowrap;
+}
+.premium-table tbody td,
+.premium-table tbody th {
+  padding: 0.85rem 1.1rem;
+  color: var(--color-text-muted);
+  border-bottom: 1px solid rgba(var(--color-primary-rgb), 0.07);
+  vertical-align: top;
+  line-height: 1.55;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+  text-align: left;
+}
+.premium-table tbody tr:last-child td,
+.premium-table tbody tr:last-child th { border-bottom: none; }
+.premium-table tbody tr:nth-child(odd) td,
+.premium-table tbody tr:nth-child(odd) th { background: rgba(0, 0, 0, 0.12); }
+.premium-table tbody tr:hover td,
+.premium-table tbody tr:hover th { background: rgba(var(--color-primary-rgb), 0.05); }
+.premium-table td:first-child,
+.premium-table th[scope="row"] {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+}
+
+
+/* ── Premium Alert (editorial, shared) ───────────────────────
+   Bloco de aviso com stripe vertical à esquerda + ícone.
+   Variantes herdadas dos semantic tokens. Mantém personalidade
+   por página via cor do stripe; baseline visual idêntico.
+*/
+.premium-alert {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: rgba(var(--color-primary-rgb), 0.07);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.22);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  overflow: hidden;
+}
+.premium-alert::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--color-primary);
+  opacity: 0.85;
+}
+.premium-alert__icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--color-primary);
+  display: inline-flex;
+}
+.premium-alert p { margin: 0; }
+.premium-alert strong { color: var(--color-text); font-weight: 700; }
+
+.premium-alert--warning {
+  background: rgba(var(--color-warning-rgb), 0.07);
+  border-color: rgba(var(--color-warning-rgb), 0.22);
+}
+.premium-alert--warning::before { background: var(--color-warning); }
+.premium-alert--warning .premium-alert__icon { color: var(--color-warning); }
+.premium-alert--warning strong { color: var(--color-warning); }
+
+.premium-alert--error {
+  background: rgba(var(--color-error-rgb), 0.07);
+  border-color: rgba(var(--color-error-rgb), 0.22);
+}
+.premium-alert--error::before { background: var(--color-error); }
+.premium-alert--error .premium-alert__icon { color: var(--color-error); }
+.premium-alert--error strong { color: var(--color-error); }
+
+
+/* ── Products Grid ────────────────────────────────────────── */
+/*
+  .products-grid base (repeat(3, 1fr)) REMOVIDA - nunca usada no HTML.
+  Apenas .products-grid--two existe e é aplicada.
+  Manter estilos mortos aumenta o CSS bundle e confunde futuros devs.
+*/
+.products-grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.products-grid--two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 768px) {
+  .products-grid--two {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ── Reduced Motion - WCAG 2.3.3 ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skeleton {
+    animation: none;
+    background: var(--color-surface-2);
+  }
+
+  .fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .status-dot  { animation: none; }
+
+  .btn-primary:hover,
+  .card:hover  { transform: none; }
+}
+
+
+/* ── Feedback Modal (Shared) ─────────────────────────────── */
+.feedback-modal[hidden],
+.feedback-backdrop[hidden] {
+  display: none !important;
+}
+
+.feedback-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 999;
+}
+
+.feedback-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.feedback-modal-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem 1.5rem 1.5rem;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+}
+
+.feedback-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: var(--color-text-faint);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.feedback-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-text);
+}
+
+/* ── SEO / Acessibilidade Utility ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Reset semântico para headings dentro de cards */
+h3.nav__product-block,
+h3.product-card__dm-logo-row {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/* era font-size: 11px hardcoded - substituído por token fluido */
+.feedback-subtitle {
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  margin-top: -0.5rem;
+}
+
+.feedback-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.feedback-type-btn {
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  padding: 0.4rem 0.8rem;
+  font-family: inherit;
+}
+
+.feedback-type-btn.selected {
+  background: var(--color-primary-highlight);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.feedback-textarea,
+.feedback-email {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-family: inherit;
+}
+
+.feedback-submit {
+  background: var(--color-primary);
+  color: var(--color-bg);
+  border: none;
+  padding: 0.8rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.feedback-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.feedback-status {
+  font-size: var(--text-xs);
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+}
+.feedback-status--success {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-success);
+}

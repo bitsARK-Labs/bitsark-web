@@ -1,0 +1,1145 @@
+---
+import Base from "@layouts/Base.astro";
+import t    from "@i18n/pt.json";
+import "@styles/pages/receber-exterior-pj.css";
+
+/* ─── Constantes editoriais ───────────────────────────────────────── */
+const locale        = "pt-BR";   /* trocar para "en-US" na versão inglesa */
+const canonical     = "https://bitsark.com/pt/stablecoins-brasil/receber-exterior-pj/";
+const datePublished = "2026-05-16";
+const dateModified  = "2026-05-16";
+
+/* PTAX-venda hardcoded · atualizar editorialmente com dateModified */
+const ptaxRef     = 5.12;
+const ptaxRefDate = "2026-05-15";
+
+/* IOF projetado · consulta pública (CP 99/2026), sem lei sancionada */
+const iofProposed     = 0.035;   /* stablecoin · projetado */
+const iofSwiftCurrent = 0.0038;  /* câmbio ingresso PJ atual */
+
+/* Simulador · presets editoriais (em percentual; JS divide por 100) */
+const fxPresets = {
+  wire:    { charge: 2.5, fixed: 35 },
+  fintech: { charge: 1.0, fixed: 0  },
+};
+const stablePresets = { spread: 0.1, fee: 1.0 };
+const iofCambioPct       = 0.38;  /* IOF de câmbio (wire + fintech) */
+const iofStableProposedPct = 3.5; /* IOF stablecoin (CP 99/2026) */
+
+const rep = t.receber_exterior_pj;
+
+const dateModifiedDisplay = new Date(dateModified + "T12:00:00Z")
+  .toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+
+const ptaxFormatted = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(ptaxRef);
+const ptaxDateFormatted = new Date(ptaxRefDate + "T12:00:00Z").toLocaleDateString(locale, { timeZone: "UTC" });
+
+const iofCambioFormatted = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(iofCambioPct) + "%";
+const iofStableFormatted = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(iofStableProposedPct) + "%";
+
+/* ─── Timeline regulatória com status dinâmico (build-time) ───────── */
+const now = new Date();
+const timelineConfig = [
+  { date: new Date("2022-12-21"), end: new Date("2023-12-11T23:59:59") },
+  { date: new Date("2023-12-12"), end: new Date("2025-10-31T23:59:59") },
+  { date: new Date("2025-11-01"), end: new Date("2025-12-31T23:59:59") },
+  { date: new Date("2026-01-01"), end: new Date("2026-06-30T23:59:59") },
+  { date: new Date("2026-07-01"), end: new Date("2026-12-31T23:59:59") },
+  { date: new Date("2027-01-01"), end: new Date("2099-12-31T23:59:59") },
+];
+const processedTimeline = rep.regulacao.items.map((it, i) => {
+  const cfg = timelineConfig[i];
+  const status = now > cfg.end ? "past" : now >= cfg.date ? "active" : "future";
+  return { ...it, status };
+});
+
+const alternates = [
+  { hreflang: "en",        href: "https://bitsark.com/stablecoins-brasil/receber-exterior-pj/" },
+  { hreflang: "pt-BR",     href: canonical },
+  { hreflang: "x-default", href: "https://bitsark.com/stablecoins-brasil/receber-exterior-pj/" }
+];
+
+/* ─── Schema.org @graph ───────────────────────────────────────────── */
+const allFaqs = rep.faq.categories.flatMap(c => c.questions);
+
+const schemaGraph = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": canonical,
+      "url": canonical,
+      "name": rep.meta.title,
+      "description": rep.meta.description,
+      "inLanguage": "pt-BR",
+      "datePublished": datePublished,
+      "dateModified": dateModified,
+      "publisher": {
+        "@type": "Organization",
+        "name": "bitsARK Labs",
+        "url": "https://bitsark.com",
+      },
+      "about": [
+        { "@type": "Legislation", "name": "Lei nº 14.478/2022",                 "alternateName": "Marco dos Ativos Virtuais", "legislationType": "Lei Ordinária Federal",   "jurisdiction": "Brasil", "dateEnacted": "2022-12-21" },
+        { "@type": "Legislation", "name": "Lei nº 14.754/2023",                 "alternateName": "Lei das Offshores",         "legislationType": "Lei Ordinária Federal",   "jurisdiction": "Brasil", "dateEnacted": "2023-12-12" },
+        { "@type": "Legislation", "name": "Instrução Normativa RFB nº 2.291/2025", "alternateName": "DeCripto",               "legislationType": "Instrução Normativa",     "jurisdiction": "Brasil", "dateEnacted": "2025-11-14" },
+        { "@type": "Legislation", "name": "Resolução BCB nº 521/2025",          "legislationType": "Resolução BCB",                                                          "jurisdiction": "Brasil", "dateEnacted": "2025-11-01" },
+        { "@type": "Legislation", "name": "Lei Complementar nº 116/2003",       "alternateName": "ISS sobre serviços",        "legislationType": "Lei Complementar",        "jurisdiction": "Brasil", "dateEnacted": "2003-07-31" },
+      ],
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Empresários PJ no Brasil que prestam serviços ao exterior",
+      },
+      "breadcrumb": { "@id": `${canonical}#breadcrumb` },
+      "mainEntity": [
+        { "@id": `${canonical}#article` },
+        { "@id": `${canonical}#howto` },
+        { "@id": `${canonical}#faq` },
+      ],
+    },
+    {
+      "@type": "TechArticle",
+      "@id": `${canonical}#article`,
+      "headline": rep.meta.title,
+      "description": rep.meta.description,
+      "datePublished": datePublished,
+      "dateModified": dateModified,
+      "inLanguage": "pt-BR",
+      "author":    { "@type": "Organization", "name": "bitsARK Labs", "url": "https://bitsark.com" },
+      "publisher": { "@type": "Organization", "name": "bitsARK Labs", "url": "https://bitsark.com" },
+      "image": "https://bitsark.com/og/receber-exterior-pj.png",
+      "articleSection": "Tributação Cripto-PJ",
+      "keywords": "receber USDT exterior, USDC exportação serviço, CNPJ stablecoin, Wise Business PJ, Husky câmbio fintech, Remessa Online PJ, prestador serviço exterior, exportação serviço cripto, freelancer cripto Brasil, nômade digital CNPJ, DeCripto PJ",
+      "mentions": [
+        { "@type": "Organization", "name": "Wise Business",   "url": "https://wise.com/business" },
+        { "@type": "Organization", "name": "Husky",           "url": "https://huskypay.com" },
+        { "@type": "Organization", "name": "Remessa Online",  "url": "https://www.remessaonline.com.br" }
+      ],
+      "mainEntityOfPage": { "@id": canonical },
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${canonical}#breadcrumb`,
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início",                       "item": "https://bitsark.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Stablecoins no Brasil",        "item": "https://bitsark.com/pt/stablecoins-brasil/" },
+        { "@type": "ListItem", "position": 3, "name": "Receber do exterior como PJ",  "item": canonical },
+      ],
+    },
+    {
+      "@type": "HowTo",
+      "@id": `${canonical}#howto`,
+      "name": rep.comoReceber.title,
+      "description": rep.comoReceber.howToDescription,
+      "totalTime": rep.comoReceber.totalTime,
+      "inLanguage": "pt-BR",
+      "tool": rep.comoReceber.tools.map(toolName => ({ "@type": "HowToTool", "name": toolName })),
+      "step": rep.comoReceber.steps.map((s, i) => ({
+        "@type": "HowToStep",
+        "position": i + 1,
+        "name": s.title,
+        "text": s.text,
+        "url": `${canonical}#step-${i + 1}`,
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonical}#faq`,
+      "mainEntity": allFaqs.map(q => ({
+        "@type": "Question",
+        "name": q.q,
+        "acceptedAnswer": { "@type": "Answer", "text": q.a.replace(/<[^>]+>/g, "") },
+      })),
+    },
+  ],
+};
+
+/* ─── Icons (inline SVG) ──────────────────────────────────────────── */
+const icons = {
+  shield:    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+  building:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>',
+  receipt:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2H4z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',
+  calendar:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  info:      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+  coins:     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18.06"/><path d="M7 6h1v4"/><path d="M17 12h1v4"/></svg>',
+  "file-text":'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  globe:     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  bolt:      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  coin:      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M14.5 9a2.5 2.5 0 0 0-5 0c0 1.4 1 2.2 2.5 2.5s2.5 1.1 2.5 2.5a2.5 2.5 0 0 1-5 0"/><path d="M12 7v10"/></svg>',
+  clock:     '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  warning:   '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  check:     '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>',
+  arrow:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
+};
+
+/* helper para resolver ícone do TLDR */
+const tldrIcon = (name) => icons[name] || icons.info;
+
+/* Status labels para timeline */
+const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "Próximo" };
+---
+
+<Base
+  title={rep.meta.title}
+  description={rep.meta.description}
+  lang="pt-BR"
+  canonical={canonical}
+  ogType="article"
+  alternates={alternates}
+  ogImage="https://bitsark.com/og/receber-exterior-pj.png"
+>
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schemaGraph)} />
+
+  <!-- ═══════════════════════════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-hero" aria-labelledby="page-heading" id="top">
+    <div class="rep-hero__atmos" aria-hidden="true">
+      <div class="rep-hero__halo"></div>
+      <div class="rep-hero__grid"></div>
+      <div class="rep-hero__noise"></div>
+    </div>
+
+    <div class="container rep-hero__body">
+
+      <nav class="rep-breadcrumb" aria-label="Breadcrumb">
+        <a href="/pt/">{rep.hero.breadcrumbHome}</a>
+        <span aria-hidden="true">›</span>
+        <a href="/pt/stablecoins-brasil/">{rep.hero.breadcrumbHub}</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{rep.hero.breadcrumbCurrent}</span>
+      </nav>
+
+      <div class="rep-hero__topbar fade-up">
+        <div class="rep-urgency-pill" role="status">
+          <span class="rep-urgency-pill__dot" aria-hidden="true"></span>
+          <span>{rep.hero.urgencyPill}</span>
+        </div>
+        <p class="rep-hero__meta">
+          <time datetime={dateModified}>
+            {rep.meta.lastReviewedLabel}: {dateModifiedDisplay}
+          </time>
+          <span class="rep-hero__meta-sep" aria-hidden="true">·</span>
+          <span class="rep-hero__meta-disc">{rep.meta.disclaimerNotLegal}</span>
+        </p>
+      </div>
+
+      <h1 id="page-heading" class="rep-hero__title fade-up" style="animation-delay:.08s" set:html={rep.hero.title} />
+
+      <p class="rep-hero__sub fade-up" style="animation-delay:.16s">{rep.hero.sub}</p>
+
+      <div class="rep-hero__chips fade-up" style="animation-delay:.24s">
+        {rep.hero.chips.map(chip => (
+          <span class="rep-chip">{chip}</span>
+        ))}
+      </div>
+
+      <div class="rep-hero__floats" aria-label="Indicadores principais">
+        {rep.hero.kpis.map((k, i) => (
+          <div class="rep-hfloat" style={`--rep-stagger:${i}`}>
+            <span class="rep-hfloat__label">{k.label}</span>
+            <span class="rep-hfloat__value">{k.value}</span>
+            <span class="rep-hfloat__meta">{k.meta}</span>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TL;DR
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-section--alt" id="tldr" aria-labelledby="tldr-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.tldr.eyebrow}</p>
+        <h2 id="tldr-heading" class="rep-section-title">{rep.tldr.title}</h2>
+        <p class="rep-section-sub">{rep.tldr.sub}</p>
+      </header>
+
+      <div class="rep-tldr-grid">
+        {rep.tldr.items.map((item, i) => (
+          <article class="rep-tldr-card" style={`--rep-stagger:${i}`}>
+            <div class="rep-tldr-icon" aria-hidden="true" set:html={tldrIcon(item.icon)} />
+            <h3 class="rep-tldr-q">{item.q}</h3>
+            <p class="rep-tldr-a" set:html={item.a} />
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       POR QUE STABLECOIN
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section" id="why-stablecoin" aria-labelledby="porque-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.porQue.eyebrow}</p>
+        <h2 id="porque-heading" class="rep-section-title">{rep.porQue.title}</h2>
+        <p class="rep-section-sub">{rep.porQue.sub}</p>
+      </header>
+
+      <div class="rep-porque-grid">
+        {rep.porQue.cards.map((card, i) => (
+          <article class="rep-porque-card" style={`--rep-stagger:${i}`}>
+            <div class="rep-porque-icon" aria-hidden="true" set:html={i === 0 ? icons.bolt : i === 1 ? icons.coin : icons.clock} />
+            <div class="rep-porque-stat">
+              <span class="rep-porque-stat__value">{card.stat}</span>
+              <span class="rep-porque-stat__label">{card.statLabel}</span>
+            </div>
+            <h3 class="rep-porque-title">{card.title}</h3>
+            <p class="rep-porque-desc">{card.desc}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMO RECEBER (HowTo)
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-section--alt" id="how-to" aria-labelledby="howto-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.comoReceber.eyebrow}</p>
+        <h2 id="howto-heading" class="rep-section-title">{rep.comoReceber.title}</h2>
+        <p class="rep-section-sub">{rep.comoReceber.sub}</p>
+      </header>
+
+      <ol class="rep-howto-list" aria-label="Passos para receber em USDT/USDC como PJ">
+        {rep.comoReceber.steps.map((step, i) => (
+          <li class="rep-howto-step" id={`step-${i + 1}`} style={`--rep-stagger:${i}`}>
+            <div class="rep-howto-step__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</div>
+            <div class="rep-howto-step__body">
+              <h3 class="rep-howto-step__title">{step.title}</h3>
+              <p class="rep-howto-step__text">{step.text}</p>
+              {step.note && (
+                <p class="rep-howto-step__note">
+                  <span class="rep-howto-step__note-icon" aria-hidden="true" set:html={icons.info} />
+                  <span>{step.note}</span>
+                </p>
+              )}
+              {step.link && (
+                <a class="rep-howto-step__link" href={step.link.href}>
+                  {step.link.label}
+                </a>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       COMPARATIVO SWIFT × STABLECOIN
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section" id="comparison" aria-labelledby="comparativo-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.comparativo.eyebrow}</p>
+        <h2 id="comparativo-heading" class="rep-section-title">{rep.comparativo.title}</h2>
+        <p class="rep-section-sub">{rep.comparativo.sub}</p>
+      </header>
+
+      <div class="rep-compare-wrap">
+        <table class="rep-compare-table data-table premium-table">
+          <caption class="sr-only">Comparativo entre recebimento via SWIFT bancário e via stablecoin USDT/USDC</caption>
+          <thead>
+            <tr>
+              {rep.comparativo.headers.map((h, i) => (
+                <th scope="col" class={i === 2 ? "rep-compare-table__highlight" : ""}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rep.comparativo.rows.map(row => (
+              <tr>
+                <th scope="row">{row[0]}</th>
+                <td>{row[1]}</td>
+                <td class="rep-compare-table__highlight">{row[2]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       SIMULADOR SWIFT × STABLECOIN
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-section--alt" id="simulator" aria-labelledby="sim-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.simulador.eyebrow}</p>
+        <h2 id="sim-heading" class="rep-section-title">{rep.simulador.title}</h2>
+        <p class="rep-section-sub">{rep.simulador.sub}</p>
+      </header>
+
+      <div
+        class="rep-sim"
+        id="rep-sim"
+        data-locale={locale}
+        data-ptax={ptaxRef}
+        data-fx-mode="wire"
+        data-wire-charge={fxPresets.wire.charge}
+        data-wire-fixed={fxPresets.wire.fixed}
+        data-fintech-charge={fxPresets.fintech.charge}
+        data-fintech-fixed={fxPresets.fintech.fixed}
+        data-stable-spread={stablePresets.spread}
+        data-stable-fee={stablePresets.fee}
+        data-iof-cambio={iofCambioPct}
+        data-iof-stable-proposed={iofStableProposedPct}
+      >
+        <div class="rep-sim__top">
+          <div class="rep-sim__input-wrap">
+            <label for="rep-sim-input" class="rep-sim__input-label">{rep.simulador.inputLabel}</label>
+            <div class="rep-sim__input-field">
+              <span class="rep-sim__input-currency" aria-hidden="true">$</span>
+              <input
+                type="number"
+                inputmode="decimal"
+                id="rep-sim-input"
+                class="rep-sim__input"
+                value="5000"
+                min="100"
+                max="10000000"
+                step="100"
+              />
+              <span class="rep-sim__input-unit" aria-hidden="true">{rep.simulador.inputUnit}</span>
+            </div>
+
+            <div class="rep-sim__presets" role="group" aria-label={rep.simulador.presetsLabel}>
+              {rep.simulador.presets.map(p => (
+                <button type="button" class="rep-sim__preset" data-preset={p}>
+                  ${new Intl.NumberFormat(locale).format(p)}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div class="rep-sim__ptax-col">
+            <div class="rep-sim__ptax-row">
+              <label for="rep-sim-ptax-input" class="rep-sim__ptax-label">
+                {rep.simulador.ptaxLabel}
+              </label>
+              <div class="rep-sim__ptax-field" id="rep-sim-ptax-field">
+                <span class="rep-sim__ptax-prefix" aria-hidden="true">R$</span>
+                <input
+                  type="number"
+                  id="rep-sim-ptax-input"
+                  class="rep-sim__ptax-input"
+                  value={ptaxRef}
+                  min="1"
+                  max="20"
+                  step="0.01"
+                  inputmode="decimal"
+                  aria-label={`${rep.simulador.ptaxLabel} - editável`}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="rep-sim__toggle-wrap">
+            <label class="rep-sim__toggle">
+              <input type="checkbox" id="rep-sim-iof-toggle" />
+              <span class="rep-sim__toggle-track" aria-hidden="true"><span class="rep-sim__toggle-thumb"></span></span>
+              <span class="rep-sim__toggle-label">{rep.simulador.iofToggleLabel}</span>
+            </label>
+            <p class="rep-sim__warning">
+              <span aria-hidden="true" set:html={icons.warning} />
+              <span>{rep.simulador.iofWarning}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="rep-sim__cards">
+          <article class="rep-sim__card rep-sim__card--fx" aria-label={rep.simulador.fxModes.wire.title}>
+            <header class="rep-sim__card-head rep-sim__card-head--fx">
+              <div class="rep-sim__mode-switch" role="radiogroup" aria-label={rep.simulador.fxModes.groupLabel}>
+                <button type="button" role="radio" aria-checked="true" tabindex="0"
+                        data-mode="wire"
+                        data-charge-label={rep.simulador.fxModes.wire.chargeLabel}
+                        data-fixed-label={rep.simulador.fxModes.wire.fixedLabel}
+                        data-title={rep.simulador.fxModes.wire.title}
+                        class="rep-sim__mode-btn is-active">
+                  {rep.simulador.fxModes.wire.tag}
+                </button>
+                <button type="button" role="radio" aria-checked="false" tabindex="-1"
+                        data-mode="fintech"
+                        data-charge-label={rep.simulador.fxModes.fintech.chargeLabel}
+                        data-fixed-label={rep.simulador.fxModes.fintech.fixedLabel}
+                        data-title={rep.simulador.fxModes.fintech.title}
+                        class="rep-sim__mode-btn">
+                  {rep.simulador.fxModes.fintech.tag}
+                </button>
+              </div>
+              <h3 class="rep-sim__card-title" data-fx-title>{rep.simulador.fxModes.wire.title}</h3>
+              <button type="button" class="rep-sim__restore" data-restore="fx" aria-label={rep.simulador.restoreAriaLabel}>
+                {rep.simulador.restoreDefaults}
+              </button>
+            </header>
+            <ul class="rep-sim__breakdown">
+              <li class="rep-sim__bd-row">
+                <span class="rep-sim__bd-label" data-fx-charge-label>{rep.simulador.fxModes.wire.chargeLabel}</span>
+                <span class="rep-sim__bd-input">
+                  <input type="number" inputmode="decimal" step="0.1" min="0" max="10"
+                         data-field="fx-charge" value={fxPresets.wire.charge}
+                         aria-label={rep.simulador.fxModes.wire.chargeLabel} />
+                  <span aria-hidden="true">%</span>
+                </span>
+                <span class="rep-sim__bd-out" data-out="fx-charge">-</span>
+              </li>
+              <li class="rep-sim__bd-row">
+                <span class="rep-sim__bd-label">{rep.simulador.breakdown.fxIofFixed}</span>
+                <span class="rep-sim__bd-input rep-sim__bd-input--readonly" aria-hidden="true">{iofCambioFormatted}</span>
+                <span class="rep-sim__bd-out" data-out="fx-iof">-</span>
+              </li>
+              <li class="rep-sim__bd-row">
+                <span class="rep-sim__bd-label" data-fx-fixed-label>{rep.simulador.fxModes.wire.fixedLabel}</span>
+                <span class="rep-sim__bd-input">
+                  <span aria-hidden="true">$</span>
+                  <input type="number" inputmode="decimal" step="1" min="0" max="200"
+                         data-field="fx-fixed" value={fxPresets.wire.fixed}
+                         aria-label={rep.simulador.fxModes.wire.fixedLabel} />
+                </span>
+                <span class="rep-sim__bd-out" data-out="fx-fixed">-</span>
+              </li>
+            </ul>
+            <footer class="rep-sim__card-foot">
+              <span class="rep-sim__card-foot-label">{rep.simulador.breakdown.swiftNet}</span>
+              <output for="rep-sim-input" data-out="fx-net" class="rep-sim__card-foot-value" aria-live="polite">-</output>
+            </footer>
+          </article>
+
+          <article class="rep-sim__card rep-sim__card--stable" aria-label={rep.simulador.stablecoinLabel}>
+            <header class="rep-sim__card-head">
+              <span class="rep-sim__card-tag rep-sim__card-tag--accent">USDT / USDC</span>
+              <h3 class="rep-sim__card-title">{rep.simulador.stablecoinLabel}</h3>
+              <button type="button" class="rep-sim__restore" data-restore="stable" aria-label={rep.simulador.restoreAriaLabel}>
+                {rep.simulador.restoreDefaults}
+              </button>
+            </header>
+            <ul class="rep-sim__breakdown">
+              <li class="rep-sim__bd-row">
+                <span class="rep-sim__bd-label">{rep.simulador.stableFields.spreadLabel}</span>
+                <span class="rep-sim__bd-input">
+                  <input type="number" inputmode="decimal" step="0.05" min="0" max="10"
+                         data-field="stable-spread" value={stablePresets.spread}
+                         aria-label={rep.simulador.stableFields.spreadLabel} />
+                  <span aria-hidden="true">%</span>
+                </span>
+                <span class="rep-sim__bd-out" data-out="stable-spread">-</span>
+              </li>
+              <li class="rep-sim__bd-row rep-sim__breakdown-iof" data-iof-row>
+                <span class="rep-sim__bd-label">{rep.simulador.breakdown.stableIof}</span>
+                <span class="rep-sim__bd-input rep-sim__bd-input--readonly" aria-hidden="true">{iofStableFormatted}</span>
+                <span class="rep-sim__bd-out" data-out="stable-iof">-</span>
+              </li>
+              <li class="rep-sim__bd-row">
+                <span class="rep-sim__bd-label">{rep.simulador.stableFields.feeLabel}</span>
+                <span class="rep-sim__bd-input">
+                  <span aria-hidden="true">$</span>
+                  <input type="number" inputmode="decimal" step="0.5" min="0" max="50"
+                         data-field="stable-fee" value={stablePresets.fee}
+                         aria-label={rep.simulador.stableFields.feeLabel} />
+                </span>
+                <span class="rep-sim__bd-out" data-out="stable-fee">-</span>
+              </li>
+            </ul>
+            <footer class="rep-sim__card-foot">
+              <span class="rep-sim__card-foot-label">{rep.simulador.breakdown.stableNet}</span>
+              <output for="rep-sim-input" data-out="stable-net" class="rep-sim__card-foot-value rep-sim__card-foot-value--accent" aria-live="polite">-</output>
+            </footer>
+          </article>
+        </div>
+
+        <div class="rep-sim__savings" role="status">
+          <div class="rep-sim__savings-main">
+            <span class="rep-sim__savings-label">{rep.simulador.savingsLabel}</span>
+            <output data-out="savings" class="rep-sim__savings-value" aria-live="polite">-</output>
+          </div>
+          <div class="rep-sim__savings-pct">
+            <output data-out="savings-pct" aria-live="polite">-</output>
+            <span class="rep-sim__savings-pct-label">{rep.simulador.savingsPctLabel}</span>
+          </div>
+        </div>
+
+        <div class="rep-sim__timing" aria-label={rep.simulador.timingLabel}>
+          <div class="rep-sim__timing-row">
+            <span class="rep-sim__timing-name">SWIFT</span>
+            <div class="rep-sim__timing-bar rep-sim__timing-bar--swift"><span style="width:100%"></span></div>
+            <span class="rep-sim__timing-val">{rep.simulador.swiftTiming}</span>
+          </div>
+          <div class="rep-sim__timing-row">
+            <span class="rep-sim__timing-name">USDT/USDC</span>
+            <div class="rep-sim__timing-bar rep-sim__timing-bar--stable"><span style="width:2%"></span></div>
+            <span class="rep-sim__timing-val">{rep.simulador.stableTiming}</span>
+          </div>
+        </div>
+
+        <aside class="rep-sim__honesty" role="note" aria-labelledby="rep-sim-honesty-title">
+          <h3 id="rep-sim-honesty-title" class="rep-sim__honesty-title">{rep.simulador.honestyNote.title}</h3>
+          <p class="rep-sim__honesty-intro">{rep.simulador.honestyNote.intro}</p>
+          <div class="rep-sim__honesty-grid">
+            <div class="rep-sim__honesty-card">
+              <h4>{rep.simulador.honestyNote.scenarios.fintechWinsTitle}</h4>
+              <p>{rep.simulador.honestyNote.scenarios.fintechWinsBody}</p>
+            </div>
+            <div class="rep-sim__honesty-card rep-sim__honesty-card--accent">
+              <h4>{rep.simulador.honestyNote.scenarios.stableWinsAfterIofTitle}</h4>
+              <p>{rep.simulador.honestyNote.scenarios.stableWinsAfterIofBody}</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TRIBUTAÇÃO
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section" id="taxation" aria-labelledby="trib-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.tributacao.eyebrow}</p>
+        <h2 id="trib-heading" class="rep-section-title">{rep.tributacao.title}</h2>
+        <p class="rep-section-sub">{rep.tributacao.sub}</p>
+      </header>
+
+      <p class="rep-tax-discl" role="note">
+        <span aria-hidden="true" set:html={icons.info} />
+        <span>{rep.meta.disclaimerNotLegal}</span>
+      </p>
+
+      <div class="rep-tax-grid">
+        {rep.tributacao.blocks.map(b => (
+          <article class={`rep-tax-block rep-tax-block--${b.tone || "neutral"}`} id={`tax-${b.id}`}>
+            <h3 class="rep-tax-block__title">{b.title}</h3>
+            <div class="rep-tax-block__body" set:html={b.body} />
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CNPJ vs CPF
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-section--alt" id="legal-entity" aria-labelledby="vs-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.cnpjVsCpf.eyebrow}</p>
+        <h2 id="vs-heading" class="rep-section-title">{rep.cnpjVsCpf.title}</h2>
+        <p class="rep-section-sub">{rep.cnpjVsCpf.sub}</p>
+      </header>
+
+      <div class="rep-vs-wrap">
+        <table class="rep-vs-table data-table premium-table">
+          <caption class="sr-only">Comparativo de aspectos fiscais entre receber como Pessoa Física (CPF) e Pessoa Jurídica (CNPJ)</caption>
+          <thead>
+            <tr>
+              {rep.cnpjVsCpf.headers.map((h, i) => (
+                <th scope="col" class={i === 2 ? "rep-vs-table__highlight" : i === 1 ? "rep-vs-table__danger" : ""}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rep.cnpjVsCpf.rows.map(row => (
+              <tr>
+                <th scope="row">{row[0]}</th>
+                <td class="rep-vs-table__danger">{row[1]}</td>
+                <td class="rep-vs-table__highlight">{row[2]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <aside class="rep-vs-warning" role="note">
+        <div class="rep-vs-warning__icon" aria-hidden="true" set:html={icons.warning} />
+        <p set:html={rep.cnpjVsCpf.warning} />
+      </aside>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       REGULAÇÃO TIMELINE
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section" id="regulation-timeline" aria-labelledby="reg-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.regulacao.eyebrow}</p>
+        <h2 id="reg-heading" class="rep-section-title">{rep.regulacao.title}</h2>
+        <p class="rep-section-sub">{rep.regulacao.sub}</p>
+      </header>
+
+      <ol class="rep-timeline">
+        {processedTimeline.map((item, i) => (
+          <li class={`rep-timeline__item rep-timeline__item--${item.status}`} style={`--rep-stagger:${i}`}>
+            <div class="rep-timeline__marker" aria-hidden="true">
+              {item.status === "past"   && <span class="rep-timeline__icon" set:html={icons.check} />}
+              {item.status === "active" && <span class="rep-timeline__dot"></span>}
+              {item.status === "future" && <span class="rep-timeline__icon" set:html={icons.arrow} />}
+            </div>
+            <div class="rep-timeline__body">
+              <div class="rep-timeline__head">
+                <span class="rep-timeline__label">{item.label}</span>
+                <span class={`rep-timeline__status rep-timeline__status--${item.status}`}>{timelineStatusLabel[item.status]}</span>
+              </div>
+              <h3 class="rep-timeline__title">{item.title}</h3>
+              <p class="rep-timeline__text">{item.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       EXCHANGES
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-section--alt" id="exchanges" aria-labelledby="ex-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.exchanges.eyebrow}</p>
+        <h2 id="ex-heading" class="rep-section-title">{rep.exchanges.title}</h2>
+        <p class="rep-section-sub">{rep.exchanges.sub}</p>
+      </header>
+
+      <div class="rep-exchanges-grid">
+        {rep.exchanges.items.map((ex, i) => (
+          <article class="rep-exchange-card" style={`--rep-stagger:${i}`}>
+            <h3 class="rep-exchange-card__name">{ex.name}</h3>
+            <p class="rep-exchange-card__note">{ex.note}</p>
+            <a class="rep-exchange-card__link" href={ex.link}>
+              Comparar →
+            </a>
+          </article>
+        ))}
+      </div>
+
+      <div class="rep-exchanges-cta">
+        <a class="btn btn-secondary" href="/pt/exchanges/">{rep.exchanges.ctaAll}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       ERROS COMUNS
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section" id="errors" aria-labelledby="err-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.erros.eyebrow}</p>
+        <h2 id="err-heading" class="rep-section-title">{rep.erros.title}</h2>
+        <p class="rep-section-sub">{rep.erros.sub}</p>
+      </header>
+
+      <div class="rep-errors-grid">
+        {rep.erros.items.map((err, i) => (
+          <article class="rep-error-item" style={`--rep-stagger:${i}`}>
+            <div class="rep-error-item__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</div>
+            <div class="rep-error-item__body">
+              <h3 class="rep-error-item__title">{err.title}</h3>
+              <p class="rep-error-item__desc">{err.desc}</p>
+              <p class="rep-error-item__fix">
+                <span class="rep-error-item__fix-tag">Como evitar</span>
+                <span>{err.fix}</span>
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FAQ
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-section--alt" id="faq" aria-labelledby="faq-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.faq.eyebrow}</p>
+        <h2 id="faq-heading" class="rep-section-title">{rep.faq.title}</h2>
+        <p class="rep-section-sub">{rep.faq.sub}</p>
+      </header>
+
+      <nav class="rep-faq-nav" aria-label="Categorias de perguntas">
+        {rep.faq.categories.map((cat, i) => (
+          <a class={`rep-faq-nav__link ${i === 0 ? "active" : ""}`} href={`#faq-${cat.id}`}>
+            <span class="rep-faq-nav__icon" aria-hidden="true" set:html={icons[cat.icon] || icons.info} />
+            <span>{cat.title}</span>
+          </a>
+        ))}
+      </nav>
+
+      <div class="rep-faq-cats">
+        {rep.faq.categories.map(cat => (
+          <section class="rep-faq-cat" id={`faq-${cat.id}`} aria-labelledby={`faq-${cat.id}-h`}>
+            <h3 class="rep-faq-cat__title" id={`faq-${cat.id}-h`}>
+              <span class="rep-faq-cat__icon" aria-hidden="true" set:html={icons[cat.icon] || icons.info} />
+              <span>{cat.title}</span>
+            </h3>
+            <div class="faq-list">
+              {cat.questions.map(q => (
+                <details class="faq-item">
+                  <summary>{q.q}</summary>
+                  <div class="faq-answer" set:html={q.a} />
+                </details>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       FONTES
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section" id="sources" aria-labelledby="fontes-heading">
+    <div class="container">
+      <header class="rep-section-head">
+        <p class="eyebrow">{rep.fontes.eyebrow}</p>
+        <h2 id="fontes-heading" class="rep-section-title">{rep.fontes.title}</h2>
+        <p class="rep-section-sub">{rep.fontes.sub}</p>
+      </header>
+
+      <ul class="rep-fontes">
+        {rep.fontes.items.map(item => (
+          <li class="rep-fontes__item">
+            <span class="rep-fontes__label">{item.label}</span>
+            <a class="rep-fontes__source" href={item.href} target="_blank" rel="noopener noreferrer">{item.source}</a>
+          </li>
+        ))}
+      </ul>
+      <p class="rep-fontes__updated">{rep.fontes.lastUpdatedLabel} <time datetime={dateModified}>{dateModifiedDisplay}</time></p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       CTA FINAL
+  ══════════════════════════════════════════════════════════════ -->
+  <section class="rep-section rep-cta-section" id="cta" aria-labelledby="cta-heading">
+    <div class="rep-cta__glow" aria-hidden="true"></div>
+    <div class="container">
+      <p class="eyebrow">{rep.cta.eyebrow}</p>
+      <h2 id="cta-heading" class="rep-cta__title">{rep.cta.title}</h2>
+      <p class="rep-cta__sub">{rep.cta.sub}</p>
+      <div class="rep-cta__btns">
+        <a class="rep-cta-btn rep-cta-btn--primary" href={rep.cta.primary.href}>
+          {rep.cta.primary.label}
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M7 7h10v10"/></svg>
+        </a>
+        <a class="rep-cta-btn rep-cta-btn--secondary" href={rep.cta.secondary.href}>{rep.cta.secondary.label}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DISCLAIMER
+  ══════════════════════════════════════════════════════════════ -->
+  <aside class="rep-disclaimer-band" role="note">
+    <div class="container">
+      <p set:html={rep.disclaimer} />
+    </div>
+  </aside>
+
+</Base>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIMULADOR · VANILLA JS
+══════════════════════════════════════════════════════════════ -->
+<script is:inline>
+  (function () {
+    const root = document.getElementById("rep-sim");
+    if (!root) return;
+
+    const input    = document.getElementById("rep-sim-input");
+    const toggle   = document.getElementById("rep-sim-iof-toggle");
+    const presets  = root.querySelectorAll("[data-preset]");
+    const iofRow   = root.querySelector("[data-iof-row]");
+    const ptaxInput = document.getElementById("rep-sim-ptax-input");
+    const ptaxField = document.getElementById("rep-sim-ptax-field");
+
+    const PTAX_FALLBACK = 5.10;
+    const lang = root.dataset.locale || document.documentElement.lang || "pt-BR";
+
+    /* helpers */
+    const num   = (v, fb) => { const n = parseFloat(v); return Number.isFinite(n) ? n : fb; };
+    const clamp = (n, lo, hi) => Math.min(hi, Math.max(lo, n));
+    const clone = (o) => JSON.parse(JSON.stringify(o));
+
+    /* state (presets in % units; JS converts at calc time) */
+    const defaults = {
+      fxMode: root.dataset.fxMode === "fintech" ? "fintech" : "wire",
+      fx: {
+        wire:    { charge: num(root.dataset.wireCharge,    2.5), fixed: num(root.dataset.wireFixed,    35) },
+        fintech: { charge: num(root.dataset.fintechCharge, 1.0), fixed: num(root.dataset.fintechFixed,  0) },
+      },
+      stable: { spread: num(root.dataset.stableSpread, 0.1), fee: num(root.dataset.stableFee, 1.0) },
+      iofCambio:         num(root.dataset.iofCambio,         0.38),
+      iofStableProposed: num(root.dataset.iofStableProposed, 3.5),
+    };
+    const state = clone(defaults);
+    state.ptax = num(root.dataset.ptax, PTAX_FALLBACK);
+    state.iofStableOn = false;
+
+    let userEditedPtax = false;
+
+    /* element caches */
+    const outs = {};
+    root.querySelectorAll("[data-out]").forEach(el => { outs[el.dataset.out] = el; });
+    const inputs = {};
+    root.querySelectorAll("[data-field]").forEach(el => { inputs[el.dataset.field] = el; });
+
+    const modeBtns      = root.querySelectorAll("[data-mode]");
+    const fxTitle       = root.querySelector("[data-fx-title]");
+    const fxChargeLabel = root.querySelector("[data-fx-charge-label]");
+    const fxFixedLabel  = root.querySelector("[data-fx-fixed-label]");
+
+    /* formatters */
+    const fmtBRL = (n) => new Intl.NumberFormat(lang, {
+      style: "currency", currency: "BRL", maximumFractionDigits: 2
+    }).format(n);
+    const fmtBRLneg = (n) => "−" + fmtBRL(Math.abs(n));
+    const fmtPct = (n) => {
+      const val = Math.abs(n).toLocaleString(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+      return (n >= 0 ? "+" : "−") + val + "%";
+    };
+
+    /* a11y: focus input when clicking anywhere on the wrapper */
+    if (ptaxField && ptaxInput) {
+      ptaxField.addEventListener("click", () => ptaxInput.focus());
+    }
+
+    /* Same affordance for editable breakdown wrappers */
+    root.querySelectorAll(".rep-sim__bd-input:not(.rep-sim__bd-input--readonly)").forEach(wrap => {
+      wrap.addEventListener("click", (e) => {
+        if (e.target.tagName === "INPUT") return;
+        const inp = wrap.querySelector("input");
+        if (inp) { inp.focus(); inp.select(); }
+      });
+    });
+
+    /* live PTAX fetch */
+    async function fetchLivePtax() {
+      if (userEditedPtax) return;
+      try {
+        const today = new Date();
+        const start = new Date(today);
+        start.setDate(start.getDate() - 7);
+        const f = (d) =>
+          `${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}-${d.getFullYear()}`;
+        const url =
+          `https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoDolarPeriodo(dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)` +
+          `?@dataInicial='${f(start)}'&@dataFinalCotacao='${f(today)}'&$top=1&$orderby=dataHoraCotacao%20desc&$format=json&$select=cotacaoVenda,dataHoraCotacao`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data.value || !data.value[0]) throw new Error("sem dados");
+        if (userEditedPtax) return;
+        state.ptax = data.value[0].cotacaoVenda;
+        ptaxInput.value = state.ptax.toFixed(2);
+        calc();
+      } catch (e) {
+        console.warn("PTAX live indisponível, usando fallback.", e);
+        if (!userEditedPtax) {
+          state.ptax = PTAX_FALLBACK;
+          ptaxInput.value = PTAX_FALLBACK.toFixed(2);
+          calc();
+        }
+      }
+    }
+
+    ptaxInput.addEventListener("input", () => {
+      const v = parseFloat(ptaxInput.value);
+      if (isNaN(v) || v <= 0) return;
+      userEditedPtax = true;
+      state.ptax = v;
+      calc();
+    });
+
+    /* mode switch (radiogroup) */
+    function setMode(mode, focusActive) {
+      if (mode !== "wire" && mode !== "fintech") return;
+      state.fxMode = mode;
+      modeBtns.forEach(btn => {
+        const active = btn.dataset.mode === mode;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-checked", active ? "true" : "false");
+        btn.setAttribute("tabindex", active ? "0" : "-1");
+        if (active) {
+          if (fxTitle)       fxTitle.textContent       = btn.dataset.title;
+          if (fxChargeLabel) fxChargeLabel.textContent = btn.dataset.chargeLabel;
+          if (fxFixedLabel)  fxFixedLabel.textContent  = btn.dataset.fixedLabel;
+          if (inputs["fx-charge"]) inputs["fx-charge"].setAttribute("aria-label", btn.dataset.chargeLabel);
+          if (inputs["fx-fixed"])  inputs["fx-fixed"].setAttribute("aria-label", btn.dataset.fixedLabel);
+          if (focusActive) btn.focus();
+        }
+      });
+      if (inputs["fx-charge"]) inputs["fx-charge"].value = state.fx[mode].charge;
+      if (inputs["fx-fixed"])  inputs["fx-fixed"].value  = state.fx[mode].fixed;
+      calc();
+    }
+
+    modeBtns.forEach(btn => {
+      btn.addEventListener("click", () => setMode(btn.dataset.mode));
+      btn.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+          e.preventDefault();
+          setMode("wire", true);
+        } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          e.preventDefault();
+          setMode("fintech", true);
+        }
+      });
+    });
+
+    /* editable breakdown inputs */
+    function applyField(field, raw) {
+      const cur = (() => {
+        if (field === "fx-charge")     return state.fx[state.fxMode].charge;
+        if (field === "fx-fixed")      return state.fx[state.fxMode].fixed;
+        if (field === "stable-spread") return state.stable.spread;
+        if (field === "stable-fee")    return state.stable.fee;
+        return 0;
+      })();
+      let v = parseFloat(raw);
+      if (!Number.isFinite(v)) v = cur;
+      switch (field) {
+        case "fx-charge":     state.fx[state.fxMode].charge = clamp(v, 0, 10);  break;
+        case "fx-fixed":      state.fx[state.fxMode].fixed  = clamp(v, 0, 200); break;
+        case "stable-spread": state.stable.spread           = clamp(v, 0, 10);  break;
+        case "stable-fee":    state.stable.fee              = clamp(v, 0, 50);  break;
+      }
+    }
+
+    Object.entries(inputs).forEach(([field, el]) => {
+      el.addEventListener("input", () => { applyField(field, el.value); calc(); });
+      el.addEventListener("blur", () => {
+        if (field === "fx-charge")     el.value = state.fx[state.fxMode].charge;
+        if (field === "fx-fixed")      el.value = state.fx[state.fxMode].fixed;
+        if (field === "stable-spread") el.value = state.stable.spread;
+        if (field === "stable-fee")    el.value = state.stable.fee;
+      });
+    });
+
+    /* restore defaults per card */
+    root.querySelectorAll("[data-restore]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const scope = btn.dataset.restore;
+        if (scope === "fx") {
+          state.fx = clone(defaults.fx);
+          if (inputs["fx-charge"]) inputs["fx-charge"].value = state.fx[state.fxMode].charge;
+          if (inputs["fx-fixed"])  inputs["fx-fixed"].value  = state.fx[state.fxMode].fixed;
+        } else if (scope === "stable") {
+          state.stable = clone(defaults.stable);
+          if (inputs["stable-spread"]) inputs["stable-spread"].value = state.stable.spread;
+          if (inputs["stable-fee"])    inputs["stable-fee"].value    = state.stable.fee;
+        }
+        calc();
+      });
+    });
+
+    /* IOF stable toggle */
+    toggle.addEventListener("change", () => {
+      state.iofStableOn = toggle.checked;
+      calc();
+    });
+
+    /* calculation */
+    function calc() {
+      const usd = Math.max(0, num(input.value, 0));
+      const m = state.fx[state.fxMode];
+
+      const fxChargeUsd = usd * (m.charge / 100);
+      const fxIofUsd    = usd * (state.iofCambio / 100);
+      const fxFixedUsd  = m.fixed;
+      const fxNetUsd    = Math.max(0, usd - fxChargeUsd - fxIofUsd - fxFixedUsd);
+
+      const stSpreadUsd = usd * (state.stable.spread / 100);
+      const stIofUsd    = state.iofStableOn ? usd * (state.iofStableProposed / 100) : 0;
+      const stFeeUsd    = state.stable.fee;
+      const stNetUsd    = Math.max(0, usd - stSpreadUsd - stIofUsd - stFeeUsd);
+
+      const fxNetBrl  = fxNetUsd * state.ptax;
+      const stNetBrl  = stNetUsd * state.ptax;
+      const savingsBrl = stNetBrl - fxNetBrl;
+      const usdBrl     = usd * state.ptax;
+      const savingsPct = usdBrl > 0 ? (savingsBrl / usdBrl) * 100 : 0;
+
+      if (outs["fx-charge"]) outs["fx-charge"].textContent = fmtBRLneg(fxChargeUsd * state.ptax);
+      if (outs["fx-iof"])    outs["fx-iof"].textContent    = fmtBRLneg(fxIofUsd    * state.ptax);
+      if (outs["fx-fixed"])  outs["fx-fixed"].textContent  = fmtBRLneg(fxFixedUsd  * state.ptax);
+      if (outs["fx-net"])    outs["fx-net"].textContent    = fmtBRL(fxNetBrl);
+
+      if (outs["stable-spread"]) outs["stable-spread"].textContent = fmtBRLneg(stSpreadUsd * state.ptax);
+      if (outs["stable-iof"])    outs["stable-iof"].textContent    = state.iofStableOn ? fmtBRLneg(stIofUsd * state.ptax) : "-";
+      if (outs["stable-fee"])    outs["stable-fee"].textContent    = fmtBRLneg(stFeeUsd * state.ptax);
+      if (outs["stable-net"])    outs["stable-net"].textContent    = fmtBRL(stNetBrl);
+
+      if (outs["savings"])     outs["savings"].textContent     = (savingsBrl >= 0 ? "+ " : "− ") + fmtBRL(Math.abs(savingsBrl));
+      if (outs["savings-pct"]) outs["savings-pct"].textContent = fmtPct(savingsPct);
+
+      if (iofRow) iofRow.style.opacity = state.iofStableOn ? "1" : "0.4";
+
+      const savingsEl = outs["savings"];
+      if (savingsEl) {
+        savingsEl.classList.remove("rep-sim__savings-value--pulse");
+        void savingsEl.offsetWidth;
+        savingsEl.classList.add("rep-sim__savings-value--pulse");
+      }
+    }
+
+    input.addEventListener("input", calc);
+    presets.forEach(btn => btn.addEventListener("click", () => {
+      input.value = btn.dataset.preset;
+      presets.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      calc();
+    }));
+
+    calc();
+    fetchLivePtax();
+  })();
+
+  /* Fade-up on intersection */
+  (function () {
+    const els = document.querySelectorAll(".fade-up, [style*='--rep-stagger']");
+    if (!("IntersectionObserver" in window) || !els.length) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          io.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: "0px 0px -80px 0px", threshold: 0.1 });
+    els.forEach(el => io.observe(el));
+  })();
+
+  /* FAQ nav highlight on scroll */
+  (function () {
+    const links = document.querySelectorAll(".rep-faq-nav__link");
+    if (!links.length) return;
+    const sections = Array.from(links).map(l => document.querySelector(l.getAttribute("href")));
+    function update() {
+      const threshold = 200; // Distância do topo da tela para ativar
+      let idx = 0;
+      sections.forEach((s, i) => {
+        if (!s) return;
+        const rect = s.getBoundingClientRect();
+        // Se o topo da seção já subiu o suficiente para cruzar o threshold
+        if (rect.top <= threshold) idx = i;
+      });
+      links.forEach((l, i) => l.classList.toggle("active", i === idx));
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+  })();
+</script>
