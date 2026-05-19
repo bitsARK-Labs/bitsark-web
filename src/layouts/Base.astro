@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Logo         from '@components/Logo.astro';
 import DolarMapLogo from '@components/DolarMapLogo.astro';
+import MobileMenu   from '@components/MobileMenu.astro';
 import { ClientRouter } from 'astro:transitions';
 import { useTranslations } from '../i18n';
 
@@ -355,13 +356,20 @@ const mobileLinks = isDolarMap ? [
         height: 11px;
         width: auto;
       }
+      .dm-identity-nav__endorser-full,
+      .dm-identity-nav__endorser-compact {
+        display: inline-flex;
+      }
+      .dm-identity-nav__endorser-compact { display: none; }
 
-      /* Mobile <= 540px - drop the endorser and keep just the wordmark */
+      /* Mobile <= 540px - swap to compact bitsARK (sem Labs, bracket curto) */
       @media (max-width: 540px) {
-        .dm-identity-nav__by,
-        .dm-identity-nav__endorser {
+        .dm-identity-nav__by::before,
+        .dm-identity-nav__by::after {
           display: none;
         }
+        .dm-identity-nav__endorser-full { display: none; }
+        .dm-identity-nav__endorser-compact { display: inline-flex; }
       }
 
       /* ── Sub-brand (Exchanges / Stablecoins) ──────────── */
@@ -403,7 +411,6 @@ const mobileLinks = isDolarMap ? [
          Aqui apenas o override específico do layout.
       ─────────────────────────────────────────────────────── */
       .nav__lang-picker {
-        display: flex;
         align-items: center;
         gap: 0.25rem;
         color: var(--color-text-faint);
@@ -440,6 +447,35 @@ const mobileLinks = isDolarMap ? [
         color: var(--color-primary);
         background: var(--color-primary-highlight);
       }
+
+      /* ── Footer legal bar: layout horizontal com lang picker ── */
+      .footer__legal {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .footer__legal-text {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .nav__lang-picker--footer {
+        flex-shrink: 0;
+        margin-right: 0;
+      }
+
+      /* Mobile: empilha o picker abaixo do texto legal */
+      @media (max-width: 520px) {
+        .footer__legal {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+      }
     </style>
 
     <!--
@@ -472,7 +508,10 @@ const mobileLinks = isDolarMap ? [
               </a>
               <span class="dm-identity-nav__by">by</span>
               <a href={l('/')} class="dm-identity-nav__link" aria-label={t('nav.ariaHome')}>
-                <div class="dm-identity-nav__endorser"><Logo /></div>
+                <div class="dm-identity-nav__endorser">
+                  <span class="dm-identity-nav__endorser-full"><Logo /></span>
+                  <span class="dm-identity-nav__endorser-compact"><Logo compact /></span>
+                </div>
               </a>
             </div>
 
@@ -488,7 +527,10 @@ const mobileLinks = isDolarMap ? [
               </a>
               <span class="dm-identity-nav__by">by</span>
               <a href={l('/')} class="dm-identity-nav__link" aria-label={t('nav.ariaHome')}>
-                <div class="dm-identity-nav__endorser"><Logo /></div>
+                <div class="dm-identity-nav__endorser">
+                  <span class="dm-identity-nav__endorser-full"><Logo /></span>
+                  <span class="dm-identity-nav__endorser-compact"><Logo compact /></span>
+                </div>
               </a>
             </div>
 
@@ -504,7 +546,10 @@ const mobileLinks = isDolarMap ? [
               </a>
               <span class="dm-identity-nav__by">by</span>
               <a href={l('/')} class="dm-identity-nav__link" aria-label={t('nav.ariaHome')}>
-                <div class="dm-identity-nav__endorser"><Logo /></div>
+                <div class="dm-identity-nav__endorser">
+                  <span class="dm-identity-nav__endorser-full"><Logo /></span>
+                  <span class="dm-identity-nav__endorser-compact"><Logo compact /></span>
+                </div>
               </a>
             </div>
 
@@ -600,7 +645,7 @@ const mobileLinks = isDolarMap ? [
             data-label-open={t('nav.hamburger.open')}
             data-label-close={t('nav.hamburger.close')}
             aria-expanded="false"
-            aria-controls="mobile-menu"
+            aria-controls="bitsark-mobile-menu"
             type="button"
           >
             <span aria-hidden="true"></span>
@@ -609,52 +654,11 @@ const mobileLinks = isDolarMap ? [
           </button>
 
         </div>
-
-        <!-- ── MOBILE MENU ──────────────────────────────────── -->
-        <div class="mobile-menu" id="mobile-menu" aria-label="Mobile menu">
-          <div class="mobile-menu__links">
-
-            <!-- Lang Toggle Mobile -->
-            <div class="nav__lang-picker nav__lang-picker--mobile"
-                 aria-label={t('nav.langPicker.ariaLabel')}>
-              {languages.map(langItem => (
-                <a
-                  href={langHrefs[langItem.code]}
-                  class:list={[
-                    'nav__lang-link',
-                    { active: langItem.code === normalizedLang },
-                  ]}
-                  aria-label={`Switch to ${langItem.label}`}
-                >
-                  {langItem.flag} {langItem.label}
-                </a>
-              ))}
-            </div>
-
-            {mobileLinks.map((link, i) => (
-              <a
-                href={link.href}
-                class:list={[
-                  'mobile-menu__link',
-                  {
-                    'mobile-menu__link--cta':
-                      cta &&
-                      i === mobileLinks.length - 1 &&
-                      link.href === cta.href,
-                  },
-                ]}
-                {...('external' in link && link.external
-                  ? { target: '_blank', rel: 'noopener noreferrer' }
-                  : {})}
-              >
-                {link.label}
-              </a>
-            ))}
-          </div>
-        </div>
-
       </div>
     </nav>
+
+    <!-- ── MOBILE MENU (full-screen, isolado em componente) ── -->
+    <MobileMenu lang={normalizedLang} path={path} alternates={alternates} />
 
     <!-- ── MAIN ──────────────────────────────────────────── -->
     <main id="main-content" tabindex="-1">
@@ -735,8 +739,33 @@ const mobileLinks = isDolarMap ? [
 
         <!-- Legal bar -->
         <div class="footer__legal">
-          <p>© {new Date().getFullYear()} bitsARK Labs · Tecnologia Atual Serviços LTDA · <span class="footer__cnpj">CNPJ 51.334.748/0001-61</span></p>
-          <p>{t('footer.legal')}</p>
+          <div class="footer__legal-text">
+            <p>© {new Date().getFullYear()} bitsARK Labs · Tecnologia Atual Serviços LTDA · <span class="footer__cnpj">CNPJ 51.334.748/0001-61</span></p>
+            <p>{t('footer.legal')}</p>
+          </div>
+
+          <div class="nav__lang-picker nav__lang-picker--footer"
+               aria-label={t('nav.langPicker.ariaLabel')}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+            {languages.map(langItem => (
+              <a
+                href={langHrefs[langItem.code]}
+                class:list={[
+                  'nav__lang-link',
+                  { active: langItem.code === normalizedLang },
+                ]}
+                aria-label={`Switch to ${langItem.label}`}
+              >
+                {langItem.label}
+              </a>
+            ))}
+          </div>
         </div>
 
       </div>
@@ -744,50 +773,11 @@ const mobileLinks = isDolarMap ? [
 
     <!-- ── SCRIPT ─────────────────────────────────────────── -->
     <script>
-      const hamburger  = document.getElementById('hamburger')   as HTMLButtonElement | null;
-      const mobileMenu = document.getElementById('mobile-menu') as HTMLElement | null;
-
-      // Strings i18n passadas via data attributes - sem dependency em runtime Astro.
-      const labelOpen  = hamburger?.dataset.labelOpen  ?? 'Open menu';
-      const labelClose = hamburger?.dataset.labelClose ?? 'Close menu';
-
-      function openMenu() {
-        mobileMenu?.classList.add('open');
-        hamburger?.setAttribute('aria-expanded', 'true');
-        hamburger?.setAttribute('aria-label', labelClose);
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeMenu() {
-        mobileMenu?.classList.remove('open');
-        hamburger?.setAttribute('aria-expanded', 'false');
-        hamburger?.setAttribute('aria-label', labelOpen);
-        document.body.style.overflow = '';
-      }
-
-      hamburger?.addEventListener('click', () => {
-        mobileMenu?.classList.contains('open') ? closeMenu() : openMenu();
-      });
-
-      document.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Escape' && mobileMenu?.classList.contains('open')) {
-          closeMenu();
-          hamburger?.focus();
-        }
-      });
-
-      document.addEventListener('click', (e: MouseEvent) => {
-        const nav = document.querySelector('.nav');
-        if (nav && !nav.contains(e.target as Node) && mobileMenu?.classList.contains('open')) {
-          closeMenu();
-        }
-      });
-
       // Active link highlight
       const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
       const hubPaths = ['/dolarmap', '/exchanges', '/stablecoins-brasil', '/pt/dolarmap', '/pt/exchanges', '/pt/stablecoins-brasil'];
 
-      document.querySelectorAll('.nav__link, .mobile-menu__link').forEach((link) => {
+      document.querySelectorAll('.nav__link').forEach((link) => {
         const href = link.getAttribute('href')?.replace(/\/$/, '') || '';
         if (!href || href.includes('#')) return;
 

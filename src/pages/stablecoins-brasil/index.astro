@@ -697,12 +697,13 @@ const alternates = [
   </section>
 
   <script
+    id="chartjs-script"
     src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
     defer
   ></script>
 
   <script define:vars={{ chartMarket, chartBrazil }}>
-    document.addEventListener("DOMContentLoaded", () => {
+    function initStablecoinCharts() {
       const style = getComputedStyle(document.documentElement);
 
       const C = {
@@ -851,7 +852,15 @@ const alternates = [
         },
       });
       markLoaded("chart-brazil");
-    });
+    }
+
+    if (window.Chart) {
+      initStablecoinCharts();
+    } else {
+      document
+        .getElementById("chartjs-script")
+        ?.addEventListener("load", initStablecoinCharts, { once: true });
+    }
   </script>
 
 </Base>

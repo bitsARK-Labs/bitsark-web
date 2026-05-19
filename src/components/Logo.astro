@@ -1,12 +1,17 @@
 ---
+interface Props {
+  compact?: boolean;
+}
+const { compact = false } = Astro.props;
 const logoUid = `bitsark-logo-${Math.random().toString(36).slice(2, 10)}`;
 const frameClipId = `${logoUid}-frame`;
 const bracketShapeId = `${logoUid}-bracket`;
+const bracketShortShapeId = `${logoUid}-bracket-short`;
 const bracketRevealMaskId = `${logoUid}-bracket-reveal`;
 const bracketRevealGradientId = `${logoUid}-bracket-reveal-gradient`;
 const bracketSheenGradientId = `${logoUid}-bracket-sheen-gradient`;
 ---
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="202" fill="none" viewBox="0 0 800 202" class="logo-svg" aria-label="bitsARK Labs" role="img">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="202" fill="none" viewBox="0 0 800 202" class:list={["logo-svg", { "logo-svg--compact": compact }]} aria-label="bitsARK Labs" role="img">
   <g clip-path={`url(#${frameClipId})`}>
     <!-- bits -->
     <path class="logo-bits" d="M197.564 109.822V90.227h62.703V80.35H213.24V64.675h-15.676V45.237h15.676V31.443h66.465v17.556h-62.703v11.914h47.027V76.59h15.676v17.557h-15.676v15.676zM129.742 51.037V31.443h15.676V.09h19.438v31.352h18.571v19.594h-18.571v39.19h18.571v19.595h-22.333V94.146h-15.676V51.037zM96.253 109.822v-78.38h19.438v78.38zm0-90.136V.09h19.438v19.595zM0 94.146V.09h19.438v31.352h47.028v15.675H82.14v47.028H66.466v15.676h-50.79V94.146zm19.438-3.92h43.265V51.038H19.438z"/>
@@ -24,6 +29,8 @@ const bracketSheenGradientId = `${logoUid}-bracket-sheen-gradient`;
       mask={`url(#${bracketRevealMaskId})`}
       aria-hidden="true"
     />
+    <!-- Bracket compacto: somente bitsARK (escala x = 595/799.845) -->
+    <path id={bracketShortShapeId} class="logo-bracket logo-bracket--short" d="M595 147.626q0 16.575-7.253 25.935-7.108 9.165-18.422 9.165H330.358q-6.237 0-10.299 2.34-4.207 2.145-6.237 6.435t-2.031 10.53H298.05q0-6.24-2.031-10.53t-6.093-6.435q-4.207-2.34-10.299-2.34H25.821q-11.46 0-18.567-9.165Q0 164.201 0 147.626v-11.115h13.781q-.435 14.235 2.611 20.475 3.047 6.045 10.299 6.045h254.099q10.589 0 16.534 6.63 5.947 6.435 7.398 15.6h.29q1.306-9.165 7.398-15.6 6.093-6.63 16.829-6.63h239.071q7.253 0 10.299-6.045 3.192-6.24 2.901-20.475h13.491z"/>
   </g>
   <defs>
     <linearGradient id={bracketSheenGradientId} x1="0" y1="169" x2="800" y2="169" gradientUnits="userSpaceOnUse">
@@ -57,17 +64,39 @@ const bracketSheenGradientId = `${logoUid}-bracket-sheen-gradient`;
     pointer-events: none;
   }
 
+  /* Compact: encurta o canvas para conter apenas bitsARK (x=595 da viewBox de 800).
+     A height efetiva é definida pelo contexto (30px padrão, 11px no endorser);
+     aspect-ratio reduz a width derivada de ~3.96:1 (800/202) para ~2.95:1 (595/202). */
+  .logo-svg--compact {
+    width: auto;
+    aspect-ratio: 595 / 202;
+    overflow: hidden;
+  }
+
   .logo-bits { fill: var(--logo-bits-color); }
   .logo-ark  { fill: var(--logo-ark-color); }
 
 
   .logo-labs { fill: var(--logo-labs-color); }
 
+  .logo-svg--compact .logo-labs { display: none; }
+
   .logo-bracket--base {
     fill: var(--logo-bracket-color);
     opacity: var(--logo-bracket-opacity);
     transition: opacity var(--logo-bracket-fade-duration) var(--logo-bracket-fade-ease);
   }
+
+  .logo-bracket--short {
+    fill: var(--logo-bracket-color);
+    opacity: var(--logo-bracket-opacity);
+    display: none;
+  }
+
+  .logo-svg--compact .logo-bracket--base,
+  .logo-svg--compact .logo-bracket--reveal { display: none; }
+
+  .logo-svg--compact .logo-bracket--short { display: block; }
 
   .logo-bracket--reveal {
     opacity: 0;

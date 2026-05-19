@@ -42,9 +42,11 @@ export const onRequestPost = async ({ request, env }) => {
       });
     }
 
+    const corsHeaders = { 'Access-Control-Allow-Origin': origin };
+
     // 2. Validação básica
     if (!type || !message || message.length < 5) {
-      return new Response('Invalid data', { status: 400 });
+      return new Response('Invalid data', { status: 400, headers: corsHeaders });
     }
 
     // 3. Rate Limit (1 req/min por IP) usando KV
@@ -52,7 +54,7 @@ export const onRequestPost = async ({ request, env }) => {
     if (env.RATE_LIMIT_KV) {
       const lastReq = await env.RATE_LIMIT_KV.get(ip);
       if (lastReq) {
-        return new Response('Too many requests', { status: 429 });
+        return new Response('Too many requests', { status: 429, headers: corsHeaders });
       }
       await env.RATE_LIMIT_KV.put(ip, '1', { expirationTtl: 60 });
     }
@@ -99,7 +101,7 @@ export const onRequestPost = async ({ request, env }) => {
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://bitsark.com' }
+      headers: { 'Content-Type': 'application/json', ...corsHeaders }
     });
   } catch (err) {
     return new Response('Internal Error', { status: 500 });

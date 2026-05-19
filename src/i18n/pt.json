@@ -216,6 +216,32 @@
     "hamburger": {
       "open": "Abrir menu",
       "close": "Fechar menu"
+    },
+    "menu": {
+      "srTitle": "Navegação do site",
+      "close": "Fechar menu",
+      "onThisPage": "Nesta página",
+      "solutions": "Soluções",
+      "company": "Empresa",
+      "about": "Sobre a bitsARK",
+      "contact": "Contato",
+      "github": "GitHub",
+      "disclaimer": "Não é aconselhamento financeiro.",
+      "tag": {
+        "dolarmap": "A melhor cotação BRL/USD",
+        "exchanges": "24 corretoras no Brasil",
+        "stablecoins": "Mercado, dados e regulação"
+      },
+      "sub": {
+        "playstore": "Baixar app Android",
+        "api": "Exchanges API",
+        "decripto": "DeCripto (conformidade fiscal)",
+        "receiverPj": "Receber do exterior (PJ)"
+      },
+      "cta": {
+        "label": "Download DolarMap",
+        "sub": "A melhor cotação BRL/USD"
+      }
     }
   },
   "footer": {
@@ -226,7 +252,7 @@
     "intelligence": "Inteligência",
     "exchanges": "Corretoras no Brasil",
     "stablecoins": "Stablecoins no Brasil",
-    "stablecoinsPj": "Receber exterior (PJ)",
+    "stablecoinsPj": "Receber USD do exterior",
     "decripto": "DeCripto (Conformidade)",
     "company": "Empresa",
     "about": "Sobre a bitsARK",

@@ -18,6 +18,7 @@
   "theme_color": "#0f1012",
   "background_color": "#0f1012",
   "display": "standalone",
+  "orientation": "any",
   "start_url": "/",
   "scope": "/",
   "id": "/",

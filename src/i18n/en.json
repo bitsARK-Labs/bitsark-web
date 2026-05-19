@@ -216,6 +216,32 @@
     "hamburger": {
       "open": "Open menu",
       "close": "Close menu"
+    },
+    "menu": {
+      "srTitle": "Site navigation",
+      "close": "Close menu",
+      "onThisPage": "On this page",
+      "solutions": "Solutions",
+      "company": "Company",
+      "about": "About bitsARK",
+      "contact": "Contact",
+      "github": "GitHub",
+      "disclaimer": "Not financial advice.",
+      "tag": {
+        "dolarmap": "Smart P2P FX",
+        "exchanges": "24 exchanges in Brazil",
+        "stablecoins": "Market, data, regulation"
+      },
+      "sub": {
+        "playstore": "Download Android app",
+        "api": "Exchanges API",
+        "decripto": "DeCripto (tax compliance)",
+        "receiverPj": "Receive from abroad (PJ)"
+      },
+      "cta": {
+        "label": "DolarMap on Google Play",
+        "sub": "Real-time BRL/USD alerts"
+      }
     }
   },
   "footer": {

@@ -115,7 +115,7 @@ Runtime secrets used in production (configured in Cloudflare Pages → Functions
 ```
 bitsark-web/
 ├── src/
-│   ├── components/        Astro components (Logo, ExchangeMarquee, ...)
+│   ├── components/        Astro components (Logos, MobileMenu, ExchangeMarquee)
 │   ├── data/              Static seed data (e.g. exchanges.js fallback)
 │   ├── i18n/              EN + PT-BR translations + helpers
 │   ├── layouts/           Base layout (head, nav, footer, schema.org)

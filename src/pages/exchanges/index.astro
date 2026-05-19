@@ -671,6 +671,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
   const feedbackHp = document.getElementById('feedback-hp') as HTMLInputElement;
 
   let modalOpenedAt = 0;
+  let selectedType = '';
   let activeFilter = 'all';
   let searchTerm   = '';
   let sortCol      = '';
@@ -867,6 +868,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     if (show) modalOpenedAt = Date.now();
 
     if (!show) {
+      selectedType = '';
       if (feedbackTextarea) feedbackTextarea.value = '';
       if (feedbackEmail) feedbackEmail.value = '';
       if (feedbackStatus) feedbackStatus.setAttribute('hidden', '');
@@ -885,6 +887,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
   feedbackTypeBtns.forEach(btn => btn.addEventListener('click', () => {
     feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
+    selectedType = (btn as HTMLButtonElement).dataset.type ?? '';
     if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
   }));
 

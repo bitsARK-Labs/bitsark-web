@@ -1,0 +1,1127 @@
+---
+import { useTranslations } from '../i18n';
+
+export interface Props {
+  lang:        'en' | 'pt-BR';
+  path:        string;
+  alternates?: Array<{ hreflang: string; href: string }>;
+}
+
+const { lang, path, alternates = [] } = Astro.props;
+const t = useTranslations(lang);
+
+
+// ── Helpers locais (mirror Base.astro:64-100) ──────────────
+const toRelative = (url?: string): string | undefined => {
+  if (!url) return undefined;
+  try {
+    const pathname = new URL(url).pathname;
+    return pathname.endsWith('/') ? pathname : `${pathname}/`;
+  } catch {
+    return url;
+  }
+};
+
+const l = (link: string): string => {
+  if (link.startsWith('http') || link.startsWith('#')) return link;
+  const translated = [
+    '/', '/about', '/exchanges', '/exchanges/decripto',
+    '/terms', '/dolarmap', '/stablecoins-brasil',
+    '/dolarmap/privacy', '/dolarmap/terms', '/dolarmap/support',
+    '/stablecoins-brasil/receber-exterior-pj', '/exchanges/api',
+  ];
+  const hashIndex = link.indexOf('#');
+  const cleanPath = (hashIndex >= 0 ? link.slice(0, hashIndex) : link)
+    .replace(/\/$/, '') || '/';
+  const fragment = hashIndex >= 0 ? link.slice(hashIndex) : '';
+  if (lang === 'pt-BR' && translated.includes(cleanPath)) {
+    const ptPath = cleanPath === '/' ? '/pt/' : `/pt${cleanPath}/`;
+    return `${ptPath}${fragment}`;
+  }
+  return link;
+};
+
+const langHrefs: Record<string, string> = {
+  'en':    toRelative(alternates.find(a => a.hreflang === 'en' || a.hreflang === 'x-default')?.href) ?? '/',
+  'pt-BR': toRelative(alternates.find(a => a.hreflang.startsWith('pt'))?.href) ?? '/pt/',
+};
+
+const languages = [
+  { code: 'pt-BR', label: 'PT', flag: '🇧🇷' },
+  { code: 'en',    label: 'EN', flag: '🇺🇸' },
+];
+
+
+// ── Detecção de área (mirror Base.astro:54-57) ─────────────
+const isDolarMap    = path.startsWith('/dolarmap')           || path.startsWith('/pt/dolarmap');
+const isExchanges   = path.startsWith('/exchanges')          || path.startsWith('/pt/exchanges');
+const isStablecoins = path.startsWith('/stablecoins-brasil') || path.startsWith('/pt/stablecoins-brasil');
+
+
+// ── "Nesta página" — âncoras contextuais ───────────────────
+type Anchor = { label: string; href: string };
+const contextualAnchors: Anchor[] = isDolarMap ? [
+  { label: t('nav.dolarmap.buy'),       href: l('/dolarmap#buy')        },
+  { label: t('nav.dolarmap.sell'),      href: l('/dolarmap#sell')       },
+  { label: t('nav.dolarmap.arbitrage'), href: l('/dolarmap#arbitragem') },
+  { label: t('nav.dolarmap.notify'),    href: l('/dolarmap#alertas')    },
+] : isExchanges ? [
+  { label: t('nav.exchanges.list'),     href: l('/exchanges')           },
+  { label: t('nav.exchanges.decripto'), href: l('/exchanges/decripto')  },
+  { label: t('nav.exchanges.api'),      href: l('/exchanges/api')       },
+] : isStablecoins ? [
+  { label: t('nav.stablecoins.size'),       href: l('/stablecoins-brasil#data')                 },
+  { label: t('nav.stablecoins.receiverPj'), href: l('/stablecoins-brasil/receber-exterior-pj') },
+  { label: t('nav.stablecoins.exchanges'),  href: l('/exchanges')                              },
+] : [];
+
+const showContextual = contextualAnchors.length > 0;
+
+// Numeração e --delay das seções
+const num = (i: number) => String(i + 1).padStart(2, '0');
+const ctxNum    = showContextual ? num(0) : null;
+const solNum    = num(showContextual ? 1 : 0);
+const coNum     = num(showContextual ? 2 : 1);
+
+const ctxDelay  = 0;
+const solDelay  = showContextual ? 1 : 0;
+const coDelay   = showContextual ? 2 : 1;
+const ctaDelay  = showContextual ? 3 : 2;
+const footDelay = showContextual ? 4 : 3;
+
+const playstoreUrl = 'https://play.google.com/store/apps/details?id=com.bitsark.dolarmap';
+---
+
+<div
+  id="bitsark-mobile-menu"
+  class="bm"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="bm-title"
+  aria-hidden="true"
+  inert
+>
+  <div class="bm__scrim" aria-hidden="true"></div>
+
+  <div class="bm__panel" tabindex="-1">
+
+    <!-- ── HEADER ─────────────────────────────────────── -->
+    <header class="bm__header">
+      <div class="bm__lang" aria-label={t('nav.langPicker.ariaLabel')}>
+        {languages.map(li => (
+          <a
+            href={langHrefs[li.code]}
+            class:list={['bm__lang-link', { 'bm__lang-link--active': li.code === lang }]}
+            aria-label={`Switch to ${li.label}`}
+          >
+            <span class="bm__lang-flag" aria-hidden="true">{li.flag}</span>
+            <span class="bm__lang-code">{li.label}</span>
+          </a>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        id="bm-close"
+        class="bm__close"
+        aria-label={t('nav.menu.close')}
+      >
+        <svg viewBox="0 0 24 24" width="22" height="22"
+             fill="none" stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 6L18 18M18 6L6 18"/>
+        </svg>
+      </button>
+    </header>
+
+    <h2 id="bm-title" class="bm__sr">{t('nav.menu.srTitle')}</h2>
+
+    <!-- ── SCROLLABLE BODY ────────────────────────────── -->
+    <div class="bm__scroll">
+
+      {showContextual && (
+        <section class="bm__section bm__section--context" style={`--delay: ${ctxDelay}`}>
+          <p class="bm__eyebrow">
+            <span class="bm__eyebrow-num">{ctxNum}</span>
+            <span class="bm__eyebrow-label">{t('nav.menu.onThisPage')}</span>
+          </p>
+          <ul class="bm__anchors" role="list">
+            {contextualAnchors.map(a => (
+              <li>
+                <a href={a.href} class="bm__anchor" data-anchor>
+                  <span class="bm__anchor-arrow" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="14" height="14"
+                         fill="none" stroke="currentColor" stroke-width="1.5"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </span>
+                  <span class="bm__anchor-label">{a.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section class="bm__section" style={`--delay: ${solDelay}`}>
+        <p class="bm__eyebrow">
+          <span class="bm__eyebrow-num">{solNum}</span>
+          <span class="bm__eyebrow-label">{t('nav.menu.solutions')}</span>
+        </p>
+
+        <ul class="bm__solutions" role="list">
+
+          <!-- DolarMap -->
+          <li class="bm__sol bm__sol--dolarmap">
+            <a class="bm__sol-link" href={l('/dolarmap')}>
+              <span class="bm__sol-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9" opacity="0.5"/>
+                  <circle cx="12" cy="12" r="5" opacity="0.8"/>
+                  <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+                </svg>
+              </span>
+              <span class="bm__sol-body">
+                <span class="bm__sol-name">DolarMap</span>
+                <span class="bm__sol-tagline">{t('nav.menu.tag.dolarmap')}</span>
+              </span>
+              <span class="bm__sol-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 6l6 6-6 6"/>
+                </svg>
+              </span>
+            </a>
+            <ul class="bm__sol-subs" role="list">
+              <li>
+                <a href={playstoreUrl} class="bm__sol-sub"
+                   target="_blank" rel="noopener noreferrer">
+                  <svg class="bm__sol-sub-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  {t('nav.menu.sub.playstore')}
+                  <svg class="bm__sol-sub-ext" viewBox="0 0 24 24" width="11" height="11"
+                       fill="none" stroke="currentColor" stroke-width="1.5"
+                       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M7 17L17 7M9 7h8v8"/>
+                  </svg>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Exchanges -->
+          <li class="bm__sol bm__sol--exchanges">
+            <a class="bm__sol-link" href={l('/exchanges')}>
+              <span class="bm__sol-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 3l4 4-4 4"/>
+                  <path d="M20 7H8"/>
+                  <path d="M8 21l-4-4 4-4"/>
+                  <path d="M4 17h12"/>
+                </svg>
+              </span>
+              <span class="bm__sol-body">
+                <span class="bm__sol-name">Exchanges</span>
+                <span class="bm__sol-tagline">{t('nav.menu.tag.exchanges')}</span>
+              </span>
+              <span class="bm__sol-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 6l6 6-6 6"/>
+                </svg>
+              </span>
+            </a>
+            <ul class="bm__sol-subs" role="list">
+              <li>
+                <a href={l('/exchanges/api')} class="bm__sol-sub">
+                  <svg class="bm__sol-sub-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                  </svg>
+                  {t('nav.menu.sub.api')}
+                </a>
+              </li>
+              <li>
+                <a href={l('/exchanges/decripto')} class="bm__sol-sub">
+                  <svg class="bm__sol-sub-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+                    <path d="M7 21h10"/>
+                    <path d="M12 3v18"/>
+                    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+                  </svg>
+                  {t('nav.menu.sub.decripto')}
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Stablecoins -->
+          <li class="bm__sol bm__sol--stablecoins">
+            <a class="bm__sol-link" href={l('/stablecoins-brasil')}>
+              <span class="bm__sol-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="2" x2="12" y2="22" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+              </span>
+              <span class="bm__sol-body">
+                <span class="bm__sol-name">Stablecoins</span>
+                <span class="bm__sol-tagline">{t('nav.menu.tag.stablecoins')}</span>
+              </span>
+              <span class="bm__sol-chev" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="16" height="16"
+                     fill="none" stroke="currentColor" stroke-width="1.5"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 6l6 6-6 6"/>
+                </svg>
+              </span>
+            </a>
+            <ul class="bm__sol-subs" role="list">
+              <li>
+                <a href={l('/stablecoins-brasil/receber-exterior-pj')} class="bm__sol-sub">
+                  <svg class="bm__sol-sub-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="2" y1="20" x2="22" y2="20"></line>
+                  </svg>
+                  {t('nav.menu.sub.receiverPj')}
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <section class="bm__section" style={`--delay: ${coDelay}`}>
+        <p class="bm__eyebrow">
+          <span class="bm__eyebrow-num">{coNum}</span>
+          <span class="bm__eyebrow-label">{t('nav.menu.company')}</span>
+        </p>
+        <ul class="bm__list" role="list">
+          <li>
+            <a href={l('/about')} class="bm__link">{t('nav.menu.about')}</a>
+          </li>
+          <li>
+            <a href={l('/about#hiring')} class="bm__link">{t('nav.menu.contact')}</a>
+          </li>
+          <li>
+            <a href="https://github.com/bitsARK-Labs"
+               class="bm__link bm__link--external"
+               target="_blank" rel="noopener noreferrer">
+              {t('nav.menu.github')}
+              <svg class="bm__link-ext" viewBox="0 0 24 24" width="12" height="12"
+                   fill="none" stroke="currentColor" stroke-width="1.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7M9 7h8v8"/>
+              </svg>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="bm__section bm__section--cta" style={`--delay: ${ctaDelay}`}>
+        <a href={playstoreUrl}
+           class="bm__cta"
+           target="_blank" rel="noopener noreferrer">
+          <svg class="bm__cta-icon" width="22" height="22" viewBox="0 0 512 512" aria-hidden="true">
+            <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z" fill="#EA4335"/>
+            <path d="M47 0C34 6.8 25.3 19.2 25.3 35V477c0 15.8 8.7 28.2 21.7 35l242.3-242L47 0z" fill="#4285F4"/>
+            <path d="M425.2 225.6l-58.3-33.5-65.4 64.1 65.4 64.1 59.1-34c16.8-9.8 16.8-33.1-.8-60.7z" fill="#FBBC05"/>
+            <path d="M47 477c0 15.8 8.7 28.2 21.7 35l242.3-242-63.8-63.8L47 477z" fill="#34A853"/>
+          </svg>
+          <span class="bm__cta-body">
+            <span class="bm__cta-label">{t('nav.menu.cta.label')}</span>
+            <span class="bm__cta-sub">{t('nav.menu.cta.sub')}</span>
+          </span>
+          <span class="bm__cta-chev" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16"
+                 fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 6l6 6-6 6"/>
+            </svg>
+          </span>
+        </a>
+      </section>
+
+      <footer class="bm__footer" style={`--delay: ${footDelay}`}>
+        <a href="mailto:support@bitsark.com" class="bm__footer-email">
+          support@bitsark.com
+        </a>
+        <p class="bm__footer-legal">{t('nav.menu.disclaimer')}</p>
+      </footer>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ─────────────────────────────────────────────────────────
+     bitsARK Mobile Menu — full-screen, refined editorial
+     ───────────────────────────────────────────────────────── */
+
+  .bm {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    /* Saída: 200ms sem delay (default quando .is-open é removido) */
+    transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bm.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    /* Entrada: 220ms */
+    transition: opacity 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .bm__scrim {
+    position: absolute;
+    inset: 0;
+    background: var(--color-bg);
+    background-image:
+      radial-gradient(ellipse 70% 50% at 50% -10%, rgba(79, 152, 163, 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgba(232, 175, 52, 0.04) 0%, transparent 60%);
+  }
+
+  .bm__panel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(8px);
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  .bm.is-open .bm__panel {
+    transform: translateY(0);
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1) 40ms;
+  }
+
+  /* ── Header ─────────────────────────────────────────────── */
+  .bm__header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem clamp(1.25rem, 5vw, 1.75rem);
+    /* Compensa safe-area no notch */
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+
+  .bm__lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    background: rgba(15, 16, 18, 0.6);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  .bm__lang-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: var(--radius-full);
+    color: var(--color-text-faint);
+    text-decoration: none;
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                background 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.02em;
+  }
+  .bm__lang-link:hover { color: var(--color-text-muted); }
+  .bm__lang-link:active { background: rgba(79, 152, 163, 0.06); }
+
+  .bm__lang-link--active {
+    color: var(--color-primary);
+    background: rgba(79, 152, 163, 0.10);
+    font-weight: 700;
+  }
+
+  .bm__lang-flag {
+    font-size: 0.85rem;
+    line-height: 1;
+  }
+
+  .bm__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                background 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__close:hover {
+    color: var(--color-text);
+    background: rgba(79, 152, 163, 0.06);
+    border-color: var(--color-primary-border);
+  }
+  .bm__close:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  /* ── SR-only ────────────────────────────────────────────── */
+  .bm__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── Scrollable body ────────────────────────────────────── */
+  .bm__scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.5rem clamp(1.25rem, 5vw, 1.75rem)
+             max(2rem, env(safe-area-inset-bottom));
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Sections (com stagger) ─────────────────────────────── */
+  .bm__section,
+  .bm__footer {
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+      opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm.is-open .bm__section,
+  .bm.is-open .bm__footer {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 320ms cubic-bezier(0.16, 1, 0.3, 1) calc(80ms + var(--delay, 0) * 40ms),
+      transform 320ms cubic-bezier(0.16, 1, 0.3, 1) calc(80ms + var(--delay, 0) * 40ms);
+  }
+
+  .bm__section {
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--color-divider);
+  }
+  .bm__section:first-child {
+    border-top: none;
+    padding-top: 0.5rem;
+  }
+  .bm__section--cta {
+    border-top: none;
+    padding-top: 0.75rem;
+  }
+
+  /* ── Eyebrow ────────────────────────────────────────────── */
+  .bm__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .bm__eyebrow-num {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    color: var(--color-primary);
+    background: rgba(79, 152, 163, 0.08);
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+
+  /* ── "On this page" anchors ─────────────────────────────── */
+  .bm__anchors {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .bm__anchor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-height: 44px;
+    padding: 0.4rem 0.5rem;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                background 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__anchor:hover { color: var(--color-text); }
+  .bm__anchor:active { background: rgba(79, 152, 163, 0.06); }
+  .bm__anchor:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .bm__anchor-arrow {
+    color: var(--color-text-faint);
+    display: inline-flex;
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__anchor:hover .bm__anchor-arrow {
+    color: var(--color-primary);
+    transform: translateX(2px);
+  }
+
+  /* ── Solutions (3 áreas) ────────────────────────────────── */
+  .bm__solutions {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .bm__sol {
+    --bm-accent: var(--color-primary);
+    position: relative;
+    list-style: none;
+  }
+  .bm__sol--dolarmap    { --bm-accent: var(--color-primary); }
+  .bm__sol--exchanges   { --bm-accent: var(--color-primary-hover); }
+  .bm__sol--stablecoins { --bm-accent: var(--color-success); }
+
+  .bm__sol::before {
+    content: '';
+    position: absolute;
+    left: -1rem;
+    top: 0.75rem;
+    bottom: 0.75rem;
+    width: 1px;
+    background: var(--bm-accent);
+    opacity: 0;
+    transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+  }
+  .bm__sol:hover::before,
+  .bm__sol:focus-within::before {
+    opacity: 0.7;
+  }
+
+  .bm__sol-sub-icon {
+    flex-shrink: 0;
+    color: var(--color-text-faint);
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1), 
+                opacity 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__sol-sub:hover .bm__sol-sub-icon {
+    color: var(--bm-accent);
+  }
+  .bm__sol-sub-icon--brand {
+    opacity: 0.7;
+  }
+  .bm__sol-sub:hover .bm__sol-sub-icon--brand {
+    opacity: 1;
+  }
+  .bm__sol-link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.95rem;
+    min-height: 56px;
+    padding: 0.65rem 0.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: background 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__sol-link:active { background: rgba(79, 152, 163, 0.06); }
+  .bm__sol-link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .bm__sol-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    color: var(--bm-accent);
+    background: rgba(79, 152, 163, 0.06);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: background 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                border-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__sol--stablecoins .bm__sol-icon {
+    background: rgba(109, 170, 69, 0.06);
+    border-color: rgba(109, 170, 69, 0.18);
+  }
+  .bm__sol-link:hover .bm__sol-icon {
+    background: rgba(79, 152, 163, 0.10);
+    border-color: var(--color-primary-border);
+  }
+
+  .bm__sol-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .bm__sol-name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    line-height: 1.1;
+  }
+  .bm__sol-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-text-faint);
+    letter-spacing: 0.02em;
+    line-height: 1.3;
+  }
+
+  .bm__sol-chev {
+    color: var(--color-text-faint);
+    display: inline-flex;
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__sol-link:hover .bm__sol-chev {
+    color: var(--bm-accent);
+    transform: translateX(2px);
+  }
+
+  /* Sub-items abaixo de cada área */
+  .bm__sol-subs {
+    list-style: none;
+    margin: 0.15rem 0 0.4rem 3rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .bm__sol-sub {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 36px;
+    padding: 0.3rem 0.5rem;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                background 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__sol-sub:hover { color: var(--color-text); }
+  .bm__sol-sub:active { background: rgba(79, 152, 163, 0.06); }
+  .bm__sol-sub:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  .bm__sol-sub-ext {
+    color: var(--color-text-faint);
+    opacity: 0.7;
+  }
+
+  /* ── Company list ──────────────────────────────────────── */
+  .bm__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .bm__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.4rem 0.5rem;
+    color: var(--color-text);
+    font-size: var(--text-base);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+                background 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__link:hover { color: var(--color-primary); }
+  .bm__link:active { background: rgba(79, 152, 163, 0.06); }
+  .bm__link:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  .bm__link-ext {
+    color: var(--color-text-faint);
+    opacity: 0.7;
+  }
+
+  /* ── CTA Play Store ────────────────────────────────────── */
+  .bm__cta {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.95rem;
+    width: 100%;
+    padding: 1rem 1.1rem;
+    color: var(--color-text);
+    text-decoration: none;
+    border: 1px solid var(--color-primary-border);
+    border-radius: var(--radius-lg);
+    background:
+      linear-gradient(180deg, rgba(79, 152, 163, 0.10) 0%, rgba(79, 152, 163, 0.04) 100%);
+    box-shadow: var(--glow-primary);
+    transition:
+      background 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__cta:hover {
+    background: var(--color-primary-highlight);
+    border-color: var(--color-primary);
+    box-shadow: var(--glow-primary-strong);
+  }
+  .bm__cta:active {
+    transform: translateY(1px);
+  }
+  .bm__cta:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .bm__cta-icon {
+    flex-shrink: 0;
+  }
+  .bm__cta-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .bm__cta-label {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .bm__cta-sub {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--color-text-faint);
+    letter-spacing: 0.02em;
+  }
+  .bm__cta-chev {
+    color: var(--color-primary);
+    display: inline-flex;
+    transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__cta:hover .bm__cta-chev { transform: translateX(2px); }
+
+  /* ── Footer ────────────────────────────────────────────── */
+  .bm__footer {
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-divider);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .bm__footer-email {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 0.25rem 0;
+    transition: color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bm__footer-email:hover { color: var(--color-primary); }
+  .bm__footer-email:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .bm__footer-legal {
+    margin: 0;
+    font-size: 0.7rem;
+    color: var(--color-text-faint);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Desktop: nunca exibir o menu ───────────────────────── */
+  @media (min-width: 769px) {
+    .bm { display: none !important; }
+  }
+
+  /* ── Reduced motion ─────────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .bm,
+    .bm__panel,
+    .bm__section,
+    .bm__footer,
+    .bm__anchor-arrow,
+    .bm__sol-chev,
+    .bm__cta-chev,
+    .bm__cta {
+      transition: none !important;
+      animation: none !important;
+      transform: none !important;
+    }
+  }
+</style>
+
+<script>
+  function initBitsarkMobileMenu(): void {
+    const menu     = document.getElementById('bitsark-mobile-menu') as HTMLElement | null;
+    const trigger  = document.getElementById('hamburger')           as HTMLButtonElement | null;
+    const closeBtn = document.getElementById('bm-close')            as HTMLButtonElement | null;
+    if (!menu || !trigger || !closeBtn) return;
+
+    // Idempotência: View Transitions reexecuta o script a cada page-load
+    const M = menu as HTMLElement & { __bmInit?: boolean };
+    if (M.__bmInit) return;
+    M.__bmInit = true;
+
+    const main = document.getElementById('main-content');
+    const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    let scrollLockY = 0;
+    let lastFocused: HTMLElement | null = null;
+
+    function getFocusable(): HTMLElement[] {
+      return Array.from(menu!.querySelectorAll(FOCUSABLE)) as HTMLElement[];
+    }
+
+    function lockScroll(): void {
+      scrollLockY = window.scrollY;
+      const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollLockY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
+    }
+
+    function unlockScroll(): void {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.paddingRight = '';
+      window.scrollTo(0, scrollLockY);
+    }
+
+    function openMenu(): void {
+      lastFocused = document.activeElement as HTMLElement;
+      menu!.removeAttribute('aria-hidden');
+      menu!.removeAttribute('inert');
+      menu!.classList.add('is-open');
+      trigger!.setAttribute('aria-expanded', 'true');
+      trigger!.setAttribute('aria-label', trigger!.dataset.labelClose ?? 'Close menu');
+      if (main) {
+        main.setAttribute('aria-hidden', 'true');
+        main.setAttribute('inert', '');
+      }
+      lockScroll();
+      requestAnimationFrame(() => {
+        const first = getFocusable()[0];
+        first?.focus();
+      });
+    }
+
+    function closeMenu(opts: { restoreFocus?: boolean } = { restoreFocus: true }): void {
+      menu!.classList.remove('is-open');
+      trigger!.setAttribute('aria-expanded', 'false');
+      trigger!.setAttribute('aria-label', trigger!.dataset.labelOpen ?? 'Open menu');
+
+      const finalize = () => {
+        menu!.setAttribute('aria-hidden', 'true');
+        menu!.setAttribute('inert', '');
+        if (main) {
+          main.removeAttribute('aria-hidden');
+          main.removeAttribute('inert');
+        }
+        unlockScroll();
+        if (opts.restoreFocus && lastFocused && document.contains(lastFocused)) {
+          lastFocused.focus();
+        }
+      };
+
+      let done = false;
+      const onEnd = (e: TransitionEvent) => {
+        if (e.target !== menu) return;
+        if (done) return;
+        done = true;
+        menu!.removeEventListener('transitionend', onEnd);
+        finalize();
+      };
+      menu!.addEventListener('transitionend', onEnd);
+      // Failsafe: força finalizar após 260ms
+      window.setTimeout(() => {
+        if (done) return;
+        done = true;
+        menu!.removeEventListener('transitionend', onEnd);
+        finalize();
+      }, 260);
+    }
+
+    function toggle(): void {
+      if (menu!.classList.contains('is-open')) closeMenu();
+      else openMenu();
+    }
+
+    // ── Triggers ─────────────────────────────────────────
+    trigger.addEventListener('click', toggle);
+    closeBtn.addEventListener('click', () => closeMenu());
+
+    // ── Focus trap + ESC ─────────────────────────────────
+    menu.addEventListener('keydown', (e: KeyboardEvent) => {
+      if (!menu.classList.contains('is-open')) return;
+
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (e.key === 'Tab') {
+        const list = getFocusable();
+        if (list.length === 0) return;
+        const first = list[0];
+        const last  = list[list.length - 1];
+        const active = document.activeElement as HTMLElement;
+        if (e.shiftKey && active === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && active === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    // ── Anchor links da mesma página: fecha + smooth-scroll
+    menu.querySelectorAll('a[data-anchor]').forEach((a) => {
+      a.addEventListener('click', (e: Event) => {
+        const anchor = a as HTMLAnchorElement;
+        const href = anchor.getAttribute('href') ?? '';
+        const hashIdx = href.indexOf('#');
+        if (hashIdx < 0) return;
+
+        const targetPath = href.slice(0, hashIdx).replace(/\/$/, '');
+        const currentPath = window.location.pathname.replace(/\/$/, '');
+        const onSamePage = targetPath === '' || targetPath === currentPath;
+
+        if (onSamePage) {
+          e.preventDefault();
+          const hash = href.slice(hashIdx + 1);
+          closeMenu({ restoreFocus: false });
+          window.setTimeout(() => {
+            const target = document.getElementById(hash);
+            if (target) {
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              history.replaceState(null, '', `#${hash}`);
+            }
+          }, 220);
+        } else {
+          closeMenu({ restoreFocus: false });
+        }
+      });
+    });
+
+    // ── Qualquer outro link interno fecha antes do swap ──
+    menu.querySelectorAll('a[href]').forEach((a) => {
+      const anchor = a as HTMLAnchorElement;
+      if (anchor.dataset.anchor !== undefined) return; // já tratado acima
+      const href = anchor.getAttribute('href') ?? '';
+      if (href.startsWith('http') || href.startsWith('mailto:')) return;
+      anchor.addEventListener('click', () => {
+        if (menu.classList.contains('is-open')) {
+          closeMenu({ restoreFocus: false });
+        }
+      });
+    });
+  }
+
+  // Primeira execução
+  initBitsarkMobileMenu();
+
+  // Re-inicializa após cada navegação SPA do Astro
+  document.addEventListener('astro:page-load', initBitsarkMobileMenu);
+
+  // Cleanup antes do swap: garante que o próximo DOM começa limpo
+  document.addEventListener('astro:before-swap', () => {
+    const menu = document.getElementById('bitsark-mobile-menu');
+    if (menu?.classList.contains('is-open')) {
+      menu.classList.remove('is-open');
+      menu.setAttribute('aria-hidden', 'true');
+      menu.setAttribute('inert', '');
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.paddingRight = '';
+      const main = document.getElementById('main-content');
+      if (main) {
+        main.removeAttribute('aria-hidden');
+        main.removeAttribute('inert');
+      }
+    }
+  });
+</script>
