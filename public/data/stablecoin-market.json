@@ -1,35 +1,421 @@
 {
-  "updatedAt": "2026-05-06T13:00:00.000Z",
-  "source": "CoinGecko API v3",
-  "coins": ["tether", "usd-coin", "dai", "first-digital-usd"],
-  "latestMarketCapUsd": 232000000000,
-  "yoyGrowthPct": 41.2,
+  "updatedAt": "2026-05-19T18:14:41.053Z",
+  "source": "DefiLlama Stablecoins API - peggedUSD aggregate (~180 stablecoins, all chains)",
+  "sourceUrl": "https://defillama.com/stablecoins",
+  "latestMarketCapUsd": 321145719920,
+  "yoyGrowthPct": 30.5,
   "monthly": [
-    { "month": "2020-01", "marketCapUsd": 4800000000 },
-    { "month": "2020-04", "marketCapUsd": 7200000000 },
-    { "month": "2020-07", "marketCapUsd": 11500000000 },
-    { "month": "2020-10", "marketCapUsd": 20000000000 },
-    { "month": "2021-01", "marketCapUsd": 30000000000 },
-    { "month": "2021-04", "marketCapUsd": 75000000000 },
-    { "month": "2021-07", "marketCapUsd": 110000000000 },
-    { "month": "2021-10", "marketCapUsd": 132000000000 },
-    { "month": "2022-01", "marketCapUsd": 163000000000 },
-    { "month": "2022-04", "marketCapUsd": 180000000000 },
-    { "month": "2022-07", "marketCapUsd": 148000000000 },
-    { "month": "2022-10", "marketCapUsd": 143000000000 },
-    { "month": "2023-01", "marketCapUsd": 136000000000 },
-    { "month": "2023-04", "marketCapUsd": 130000000000 },
-    { "month": "2023-07", "marketCapUsd": 124000000000 },
-    { "month": "2023-10", "marketCapUsd": 128000000000 },
-    { "month": "2024-01", "marketCapUsd": 138000000000 },
-    { "month": "2024-04", "marketCapUsd": 157000000000 },
-    { "month": "2024-07", "marketCapUsd": 163000000000 },
-    { "month": "2024-10", "marketCapUsd": 171000000000 },
-    { "month": "2025-01", "marketCapUsd": 192000000000 },
-    { "month": "2025-04", "marketCapUsd": 216000000000 },
-    { "month": "2025-07", "marketCapUsd": 224000000000 },
-    { "month": "2025-10", "marketCapUsd": 228000000000 },
-    { "month": "2026-01", "marketCapUsd": 232000000000 },
-    { "month": "2026-04", "marketCapUsd": 232000000000 }
+    {
+      "month": "2017-11",
+      "marketCapUsd": 110105
+    },
+    {
+      "month": "2017-12",
+      "marketCapUsd": 110105
+    },
+    {
+      "month": "2018-01",
+      "marketCapUsd": 60183528
+    },
+    {
+      "month": "2018-02",
+      "marketCapUsd": 60183528
+    },
+    {
+      "month": "2018-03",
+      "marketCapUsd": 60183528
+    },
+    {
+      "month": "2018-04",
+      "marketCapUsd": 60183528
+    },
+    {
+      "month": "2018-05",
+      "marketCapUsd": 60183528
+    },
+    {
+      "month": "2018-06",
+      "marketCapUsd": 60183060
+    },
+    {
+      "month": "2018-07",
+      "marketCapUsd": 15127992
+    },
+    {
+      "month": "2018-08",
+      "marketCapUsd": 15127992
+    },
+    {
+      "month": "2018-09",
+      "marketCapUsd": 43376612
+    },
+    {
+      "month": "2018-10",
+      "marketCapUsd": 275451031
+    },
+    {
+      "month": "2018-11",
+      "marketCapUsd": 345832864
+    },
+    {
+      "month": "2018-12",
+      "marketCapUsd": 417700790
+    },
+    {
+      "month": "2019-01",
+      "marketCapUsd": 677980074
+    },
+    {
+      "month": "2019-02",
+      "marketCapUsd": 608018395
+    },
+    {
+      "month": "2019-03",
+      "marketCapUsd": 623329180
+    },
+    {
+      "month": "2019-04",
+      "marketCapUsd": 1065014749
+    },
+    {
+      "month": "2019-05",
+      "marketCapUsd": 1302219330
+    },
+    {
+      "month": "2019-06",
+      "marketCapUsd": 1766831762
+    },
+    {
+      "month": "2019-07",
+      "marketCapUsd": 2410754774
+    },
+    {
+      "month": "2019-08",
+      "marketCapUsd": 2511467562
+    },
+    {
+      "month": "2019-09",
+      "marketCapUsd": 2949092827
+    },
+    {
+      "month": "2019-10",
+      "marketCapUsd": 3656623069
+    },
+    {
+      "month": "2019-11",
+      "marketCapUsd": 3693731139
+    },
+    {
+      "month": "2019-12",
+      "marketCapUsd": 4172399815
+    },
+    {
+      "month": "2020-01",
+      "marketCapUsd": 5227722361
+    },
+    {
+      "month": "2020-02",
+      "marketCapUsd": 5228258455
+    },
+    {
+      "month": "2020-03",
+      "marketCapUsd": 5498129318
+    },
+    {
+      "month": "2020-04",
+      "marketCapUsd": 9147699579
+    },
+    {
+      "month": "2020-05",
+      "marketCapUsd": 10585121020
+    },
+    {
+      "month": "2020-06",
+      "marketCapUsd": 11358673903
+    },
+    {
+      "month": "2020-07",
+      "marketCapUsd": 12945799525
+    },
+    {
+      "month": "2020-08",
+      "marketCapUsd": 16279044423
+    },
+    {
+      "month": "2020-09",
+      "marketCapUsd": 19222845395
+    },
+    {
+      "month": "2020-10",
+      "marketCapUsd": 21187499543
+    },
+    {
+      "month": "2020-11",
+      "marketCapUsd": 23608193267
+    },
+    {
+      "month": "2020-12",
+      "marketCapUsd": 27064715439
+    },
+    {
+      "month": "2021-01",
+      "marketCapUsd": 36629455491
+    },
+    {
+      "month": "2021-02",
+      "marketCapUsd": 50754678543
+    },
+    {
+      "month": "2021-03",
+      "marketCapUsd": 62756614847
+    },
+    {
+      "month": "2021-04",
+      "marketCapUsd": 83557084261
+    },
+    {
+      "month": "2021-05",
+      "marketCapUsd": 102350266106
+    },
+    {
+      "month": "2021-06",
+      "marketCapUsd": 109620926186
+    },
+    {
+      "month": "2021-07",
+      "marketCapUsd": 114664254169
+    },
+    {
+      "month": "2021-08",
+      "marketCapUsd": 118044808424
+    },
+    {
+      "month": "2021-09",
+      "marketCapUsd": 127365031050
+    },
+    {
+      "month": "2021-10",
+      "marketCapUsd": 131867911789
+    },
+    {
+      "month": "2021-11",
+      "marketCapUsd": 148383381279
+    },
+    {
+      "month": "2021-12",
+      "marketCapUsd": 162533919428
+    },
+    {
+      "month": "2022-01",
+      "marketCapUsd": 173207296275
+    },
+    {
+      "month": "2022-02",
+      "marketCapUsd": 184075922014
+    },
+    {
+      "month": "2022-03",
+      "marketCapUsd": 187096302148
+    },
+    {
+      "month": "2022-04",
+      "marketCapUsd": 186793183826
+    },
+    {
+      "month": "2022-05",
+      "marketCapUsd": 158731339487
+    },
+    {
+      "month": "2022-06",
+      "marketCapUsd": 152787706050
+    },
+    {
+      "month": "2022-07",
+      "marketCapUsd": 152833987943
+    },
+    {
+      "month": "2022-08",
+      "marketCapUsd": 152599035949
+    },
+    {
+      "month": "2022-09",
+      "marketCapUsd": 149499660119
+    },
+    {
+      "month": "2022-10",
+      "marketCapUsd": 145639694887
+    },
+    {
+      "month": "2022-11",
+      "marketCapUsd": 141060756851
+    },
+    {
+      "month": "2022-12",
+      "marketCapUsd": 137457066907
+    },
+    {
+      "month": "2023-01",
+      "marketCapUsd": 136622261802
+    },
+    {
+      "month": "2023-02",
+      "marketCapUsd": 134598011067
+    },
+    {
+      "month": "2023-03",
+      "marketCapUsd": 131727344888
+    },
+    {
+      "month": "2023-04",
+      "marketCapUsd": 129898107897
+    },
+    {
+      "month": "2023-05",
+      "marketCapUsd": 128901070051
+    },
+    {
+      "month": "2023-06",
+      "marketCapUsd": 127696126803
+    },
+    {
+      "month": "2023-07",
+      "marketCapUsd": 125275869934
+    },
+    {
+      "month": "2023-08",
+      "marketCapUsd": 124842345255
+    },
+    {
+      "month": "2023-09",
+      "marketCapUsd": 123444764341
+    },
+    {
+      "month": "2023-10",
+      "marketCapUsd": 124019259136
+    },
+    {
+      "month": "2023-11",
+      "marketCapUsd": 127872677032
+    },
+    {
+      "month": "2023-12",
+      "marketCapUsd": 130124866033
+    },
+    {
+      "month": "2024-01",
+      "marketCapUsd": 134774487698
+    },
+    {
+      "month": "2024-02",
+      "marketCapUsd": 140219483545
+    },
+    {
+      "month": "2024-03",
+      "marketCapUsd": 150193422084
+    },
+    {
+      "month": "2024-04",
+      "marketCapUsd": 159351506461
+    },
+    {
+      "month": "2024-05",
+      "marketCapUsd": 160281823610
+    },
+    {
+      "month": "2024-06",
+      "marketCapUsd": 161187278026
+    },
+    {
+      "month": "2024-07",
+      "marketCapUsd": 164232640903
+    },
+    {
+      "month": "2024-08",
+      "marketCapUsd": 170248452894
+    },
+    {
+      "month": "2024-09",
+      "marketCapUsd": 173024265161
+    },
+    {
+      "month": "2024-10",
+      "marketCapUsd": 173321405210
+    },
+    {
+      "month": "2024-11",
+      "marketCapUsd": 195226961394
+    },
+    {
+      "month": "2024-12",
+      "marketCapUsd": 205508945173
+    },
+    {
+      "month": "2025-01",
+      "marketCapUsd": 218256562782
+    },
+    {
+      "month": "2025-02",
+      "marketCapUsd": 225161346471
+    },
+    {
+      "month": "2025-03",
+      "marketCapUsd": 234280359997
+    },
+    {
+      "month": "2025-04",
+      "marketCapUsd": 241180558318
+    },
+    {
+      "month": "2025-05",
+      "marketCapUsd": 246153464917
+    },
+    {
+      "month": "2025-06",
+      "marketCapUsd": 252156197199
+    },
+    {
+      "month": "2025-07",
+      "marketCapUsd": 264753345365
+    },
+    {
+      "month": "2025-08",
+      "marketCapUsd": 281941749375
+    },
+    {
+      "month": "2025-09",
+      "marketCapUsd": 296288435728
+    },
+    {
+      "month": "2025-10",
+      "marketCapUsd": 306158378657
+    },
+    {
+      "month": "2025-11",
+      "marketCapUsd": 305423944299
+    },
+    {
+      "month": "2025-12",
+      "marketCapUsd": 306806323628
+    },
+    {
+      "month": "2026-01",
+      "marketCapUsd": 304488397674
+    },
+    {
+      "month": "2026-02",
+      "marketCapUsd": 307894679906
+    },
+    {
+      "month": "2026-03",
+      "marketCapUsd": 313808819525
+    },
+    {
+      "month": "2026-04",
+      "marketCapUsd": 317923723900
+    },
+    {
+      "month": "2026-05",
+      "marketCapUsd": 321145719920
+    }
   ]
 }

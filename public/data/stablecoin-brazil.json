@@ -1,39 +1,161 @@
 {
-  "updatedAt": "2026-05-06T13:00:00.000Z",
-  "source": "BCB - Balanço de Pagamentos (Conta Financeira - criptoativos com passivo correspondente)",
+  "updatedAt": "2026-05-19T18:14:43.095Z",
+  "source": "BCB seed data (fallback) - dados históricos públicos. Atualizar BCB_XLSX_CANDIDATES ou STABLECOIN_LABELS no script quando a publicação do BCB mudar.",
+  "sourceUrl": "https://www.bcb.gov.br/estatisticas/tabelasespeciais",
   "isFallback": true,
   "latestAccumulatedUsd": 54000000000,
   "latestMonth": "2026-03",
   "monthly": [
-    { "month": "2019-01", "flowUsd": 50000000,   "accumulatedUsd": 50000000 },
-    { "month": "2019-04", "flowUsd": 80000000,   "accumulatedUsd": 130000000 },
-    { "month": "2019-07", "flowUsd": 130000000,  "accumulatedUsd": 260000000 },
-    { "month": "2019-10", "flowUsd": 160000000,  "accumulatedUsd": 420000000 },
-    { "month": "2020-01", "flowUsd": 200000000,  "accumulatedUsd": 620000000 },
-    { "month": "2020-04", "flowUsd": 320000000,  "accumulatedUsd": 940000000 },
-    { "month": "2020-07", "flowUsd": 480000000,  "accumulatedUsd": 1420000000 },
-    { "month": "2020-10", "flowUsd": 640000000,  "accumulatedUsd": 2060000000 },
-    { "month": "2021-01", "flowUsd": 900000000,  "accumulatedUsd": 2960000000 },
-    { "month": "2021-04", "flowUsd": 1400000000, "accumulatedUsd": 4360000000 },
-    { "month": "2021-07", "flowUsd": 1700000000, "accumulatedUsd": 6060000000 },
-    { "month": "2021-10", "flowUsd": 1900000000, "accumulatedUsd": 7960000000 },
-    { "month": "2022-01", "flowUsd": 1800000000, "accumulatedUsd": 9760000000 },
-    { "month": "2022-04", "flowUsd": 1600000000, "accumulatedUsd": 11360000000 },
-    { "month": "2022-07", "flowUsd": 1200000000, "accumulatedUsd": 12560000000 },
-    { "month": "2022-10", "flowUsd": 1100000000, "accumulatedUsd": 13660000000 },
-    { "month": "2023-01", "flowUsd": 1400000000, "accumulatedUsd": 15060000000 },
-    { "month": "2023-04", "flowUsd": 1700000000, "accumulatedUsd": 16760000000 },
-    { "month": "2023-07", "flowUsd": 2100000000, "accumulatedUsd": 18860000000 },
-    { "month": "2023-10", "flowUsd": 2400000000, "accumulatedUsd": 21260000000 },
-    { "month": "2024-01", "flowUsd": 2800000000, "accumulatedUsd": 24060000000 },
-    { "month": "2024-04", "flowUsd": 3300000000, "accumulatedUsd": 27360000000 },
-    { "month": "2024-07", "flowUsd": 3900000000, "accumulatedUsd": 31260000000 },
-    { "month": "2024-10", "flowUsd": 4500000000, "accumulatedUsd": 35760000000 },
-    { "month": "2025-01", "flowUsd": 4200000000, "accumulatedUsd": 39960000000 },
-    { "month": "2025-04", "flowUsd": 4600000000, "accumulatedUsd": 44560000000 },
-    { "month": "2025-07", "flowUsd": 3100000000, "accumulatedUsd": 47660000000 },
-    { "month": "2025-10", "flowUsd": 3400000000, "accumulatedUsd": 51060000000 },
-    { "month": "2026-01", "flowUsd": 1500000000, "accumulatedUsd": 52560000000 },
-    { "month": "2026-03", "flowUsd": 1440000000, "accumulatedUsd": 54000000000 }
-  ]
+    {
+      "month": "2019-01",
+      "flowUsd": 50000000,
+      "accumulatedUsd": 50000000
+    },
+    {
+      "month": "2019-04",
+      "flowUsd": 80000000,
+      "accumulatedUsd": 130000000
+    },
+    {
+      "month": "2019-07",
+      "flowUsd": 130000000,
+      "accumulatedUsd": 260000000
+    },
+    {
+      "month": "2019-10",
+      "flowUsd": 160000000,
+      "accumulatedUsd": 420000000
+    },
+    {
+      "month": "2020-01",
+      "flowUsd": 200000000,
+      "accumulatedUsd": 620000000
+    },
+    {
+      "month": "2020-04",
+      "flowUsd": 320000000,
+      "accumulatedUsd": 940000000
+    },
+    {
+      "month": "2020-07",
+      "flowUsd": 480000000,
+      "accumulatedUsd": 1420000000
+    },
+    {
+      "month": "2020-10",
+      "flowUsd": 640000000,
+      "accumulatedUsd": 2060000000
+    },
+    {
+      "month": "2021-01",
+      "flowUsd": 900000000,
+      "accumulatedUsd": 2960000000
+    },
+    {
+      "month": "2021-04",
+      "flowUsd": 1400000000,
+      "accumulatedUsd": 4360000000
+    },
+    {
+      "month": "2021-07",
+      "flowUsd": 1700000000,
+      "accumulatedUsd": 6060000000
+    },
+    {
+      "month": "2021-10",
+      "flowUsd": 1900000000,
+      "accumulatedUsd": 7960000000
+    },
+    {
+      "month": "2022-01",
+      "flowUsd": 1800000000,
+      "accumulatedUsd": 9760000000
+    },
+    {
+      "month": "2022-04",
+      "flowUsd": 1600000000,
+      "accumulatedUsd": 11360000000
+    },
+    {
+      "month": "2022-07",
+      "flowUsd": 1200000000,
+      "accumulatedUsd": 12560000000
+    },
+    {
+      "month": "2022-10",
+      "flowUsd": 1100000000,
+      "accumulatedUsd": 13660000000
+    },
+    {
+      "month": "2023-01",
+      "flowUsd": 1400000000,
+      "accumulatedUsd": 15060000000
+    },
+    {
+      "month": "2023-04",
+      "flowUsd": 1700000000,
+      "accumulatedUsd": 16760000000
+    },
+    {
+      "month": "2023-07",
+      "flowUsd": 2100000000,
+      "accumulatedUsd": 18860000000
+    },
+    {
+      "month": "2023-10",
+      "flowUsd": 2400000000,
+      "accumulatedUsd": 21260000000
+    },
+    {
+      "month": "2024-01",
+      "flowUsd": 2800000000,
+      "accumulatedUsd": 24060000000
+    },
+    {
+      "month": "2024-04",
+      "flowUsd": 3300000000,
+      "accumulatedUsd": 27360000000
+    },
+    {
+      "month": "2024-07",
+      "flowUsd": 3900000000,
+      "accumulatedUsd": 31260000000
+    },
+    {
+      "month": "2024-10",
+      "flowUsd": 4500000000,
+      "accumulatedUsd": 35760000000
+    },
+    {
+      "month": "2025-01",
+      "flowUsd": 4200000000,
+      "accumulatedUsd": 39960000000
+    },
+    {
+      "month": "2025-04",
+      "flowUsd": 4600000000,
+      "accumulatedUsd": 44560000000
+    },
+    {
+      "month": "2025-07",
+      "flowUsd": 3100000000,
+      "accumulatedUsd": 47660000000
+    },
+    {
+      "month": "2025-10",
+      "flowUsd": 3400000000,
+      "accumulatedUsd": 51060000000
+    },
+    {
+      "month": "2026-01",
+      "flowUsd": 1500000000,
+      "accumulatedUsd": 52560000000
+    },
+    {
+      "month": "2026-03",
+      "flowUsd": 1440000000,
+      "accumulatedUsd": 54000000000
+    }
+  ],
+  "lastSuccessAt": null
 }
