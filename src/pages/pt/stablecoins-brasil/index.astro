@@ -702,10 +702,15 @@ const alternates = [
        STYLES (mirror of EN)
   ══════════════════════════════════════════════════════════════ -->
 
-  <script id="chartjs-script" src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+  <script type="application/json" id="sb-chart-data-market" set:html={chartMarket}></script>
+  <script type="application/json" id="sb-chart-data-brazil" set:html={chartBrazil}></script>
 
-  <script define:vars={{ chartMarket, chartBrazil }}>
+  <script>
+    import Chart from "chart.js/auto";
+
     function initStablecoinCharts() {
+      const chartMarket = document.getElementById("sb-chart-data-market")?.textContent ?? "[]";
+      const chartBrazil = document.getElementById("sb-chart-data-brazil")?.textContent ?? "[]";
       const style = getComputedStyle(document.documentElement);
       const C = {
         primary:     style.getPropertyValue('--color-primary').trim(),
@@ -815,13 +820,7 @@ const alternates = [
       markLoaded("chart-brazil");
     }
 
-    if (window.Chart) {
-      initStablecoinCharts();
-    } else {
-      document
-        .getElementById("chartjs-script")
-        ?.addEventListener("load", initStablecoinCharts, { once: true });
-    }
+    initStablecoinCharts();
   </script>
 
 </Base>
