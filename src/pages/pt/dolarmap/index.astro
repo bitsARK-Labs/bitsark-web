@@ -1,13 +1,18 @@
 ---
 import Base from '@layouts/Base.astro';
+import { Picture, getImage } from 'astro:assets';
 import '@styles/pages/dolarmap.css';
 import { useTranslations } from '@i18n/ui';
+
+import screenBuy       from '@assets/dolarmap/pt-BR/screen-home-buy.png';
+import screenSell      from '@assets/dolarmap/pt-BR/screen-home-sell.png';
+import screenArbitrage from '@assets/dolarmap/pt-BR/screen-home-arbitrage.png';
+import screenAlerts    from '@assets/dolarmap/pt-BR/screen-alerts.png';
+import screenRanking   from '@assets/dolarmap/pt-BR/screen-ranking.png';
 
 // ── Config & Localization ──────────────────────────────────────────────────
 const lang = 'pt-BR';
 const t = useTranslations(lang);
-
-const imgBase = `/images/dolarmap/${lang}`;
 
 // Internal links - resolved per language (avoid using label strings as hrefs).
 const exchangesHref = '/pt/exchanges/';
@@ -19,10 +24,20 @@ const privacyHref   = '/pt/dolarmap/privacy/';
  * and /public/videos/dolarmap-hero.webm to enable autoplay video instead of
  * the static phone mockup. The page degrades gracefully if absent - the
  * <video> element's poster fallback covers the gap.
+ *
+ * The poster must be a single URL (no <picture> fallback); WebP enjoys
+ * universal support on every browser that can autoplay muted video, so we
+ * generate a sized WebP variant at build time.
  */
 const heroVideoMp4   = '/videos/dolarmap-hero.mp4';
 const heroVideoWebm  = '/videos/dolarmap-hero.webm';
-const heroVideoPoster = `${imgBase}/screen-home-buy.png`;
+const heroPoster = await getImage({
+  src: screenBuy,
+  format: 'webp',
+  width: 560,
+  quality: 80,
+});
+const heroVideoPoster = heroPoster.src;
 
 // ── Schema.org ─────────────────────────────────────────────────────────────
 const schema = {
@@ -46,7 +61,7 @@ const features = [
     eyebrow: t.dolarmap.features.buy.eyebrow,
     title: t.dolarmap.features.buy.title,
     body: t.dolarmap.features.buy.body,
-    image: `${imgBase}/screen-home-buy.png`,
+    image: screenBuy,
     alt: t.dolarmap.features.buy.alt,
     chips: t.dolarmap.features.buy.chips,
     floatA: { ...t.dolarmap.features.buy.floatA, tone: 'success' },
@@ -57,7 +72,7 @@ const features = [
     eyebrow: t.dolarmap.features.sell.eyebrow,
     title: t.dolarmap.features.sell.title,
     body: t.dolarmap.features.sell.body,
-    image: `${imgBase}/screen-home-sell.png`,
+    image: screenSell,
     alt: t.dolarmap.features.sell.alt,
     chips: t.dolarmap.features.sell.chips,
     floatA: { ...t.dolarmap.features.sell.floatA, tone: 'accent' },
@@ -68,7 +83,7 @@ const features = [
     eyebrow: t.dolarmap.features.arbitrage.eyebrow,
     title: t.dolarmap.features.arbitrage.title,
     body: t.dolarmap.features.arbitrage.body,
-    image: `${imgBase}/screen-home-arbitrage.png`,
+    image: screenArbitrage,
     alt: t.dolarmap.features.arbitrage.alt,
     chips: t.dolarmap.features.arbitrage.chips,
     floatA: { ...t.dolarmap.features.arbitrage.floatA, tone: 'accent' },
@@ -79,7 +94,7 @@ const features = [
     eyebrow: t.dolarmap.features.alerts.eyebrow,
     title: t.dolarmap.features.alerts.title,
     body: t.dolarmap.features.alerts.body,
-    image: `${imgBase}/screen-alerts.png`,
+    image: screenAlerts,
     alt: t.dolarmap.features.alerts.alt,
     chips: t.dolarmap.features.alerts.chips,
     floatA: { ...t.dolarmap.features.alerts.floatA, tone: 'success' },
@@ -90,7 +105,7 @@ const features = [
     eyebrow: t.dolarmap.features.ranking.eyebrow,
     title: t.dolarmap.features.ranking.title,
     body: t.dolarmap.features.ranking.body,
-    image: `${imgBase}/screen-ranking.png`,
+    image: screenRanking,
     alt: t.dolarmap.features.ranking.alt,
     chips: t.dolarmap.features.ranking.chips,
     floatA: { ...t.dolarmap.features.ranking.floatA, tone: 'success' },
@@ -460,12 +475,14 @@ const alternates = [
             <div class="dm-cell__halo" aria-hidden="true"></div>
             <div class="dm-cell__phone" aria-hidden="true">
               <div class="dm-cell__phone-notch"></div>
-              <img
+              <Picture
                 src={f.image}
                 alt={f.alt}
                 class="dm-cell__screen"
-                width="280"
-                height="560"
+                widths={[280, 420, 560, 840]}
+                sizes="280px"
+                formats={['avif', 'webp']}
+                quality={82}
                 loading="lazy"
                 decoding="async"
               />

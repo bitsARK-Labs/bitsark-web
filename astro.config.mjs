@@ -4,6 +4,11 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   site: 'https://bitsark.com',
+  image: {
+    // Sharp is the default; pinning it here documents the intent and
+    // unblocks future tuning (e.g. raising AVIF effort).
+    service: { entrypoint: 'astro/assets/services/sharp' },
+  },
   vite: {
     resolve: {
       alias: {
@@ -13,6 +18,7 @@ export default defineConfig({
         '@data':       fileURLToPath(new URL('./src/data', import.meta.url)),
         '@styles':     fileURLToPath(new URL('./src/styles', import.meta.url)),
         '@lib':        fileURLToPath(new URL('./src/lib', import.meta.url)),
+        '@assets':     fileURLToPath(new URL('./src/assets', import.meta.url)),
       },
     },
   },

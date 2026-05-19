@@ -1,7 +1,7 @@
 ---
 import Base from '@layouts/Base.astro';
-import { Image } from 'astro:assets';
-import founderImg from '../../assets/founder.jpg';
+import { Picture } from 'astro:assets';
+import founderImg from '@assets/founder.jpg';
 import t    from '@i18n/pt.json';
 
 const alternates = [
@@ -11,6 +11,8 @@ const alternates = [
 ];
 
 const dateModified = '2026-05-17';
+
+const founderImageUrl = new URL(founderImg.src, Astro.site).href;
 
 const schema = {
   "@context": "https://schema.org",
@@ -24,9 +26,9 @@ const schema = {
     "url": "https://bitsark.com/pt/about/",
     "image": {
       "@type": "ImageObject",
-      "url": "https://bitsark.com/images/founder.jpg",
-      "width": 400,
-      "height": 400
+      "url": founderImageUrl,
+      "width": founderImg.width,
+      "height": founderImg.height
     },
     "jobTitle": "Founder",
     "email": "ricardo@bitsark.com",
@@ -77,11 +79,13 @@ const lastUpdatedLabel = new Date(dateModified + 'T12:00:00Z').toLocaleDateStrin
   <section class="about-hero">
     <div class="container">
       <div class="about-hero__byline">
-        <Image
+        <Picture
           src={founderImg}
           alt="Ricardo Delfino - Founder of bitsARK Labs"
-          width={96}
-          height={96}
+          widths={[96, 144, 192, 288]}
+          sizes="96px"
+          formats={['avif', 'webp']}
+          quality={88}
           class="about-hero__photo"
           loading="eager"
           decoding="async"

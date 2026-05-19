@@ -7,8 +7,8 @@
  * compatível 100% com Cloudflare Pages + Astro SSG.
  */
 import Base            from '@layouts/Base.astro';
-import { Image }       from 'astro:assets';
-import founderImg      from '../assets/founder.jpg';
+import { Picture }     from 'astro:assets';
+import founderImg      from '@assets/founder.jpg';
 import t               from '@i18n/en.json';
 import ExchangeMarquee from '../components/ExchangeMarquee.astro';
 import DolarMapLogo   from '../components/DolarMapLogo.astro';
@@ -151,11 +151,13 @@ const lastModified = new Date().toISOString();
         <a href="/about" class="founder-band__photo-link"
            aria-label={t.founder.aboutLabel}>
           <span class="founder-band__photo-glow" aria-hidden="true"></span>
-          <img
-            src="/images/founder.jpg"
+          <Picture
+            src={founderImg}
             alt={t.founder.photoAlt}
-            width="64"
-            height="64"
+            widths={[64, 96, 128, 192]}
+            sizes="64px"
+            formats={['avif', 'webp']}
+            quality={85}
             class="founder-band__photo"
             loading="lazy"
             decoding="async"
