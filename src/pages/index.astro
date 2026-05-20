@@ -510,51 +510,55 @@ const lastModified = new Date().toISOString();
     Inline so it runs after DOM parse with zero bundling overhead - the
     snippet has no imports and is tiny (~1 KB).
   */}
-  <script is:inline>
-    // Spotlight: update --mx/--my on each product card as the pointer moves
-    document.querySelectorAll('[data-spotlight]').forEach((card) => {
-      card.addEventListener('pointermove', (e) => {
-        const r = card.getBoundingClientRect();
-        card.style.setProperty('--mx', `${e.clientX - r.left}px`);
-        card.style.setProperty('--my', `${e.clientY - r.top}px`);
-      });
-    });
-
-    // KPI count-up on scroll into view (skipped under reduced-motion)
-    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!reduceMotion && 'IntersectionObserver' in window) {
-      const animateCount = (el, target) => {
-        const duration = 1200;
-        const start = performance.now();
-        const tpl = el.dataset.template || '{n}';
-        const tick = (now) => {
-          const t = Math.min(1, (now - start) / duration);
-          const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
-          el.textContent = tpl.replace('{n}', Math.round(target * eased));
-          if (t < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      };
-
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const el = entry.target;
-          const target = parseFloat(el.dataset.count);
-          if (!Number.isNaN(target)) animateCount(el, target);
-          io.unobserve(el);
+  <script>
+    function initHome() {
+      // Spotlight: update --mx/--my on each product card as the pointer moves
+      document.querySelectorAll<HTMLElement>('[data-spotlight]').forEach((card) => {
+        card.addEventListener('pointermove', (e: PointerEvent) => {
+          const r = card.getBoundingClientRect();
+          card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+          card.style.setProperty('--my', `${e.clientY - r.top}px`);
         });
-      }, { threshold: 0.4 });
-
-      document.querySelectorAll('.kpi__num[data-count]').forEach((el) => {
-        const m = el.textContent.match(/(\d[\d.,]*)/);
-        if (m) {
-          el.dataset.template = el.textContent.replace(m[1], '{n}');
-          el.textContent = el.dataset.template.replace('{n}', '0');
-        }
-        io.observe(el);
       });
+
+      // KPI count-up on scroll into view (skipped under reduced-motion)
+      const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!reduceMotion && 'IntersectionObserver' in window) {
+        const animateCount = (el: HTMLElement, target: number) => {
+          const duration = 1200;
+          const start = performance.now();
+          const tpl = el.dataset.template || '{n}';
+          const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = tpl.replace('{n}', String(Math.round(target * eased)));
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        };
+
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target as HTMLElement;
+            const target = parseFloat(el.dataset.count ?? '');
+            if (!Number.isNaN(target)) animateCount(el, target);
+            io.unobserve(el);
+          });
+        }, { threshold: 0.4 });
+
+        document.querySelectorAll<HTMLElement>('.kpi__num[data-count]').forEach((el) => {
+          const m = el.textContent?.match(/(\d[\d.,]*)/);
+          if (m) {
+            el.dataset.template = el.textContent!.replace(m[1], '{n}');
+            el.textContent = el.dataset.template.replace('{n}', '0');
+          }
+          io.observe(el);
+        });
+      }
     }
+
+    document.addEventListener('astro:page-load', initHome);
   </script>
 
 </Base>

@@ -1127,180 +1127,196 @@ const alternates = [
 </style>
 
 <script>
-  /* ── Copy buttons ── */
-  document.querySelectorAll<HTMLElement>('.code-block').forEach(block => {
-    const btn = document.createElement('button');
-    btn.className = 'copy-btn';
-    btn.type = 'button';
-    btn.textContent = 'copy';
-    btn.setAttribute('aria-label', 'Copy code to clipboard');
-    btn.addEventListener('click', () => {
-      const pre = block.querySelector('pre');
-      const text = pre?.textContent?.trim() ?? '';
-      navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = 'copied!';
-        btn.classList.add('copy-btn--copied');
-        setTimeout(() => {
-          btn.textContent = 'copy';
-          btn.classList.remove('copy-btn--copied');
-        }, 2000);
-      }).catch(() => {});
-    });
-    block.appendChild(btn);
-  });
+  let scrollCleanup: (() => void) | null = null;
 
-  /* Sidebar section state */
-  const sidebarLinks = Array.from(
-    document.querySelectorAll<HTMLAnchorElement>('.api-sidebar__link[href^="#"]')
-  );
-  const sidebarTargets = sidebarLinks
-    .map(link => {
-      const id = decodeURIComponent(link.hash.slice(1));
-      return { id, link, target: document.getElementById(id) };
-    })
-    .filter((item): item is { id: string; link: HTMLAnchorElement; target: HTMLElement } => Boolean(item.target));
-
-  function setActiveSidebarLink(activeId: string) {
-    sidebarTargets.forEach(({ id, link }) => {
-      const isActive = id === activeId;
-      link.classList.toggle('is-active', isActive);
-      if (isActive) {
-        link.setAttribute('aria-current', 'location');
-      } else {
-        link.removeAttribute('aria-current');
-      }
-    });
-  }
-
-  function getCurrentSidebarTarget() {
-    const offset = 120;
-    let current = sidebarTargets[0]?.id ?? '';
-
-    for (const { id, target } of sidebarTargets) {
-      if (target.getBoundingClientRect().top <= offset) {
-        current = id;
-      } else {
-        break;
-      }
-    }
-
-    return current;
-  }
-
-  if (sidebarTargets.length > 0) {
-    let sidebarFrame = 0;
-    const syncSidebar = () => {
-      if (sidebarFrame) return;
-      sidebarFrame = window.requestAnimationFrame(() => {
-        setActiveSidebarLink(getCurrentSidebarTarget());
-        sidebarFrame = 0;
+  function init() {
+    /* ── Copy buttons ── */
+    document.querySelectorAll<HTMLElement>('.code-block').forEach(block => {
+      if (block.querySelector('.copy-btn')) return;
+      const btn = document.createElement('button');
+      btn.className = 'copy-btn';
+      btn.type = 'button';
+      btn.textContent = 'copy';
+      btn.setAttribute('aria-label', 'Copy code to clipboard');
+      btn.addEventListener('click', () => {
+        const pre = block.querySelector('pre');
+        const text = pre?.textContent?.trim() ?? '';
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'copied!';
+          btn.classList.add('copy-btn--copied');
+          setTimeout(() => {
+            btn.textContent = 'copy';
+            btn.classList.remove('copy-btn--copied');
+          }, 2000);
+        }).catch(() => {});
       });
-    };
+      block.appendChild(btn);
+    });
 
-    syncSidebar();
-    window.addEventListener('scroll', syncSidebar, { passive: true });
-    window.addEventListener('resize', syncSidebar);
-    window.addEventListener('hashchange', syncSidebar);
-  }
+    /* ── Sidebar scroll spy ── */
+    const sidebarLinks = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('.api-sidebar__link[href^="#"]')
+    );
+    const sidebarTargets = sidebarLinks
+      .map(link => {
+        const id = decodeURIComponent(link.hash.slice(1));
+        return { id, link, target: document.getElementById(id) };
+      })
+      .filter((item): item is { id: string; link: HTMLAnchorElement; target: HTMLElement } => Boolean(item.target));
 
-  /* ── Feedback modal ── */
-  const modal = document.getElementById('feedback-modal');
-  const backdrop = document.getElementById('feedback-backdrop');
-  const openBtns = [
-    document.getElementById('open-feedback-btn-api'),
-    document.getElementById('open-feedback-btn-sidebar')
-  ];
-  const closeBtn = document.getElementById('close-feedback-btn');
-  const typeBtns = document.querySelectorAll('.feedback-type-btn');
-  const submitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement;
-  const textarea = document.getElementById('feedback-message') as HTMLTextAreaElement;
-  const emailInput = document.getElementById('feedback-email') as HTMLInputElement;
-  const status = document.getElementById('feedback-status');
-  const hpEl = document.getElementById('feedback-hp'); // Adicionado
-
-  let modalOpenedAt = 0; // Adicionado para a verificação de tempo
-
-  function toggleModal(show: boolean) {
-    modal?.toggleAttribute('hidden', !show);
-    backdrop?.toggleAttribute('hidden', !show);
-    document.body.style.overflow = show ? 'hidden' : '';
-    if (show) modalOpenedAt = Date.now(); // Registra o tempo de abertura do modal
-    if (!show) {
-      if (textarea) textarea.value = '';
-      if (emailInput) emailInput.value = '';
-      if (status) status.setAttribute('hidden', '');
-      typeBtns.forEach(b => b.classList.remove('selected'));
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submit Feedback'; }
+    function setActiveSidebarLink(activeId: string) {
+      sidebarTargets.forEach(({ id, link }) => {
+        const isActive = id === activeId;
+        link.classList.toggle('is-active', isActive);
+        if (isActive) {
+          link.setAttribute('aria-current', 'location');
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      });
     }
-  }
 
-  openBtns.forEach(btn => btn?.addEventListener('click', () => toggleModal(true)));
-  closeBtn?.addEventListener('click', () => toggleModal(false));
-  backdrop?.addEventListener('click', () => toggleModal(false));
-
-  let selectedType = '';
-  typeBtns.forEach(btn => btn.addEventListener('click', () => {
-    typeBtns.forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedType = (btn as HTMLElement).dataset.type || '';
-    if (submitBtn) submitBtn.disabled = false;
-  }));
-
-  submitBtn?.addEventListener('click', async () => {
-    const timeTaken = Date.now() - modalOpenedAt; // Adicionado
-    // Honeypot check and time-based check
-    if (hpEl?.value || timeTaken < 2000) { // Adicionado
-      toggleModal(false);
-      return;
+    function getCurrentSidebarTarget() {
+      const offset = 120;
+      let current = sidebarTargets[0]?.id ?? '';
+      for (const { id, target } of sidebarTargets) {
+        if (target.getBoundingClientRect().top <= offset) {
+          current = id;
+        } else {
+          break;
+        }
+      }
+      return current;
     }
-    submitBtn.disabled = true;
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = submitBtn.dataset.labelSending || 'Sending...';
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-    try {
-      const payload = {
-        page: location.pathname,
-        type: selectedType,
-        message: textarea.value.trim(),
-        email: emailInput.value.trim(),
-        hp: (hpEl as HTMLInputElement)?.value ?? '',
+    if (sidebarTargets.length > 0) {
+      let sidebarFrame = 0;
+      const syncSidebar = () => {
+        if (sidebarFrame) return;
+        sidebarFrame = window.requestAnimationFrame(() => {
+          setActiveSidebarLink(getCurrentSidebarTarget());
+          sidebarFrame = 0;
+        });
       };
 
-      const res = await fetch('/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
+      syncSidebar();
+      window.addEventListener('scroll', syncSidebar, { passive: true });
+      window.addEventListener('resize', syncSidebar);
+      window.addEventListener('hashchange', syncSidebar);
 
-      clearTimeout(timeoutId);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      
-      if (status) { 
-        status.textContent = modal?.dataset.success || 'Thank you!';
-        status.className = 'feedback-status feedback-status--success';
-        status.removeAttribute('hidden');
-      }
-      
-      setTimeout(() => toggleModal(false), 2000);
-    } catch (err) {
-      clearTimeout(timeoutId);
-      console.error('[Feedback] error:', err);
+      scrollCleanup = () => {
+        window.removeEventListener('scroll', syncSidebar);
+        window.removeEventListener('resize', syncSidebar);
+        window.removeEventListener('hashchange', syncSidebar);
+        if (sidebarFrame) cancelAnimationFrame(sidebarFrame);
+      };
+    }
 
-      let errorMsg = modal?.dataset.errorGeneric || 'Error.';
-      if ((err as any).name === 'AbortError') errorMsg = modal?.dataset.errorTimeout || 'Timeout.';
+    /* ── Feedback modal ── */
+    const modal = document.getElementById('feedback-modal');
+    const backdrop = document.getElementById('feedback-backdrop');
+    const openBtns = [
+      document.getElementById('open-feedback-btn-api'),
+      document.getElementById('open-feedback-btn-sidebar')
+    ];
+    const closeBtn = document.getElementById('close-feedback-btn');
+    const typeBtns = document.querySelectorAll('.feedback-type-btn');
+    const submitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement;
+    const textarea = document.getElementById('feedback-message') as HTMLTextAreaElement;
+    const emailInput = document.getElementById('feedback-email') as HTMLInputElement;
+    const status = document.getElementById('feedback-status');
+    const hpEl = document.getElementById('feedback-hp') as HTMLInputElement | null;
 
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
+    let modalOpenedAt = 0;
+    let selectedType = '';
 
-      if (status) {
-        status.textContent = errorMsg;
-        status.className = 'feedback-status feedback-status--err';
-        status.removeAttribute('hidden');
+    function toggleModal(show: boolean) {
+      modal?.toggleAttribute('hidden', !show);
+      backdrop?.toggleAttribute('hidden', !show);
+      document.body.style.overflow = show ? 'hidden' : '';
+      if (show) modalOpenedAt = Date.now();
+      if (!show) {
+        if (textarea) textarea.value = '';
+        if (emailInput) emailInput.value = '';
+        if (status) status.setAttribute('hidden', '');
+        typeBtns.forEach(b => b.classList.remove('selected'));
+        if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Submit Feedback'; }
       }
     }
+
+    openBtns.forEach(btn => btn?.addEventListener('click', () => toggleModal(true)));
+    closeBtn?.addEventListener('click', () => toggleModal(false));
+    backdrop?.addEventListener('click', () => toggleModal(false));
+
+    typeBtns.forEach(btn => btn.addEventListener('click', () => {
+      typeBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedType = (btn as HTMLElement).dataset.type || '';
+      if (submitBtn) submitBtn.disabled = false;
+    }));
+
+    submitBtn?.addEventListener('click', async () => {
+      const timeTaken = Date.now() - modalOpenedAt;
+      if (hpEl?.value || timeTaken < 2000) {
+        toggleModal(false);
+        return;
+      }
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = submitBtn.dataset.labelSending || 'Sending...';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      try {
+        const payload = {
+          page: location.pathname,
+          type: selectedType,
+          message: textarea.value.trim(),
+          email: emailInput.value.trim(),
+          hp: hpEl?.value ?? '',
+        };
+
+        const res = await fetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        if (status) {
+          status.textContent = modal?.dataset.success || 'Thank you!';
+          status.className = 'feedback-status feedback-status--success';
+          status.removeAttribute('hidden');
+        }
+
+        setTimeout(() => toggleModal(false), 2000);
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.error('[Feedback] error:', err);
+
+        let errorMsg = modal?.dataset.errorGeneric || 'Error.';
+        if ((err as any).name === 'AbortError') errorMsg = modal?.dataset.errorTimeout || 'Timeout.';
+
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+
+        if (status) {
+          status.textContent = errorMsg;
+          status.className = 'feedback-status feedback-status--err';
+          status.removeAttribute('hidden');
+        }
+      }
+    });
+  }
+
+  document.addEventListener('astro:before-swap', () => {
+    scrollCleanup?.();
+    scrollCleanup = null;
   });
+
+  document.addEventListener('astro:page-load', init);
 </script>

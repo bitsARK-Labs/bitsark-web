@@ -295,15 +295,14 @@ const mobileLinks = isDolarMap ? [
       "name": "bitsARK Labs",
       "legalName": "Tecnologia Atual Serviços LTDA",
       "taxID": "51.334.748/0001-61",
-      "url": "https://bitsark.com/",
+      "url": "https://bitsark.com",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://bitsark.com/og-default.png",
+        "url": "https://bitsark.com/images/logo.png",
         "width": 1200,
-        "height": 630
+        "height": 1200
       },
-      "image": "https://bitsark.com/og-default.png",
-      "founder": {
+      "image": "https://bitsark.com/images/logo.png",
         "@type": "Person",
         "@id": "https://bitsark.com/about/#ricardo",
         "name": "Ricardo Delfino",
@@ -322,7 +321,11 @@ const mobileLinks = isDolarMap ? [
         "https://twitter.com/bitsarklabs",
         "https://play.google.com/store/apps/dev?id=7793792104800726717"
       ]
-    })} />
+    })} /> 
+    <!-- 
+      A propriedade "url" em Schema.org para Organization deve ser a URL base do site, 
+      sem a barra final, conforme as diretrizes mais recentes.
+    -->
 
     <style is:global>
       .skip-link {
