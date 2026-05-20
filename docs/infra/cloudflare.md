@@ -91,6 +91,25 @@ Browser TTL: Respect origin TTL
 
 > **Aviso DNS de `.webp`:** se aparecer "Your DNS configuration may not be proxying traffic for .webp" — é falso positivo enquanto bitsark.com está proxied (laranja). Não bloquear deploy por isso.
 
+### 5.2b `assets.bitsark.com` — logos SVG imutáveis
+Regra 1 - Cache Rules:
+```
+Expression: (http.host eq "assets.bitsark.com" and starts_with(http.request.uri.path, "/logos/"))
+Eligible for cache: yes
+Edge TTL: Ignore cache-control header, TTL = 1 year
+Browser TTL: Override origin, TTL = 1 year
+```
+> **Por que regra separada e não na §5.2:** `assets.bitsark.com` é um hostname diferente — misturar dois hostnames numa regra dificulta debug. Regra dedicada torna o escopo explícito.
+
+Regra 2 - Cache Response Rules:
+```
+Expression: (http.host eq "assets.bitsark.com" and starts_with(http.request.uri.path, "/logos/"))
+Modify cache-control directives: yes
+Action - Add directive; Directive - immutable; Cloudflare only -> OFF
+Action - Add directive; Directive - max-age; Duration (seconds) - 31536000; Cloudflare only -> OFF
+Action - Add directive; Directive - public; Cloudflare only -> OFF
+```
+
 ### 5.3 Site — sitemap/robots (TTL curto)
 ```
 Expression: (http.host eq "bitsark.com" and (http.request.uri.path eq "/robots.txt" or starts_with(http.request.uri.path, "/sitemap")))
@@ -200,6 +219,7 @@ Action: Block
 | Função `feedback` retornando 429 | Rate-limit KV (1 req/min/IP) — não é Cloudflare config | [`functions/feedback.js`](../../functions/feedback.js) |
 | Sitemap servindo versão velha após deploy | Cache Rule §5.3 com TTL 2h | Esperar 2h ou purge |
 | API DolarMap retornando dados em cache quando deveria ser fresh | Endpoint caiu na regra §5.5 sem querer | Verificar path bate só com os listados em §5.4/§5.5 |
+| SVGs de `assets.bitsark.com` sem cache (PSI reclama) | Cache Rule §5.2b ausente ou Transform Rule recriada no lugar errado | Confirmar §5.2b existe; deletar qualquer Transform Rule "Modify Response Header" para `/logos/` |
 | HSTS reclamando no hstspreload.org | `_headers` diz 2 anos, painel diz 12 meses — preload list lê do header que chega | Garantir `_headers` permanece em 63072000 |
 | Cache Rule "expressão inválida" ao salvar | Tentativa de usar brace `{a,b}` em wildcard | Usar `http.request.uri.path.extension in {...}` |
 

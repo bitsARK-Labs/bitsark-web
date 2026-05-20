@@ -990,9 +990,10 @@
 
   /* ── Responsive ── */
   @media (max-width: 768px) {
-    #col-rfb, #col-obligations { display: none; }
-    td[headers="col-rfb"],
-    td[headers="col-obligations"] { display: none; }
+    /* Colunas ocultas por padrão no mobile: Taxas e Pix */
+    #col-fees, #col-pix { display: none; }
+    td[headers="col-fees"],
+    td[headers="col-pix"] { display: none; }
   }
 
   /* ── sr-only ── */
@@ -1093,10 +1094,125 @@
     background: var(--color-primary-highlight);
   }
 
-  /* ── Mobile responsive improvements ── */
-  @media (max-width: 480px) {
+  /* ── Mobile: table edge-to-edge e coluna nome compacta ── */
+  @media (max-width: 768px) {
+    /* Tabela ocupa toda a largura: zeramos o padding do container da section#table */
+    section#table > .container {
+      padding-inline: 0;
+    }
+    section#table > .container > .exch-block-head,
+    section#table > .container > .exch-toolbar,
+    section#table > .container > .table-meta,
+    section#table > .container > .rotate-hint,
+    section#table > .container > .exch-empty,
+    section#table > .container > .table-footer-notice {
+      padding-inline: var(--space-4, 1rem);
+    }
+
+    /* Table wrap sem borda lateral arredondada para edge-to-edge */
+    .table-wrap {
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+
+    /* Coluna nome: compacta ao mínimo */
+    .exch-td-name,
+    th#col-exchange {
+      min-width: 0;
+      width: auto;
+    }
+
+    /* Nome da exchange: sem padding extra, texto menor */
+    .exch-name-link {
+      font-size: 13px;
+      gap: 0.35rem;
+      padding-right: 0.35rem;
+    }
+
+    .exch-cnpj-sub {
+      padding-left: 0;
+      font-size: 10px;
+    }
+
+    /* Logo menor no mobile */
+    .exch-logo {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Badge BCB: oculto no mobile para economizar espaço */
+    .badge-bcb { display: none !important; }
+
+    /* Obrigações: wrap mais compacto */
+    .exch-oblig-wrap {
+      min-width: 0;
+      gap: 0.25rem;
+    }
+
+    /* Células com menos padding */
+    .data-table th,
+    .data-table td {
+      padding: 0.5rem 0.4rem;
+    }
+
+    /* Sticky col com sombra sutil para indicar scroll */
+    .sticky-col::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: -12px;
+      bottom: 0;
+      width: 12px;
+      background: linear-gradient(to right, rgba(0,0,0,0.12), transparent);
+      pointer-events: none;
+    }
+
+    /* Coluna país: mais compacta */
     #col-country,
-    td[headers="col-country"] { display: none; }
+    td[headers="col-country"] {
+      width: 52px;
+      padding-inline: 0.3rem !important;
+    }
+
+    .exch-iso-code { display: none; }
+
+    .exch-flag-img {
+      width: 20px;
+      height: 14px;
+    }
+  }
+
+  /* Hint de rotação — visível só quando retrato em mobile */
+  .rotate-hint {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+    padding: 0.45rem 0.85rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    color: var(--color-text-faint);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+    width: fit-content;
+    animation: exch-fade 400ms ease both;
+  }
+  .rotate-hint svg {
+    flex-shrink: 0;
+    animation: rotate-nudge 2.4s ease-in-out infinite;
+  }
+  @keyframes rotate-nudge {
+    0%, 70%, 100% { transform: rotate(0deg); }
+    20%           { transform: rotate(-25deg); }
+    40%           { transform: rotate(15deg); }
+  }
+
+  @media (max-width: 768px) {
+    .rotate-hint.is-portrait { display: inline-flex; }
   }
 
   /* ── Feedback Modal Styles ── */

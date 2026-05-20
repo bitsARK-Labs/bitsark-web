@@ -2266,7 +2266,7 @@
       "aboutUs": {
         "title": "1. Sobre Nós",
         "p1": "DolarMap é um aplicativo de monitoramento de câmbio desenvolvido e operado pela <strong>Tecnologia Atual Serviços LTDA</strong>, doravante referida como \"desenvolvedor\" ou \"nós\". O aplicativo agrega, em tempo real, cotações do dólar americano (USD/BRL) de várias exchanges e corretoras de criptomoedas, exibindo as melhores oportunidades disponíveis para compra, venda e arbitragem no mercado.",
-        "p2": "A Tecnologia Atual Serviços LTDA está sediada no Brasil e registrada sob o CNPJ nº 51.334.748/0001-61. O contato pode ser feito via e-mail em <a href=\"mailto:support@bitsark.com\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a> ou através do portal <a href=\"https://bitsark.com\" target=\"_blank\" rel=\"noopener noreferrer\">bitsARK.com</a>."
+        "p2": "A Tecnologia Atual Serviços LTDA está sediada no Brasil e registrada sob o CNPJ nº 51.334.748/0001-61. O contato pode ser feito via e-mail em <a href=\"mailto:support@bitsark.com\">support@bitsark.com</a> ou através do portal <a href=\"https://bitsark.com\" target=\"_blank\" rel=\"noopener noreferrer\">bitsARK.com</a>."
       },
       "whatDolarMapDoes": {
         "title": "2. O Que o DolarMap Faz",
@@ -2365,6 +2365,7 @@
     "contact": {
       "badge": "Contato Direto",
       "text": "Precisa de ajuda especializada? Fale diretamente com nosso time:",
+      "email": "support@bitsark.com",
       "response": "Tempo de resposta típico: <strong>2 dias úteis</strong>."
     },
     "faq": {
@@ -2413,7 +2414,7 @@
         "sub": "Envie um e-mail de qualquer endereço com o assunto abaixo. Não é necessário login.",
         "step1": {
           "title": "Abra seu app de e-mail",
-          "text": "Enderece para <a href=\"mailto:support@bitsark.com?subject=DolarMap%20-%20Account%20Deletion%20Request\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a>"
+          "text": "Enderece para <a href=\"mailto:support@bitsark.com?subject=DolarMap%20-%20Account%20Deletion%20Request\">support@bitsark.com</a>"
         },
         "step2": {
           "title": "Use o assunto exato",
@@ -2446,7 +2447,7 @@
     },
     "s1": {
       "h2": "1. Identificação",
-      "p": "A plataforma <strong>bitsARK</strong> (incluindo o portal bitsark.com e suas APIs) é de propriedade e operada pela <strong>Tecnologia Atual Serviços LTDA</strong>, empresa brasileira inscrita no CNPJ sob o nº 51.334.748/0001-61. Para suporte ou questões legais, entre em contato via <a href=\"mailto:support@bitsark.com\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a>."
+      "p": "A plataforma <strong>bitsARK</strong> (incluindo o portal bitsark.com e suas APIs) é de propriedade e operada pela <strong>Tecnologia Atual Serviços LTDA</strong>, empresa brasileira inscrita no CNPJ sob o nº 51.334.748/0001-61. Para suporte ou questões legais, entre em contato via <a href=\"mailto:support@bitsark.com\">support@bitsark.com</a>."
     },
     "s2": {
       "h2": "2. Natureza Informativa e Isenção de Aconselhamento",
@@ -2781,7 +2782,7 @@
       },
       "q7": {
         "q": "Como entro em contato com o suporte?",
-        "a": "E-mail <a href=\"mailto:support@bitsark.com\" class=\"dm-link\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a> - respostas em até 24h em dias úteis. Ou visite nossa <a href=\"/pt/dolarmap/support\" class=\"dm-link\">página de suporte</a>."
+        "a": "E-mail <a href=\"mailto:support@bitsark.com\" class=\"dm-link\">support@bitsark.com</a> - respostas em até 24h em dias úteis. Ou visite nossa <a href=\"/pt/dolarmap/support\" class=\"dm-link\">página de suporte</a>."
       }
     },
     "final": {

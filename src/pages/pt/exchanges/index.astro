@@ -207,6 +207,17 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
         </div>
       </div>
 
+      <!-- Hint de rotação (mobile portrait) -->
+      <div class="rotate-hint" id="rotate-hint" aria-hidden="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 8a8 8 0 0 1 14.93-2"/>
+          <polyline points="20 2 20 8 14 8"/>
+          <path d="M20 16a8 8 0 0 1-14.93 2"/>
+          <polyline points="4 22 4 16 10 16"/>
+        </svg>
+        Gire o celular para ver mais colunas
+      </div>
+
       <!-- Tabela -->
       <div class="table-meta">
         <p class="exch-result-count" id="result-count" aria-live="polite" data-template={t.exchanges.table.results}>{t.exchanges.table.results.replace('{count}', exchangesData.length.toString()).replace('{s}', exchangesData.length !== 1 ? 's' : '')}</p>
@@ -840,10 +851,18 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
     document.querySelectorAll(`td[headers="${id}"]`).forEach(td => (td as HTMLElement).classList.toggle('col-hidden', !show));
   };
 
+  const isMobileViewport = () => window.innerWidth <= 768;
+  const MOBILE_HIDDEN_COLS = new Set(['col-fees', 'col-pix']);
+
   const savedCols = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
   colToggles.forEach(t => {
     const id = t.dataset.col || '';
-    if (savedCols[id] !== undefined) { t.checked = savedCols[id]; syncCol(id, t.checked); }
+    if (savedCols[id] !== undefined) {
+      t.checked = savedCols[id];
+    } else if (isMobileViewport() && MOBILE_HIDDEN_COLS.has(id)) {
+      t.checked = false;
+    }
+    syncCol(id, t.checked);
     t.addEventListener('change', () => {
       syncCol(id, t.checked);
       const curr = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
@@ -854,6 +873,17 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
 
   // Initial filter and count update on page load
   applyFilters();
+
+  // ── Rotate hint (portrait mobile) ──
+  const rotateHint = document.getElementById('rotate-hint');
+  function updateRotateHint() {
+    if (!rotateHint) return;
+    const isPortrait = window.matchMedia('(orientation: portrait) and (max-width: 768px)').matches;
+    rotateHint.classList.toggle('is-portrait', isPortrait);
+  }
+  updateRotateHint();
+  window.addEventListener('orientationchange', updateRotateHint);
+  window.matchMedia('(orientation: portrait)').addEventListener('change', updateRotateHint);
 
   // Feedback Logic
   function toggleModal(show: boolean) {

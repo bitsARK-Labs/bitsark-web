@@ -1660,7 +1660,7 @@
       },
       "contact": {
         "title": "14. Contact and Data Protection Officer (DPO)",
-        "p1": "DolarMap is operated by Tecnologia Atual Serviços LTDA, which follows industry-standard privacy and security practices. For any privacy-related questions, please contact us via email at <a href=\"mailto:support@bitsark.com\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a>.",
+        "p1": "DolarMap is operated by Tecnologia Atual Serviços LTDA, which follows industry-standard privacy and security practices. For any privacy-related questions, please contact us via email at <a href=\"mailto:support@bitsark.com\">support@bitsark.com</a>.",
         "p2": "We will respond to requests within 15 business days, as provided for by the LGPD."
       },
       "summary": {
@@ -1699,7 +1699,7 @@
       "aboutUs": {
         "title": "1. About Us",
         "p1": "DolarMap is a currency exchange monitoring application developed and operated by <strong>Tecnologia Atual Servicos LTDA</strong>, hereinafter referred to as the \"developer\" or \"we\". The application aggregates, in real-time, US dollar (USD/BRL) quotes from various cryptocurrency exchanges and brokers, displaying the best available opportunities for buying, selling, and arbitrage in the market.",
-        "p2": "Tecnologia Atual Serviços LTDA is based in Brazil and registered under CNPJ No. 51.334.748/0001-61. Contact can be made via email at <a href=\"mailto:support@bitsark.com\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a> or through the <a href=\"https://bitsark.com\" target=\"_blank\" rel=\"noopener noreferrer\">bitsARK.com</a> portal."
+        "p2": "Tecnologia Atual Serviços LTDA is based in Brazil and registered under CNPJ No. 51.334.748/0001-61. Contact can be made via email at <a href=\"mailto:support@bitsark.com\">support@bitsark.com</a> or through the <a href=\"https://bitsark.com\" target=\"_blank\" rel=\"noopener noreferrer\">bitsARK.com</a> portal."
       },
       "whatDolarMapDoes": {
         "title": "2. What DolarMap Does",
@@ -1846,7 +1846,7 @@
         "sub": "Send an email from any address with the subject line below. No account login required.",
         "step1": {
           "title": "Open your email app",
-          "text": "Address it to <a href=\"mailto:support@bitsark.com?subject=DolarMap%20-%20Account%20Deletion%20Request\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a>"
+          "text": "Address it to <a href=\"mailto:support@bitsark.com?subject=DolarMap%20-%20Account%20Deletion%20Request\">support@bitsark.com</a>"
         },
         "step2": {
           "title": "Use the exact subject line",
@@ -1879,7 +1879,7 @@
     },
     "s1": {
       "h2": "1. Identification",
-      "p": "The <strong>bitsARK</strong> platform (including the bitsark.com portal and its APIs) is owned and operated by <strong>Tecnologia Atual Serviços LTDA</strong>, a Brazilian company registered under CNPJ No. 51.334.748/0001-61. For support or legal issues, contact us via <a href=\"mailto:support@bitsark.com\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a>."
+      "p": "The <strong>bitsARK</strong> platform (including the bitsark.com portal and its APIs) is owned and operated by <strong>Tecnologia Atual Serviços LTDA</strong>, a Brazilian company registered under CNPJ No. 51.334.748/0001-61. For support or legal issues, contact us via <a href=\"mailto:support@bitsark.com\">support@bitsark.com</a>."
     },
     "s2": {
       "h2": "2. Informational Nature and Disclaimer",
@@ -2819,7 +2819,7 @@
       },
       "q7": {
         "q": "How do I contact support?",
-        "a": "Email <a href=\"mailto:support@bitsark.com\" class=\"dm-link\" aria-label=\"Email: support@bitsark.com\"><span style=\"unicode-bidi:bidi-override;direction:rtl\" aria-hidden=\"true\">moc.kraastib@troppus</span></a> - replies within 24h on business days. Or visit our <a href=\"/dolarmap/support\" class=\"dm-link\">support page</a>."
+        "a": "Email <a href=\"mailto:support@bitsark.com\" class=\"dm-link\">support@bitsark.com</a> - replies within 24h on business days. Or visit our <a href=\"/dolarmap/support\" class=\"dm-link\">support page</a>."
       }
     },
     "final": {

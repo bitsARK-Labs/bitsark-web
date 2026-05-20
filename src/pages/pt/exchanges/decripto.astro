@@ -134,9 +134,7 @@ const icons: Record<string, string> = {
         </p>
       </div>
 
-      <h1 id="page-heading" class="dc-hero__title fade-up" style="animation-delay:.1s">
-        {t.decripto.hero.title}
-      </h1>
+      <h1 id="page-heading" class="dc-hero__title fade-up" style="animation-delay:.1s" set:html={t.decripto.hero.title} />
 
       <p class="dc-hero__sub fade-up" style="animation-delay:.2s" set:html={t.decripto.hero.sub} />
 
