@@ -103,6 +103,13 @@ export default defineConfig({
     service: { entrypoint: 'astro/assets/services/sharp' },
   },
   vite: {
+    build: {
+      // Prevent Vite from splitting shared CSS into separate chunks.
+      // Without this, Astro emits two <link rel="stylesheet"> tags per route
+      // (one for shared CSS, one for page-specific CSS), both render-blocking.
+      // A single merged stylesheet eliminates the extra blocking request.
+      cssCodeSplit: false,
+    },
     resolve: {
       alias: {
         '@layouts':    fileURLToPath(new URL('./src/layouts', import.meta.url)),

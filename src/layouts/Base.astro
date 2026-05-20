@@ -303,6 +303,7 @@ const mobileLinks = isDolarMap ? [
         "height": 1200
       },
       "image": "https://bitsark.com/images/logo.png",
+      "founder": {
         "@type": "Person",
         "@id": "https://bitsark.com/about/#ricardo",
         "name": "Ricardo Delfino",
@@ -814,38 +815,47 @@ const mobileLinks = isDolarMap ? [
 
     <!-- ── SCRIPT ─────────────────────────────────────────── -->
     <script>
-      // Active link highlight
+      // Batch all DOM reads before writes, then commit in a single rAF to avoid
+      // forced reflow. The ClientRouter (View Transitions) reads geometry right
+      // after DOMContentLoaded; interleaving classList mutations with those reads
+      // causes a 699 ms reflow on initial load.
       const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
       const hubPaths = ['/dolarmap', '/exchanges', '/stablecoins-brasil', '/pt/dolarmap', '/pt/exchanges', '/pt/stablecoins-brasil'];
 
+      // Phase 1: read-only — compute which links need which class (no DOM writes)
+      const linkUpdates = [];
       document.querySelectorAll('.nav__link').forEach((link) => {
         const href = link.getAttribute('href')?.replace(/\/$/, '') || '';
         if (!href || href.includes('#')) return;
+        const isActive =
+          currentPath === href ||
+          (href !== '' && currentPath.startsWith(href + '/') && !hubPaths.includes(href));
+        linkUpdates.push({ el: link, add: isActive });
+      });
 
-        // Remove a classe antes de aplicar para evitar duplicidade do SSR
-        link.classList.remove('active');
+      const navEl = document.querySelector('.nav') as HTMLElement | null;
+      const shouldBeScrolled = window.scrollY > 8;
 
-        if (currentPath === href) {
-          // Match exato
-          link.classList.add('active');
-        } else if (href !== '' && currentPath.startsWith(href + '/') && !hubPaths.includes(href)) {
-          // Match de sub-rota apenas para links que não são "hubs" principais
-          link.classList.add('active');
+      // Phase 2: write-only — commit all classList changes in one rAF
+      requestAnimationFrame(() => {
+        for (const { el, add } of linkUpdates) {
+          el.classList.remove('active');
+          if (add) el.classList.add('active');
+        }
+
+        if (navEl) {
+          navEl.classList.toggle('is-scrolled', shouldBeScrolled);
         }
       });
 
       // Nav scroll state - condense from translucent to opaque after the first 8px
-      const navEl = document.querySelector('.nav') as HTMLElement | null;
       if (navEl) {
         const onScroll = () => {
-          if (window.scrollY > 8) {
-            navEl.classList.add('is-scrolled');
-          } else {
-            navEl.classList.remove('is-scrolled');
-          }
+          requestAnimationFrame(() => {
+            navEl.classList.toggle('is-scrolled', window.scrollY > 8);
+          });
         };
         window.addEventListener('scroll', onScroll, { passive: true });
-        onScroll();
       }
     </script>
 
