@@ -231,7 +231,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
             <tr>
               <th scope="col" id="col-exchange" class="sticky-col sortable" data-sort="name" aria-sort="none"
                   data-tooltip={t.exchanges.table.tooltips.cnpj}>
-                {t.exchanges.table.cols.exchange}
+                <span class="col-exchange-label">{t.exchanges.table.cols.exchange}<span class="col-exchange-sub">{t.exchanges.table.cols.cnpj}</span></span>
                 <span class="sort-icon" aria-hidden="true">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
@@ -239,7 +239,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
               </th>
               <th scope="col" id="col-country" class="sortable text-center" data-sort="country" aria-sort="none"
                   data-tooltip={t.exchanges.table.tooltips.country}>
-                {t.exchanges.table.cols.country}
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="col-country-icon" aria-label={t.exchanges.table.cols.country}><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 <span class="sort-icon" aria-hidden="true">
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
                   <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>

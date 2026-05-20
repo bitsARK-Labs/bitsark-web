@@ -501,7 +501,8 @@
       "settingsTitle": "Configurar colunas",
       "visibleCols": "Colunas visíveis",
       "cols": {
-        "exchange": "Corretora / CNPJ",
+        "exchange": "Corretora",
+        "cnpj": " / CNPJ",
         "country": "País",
         "rfb": "Reporte RFB",
         "maker": "Maker",

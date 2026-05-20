@@ -270,26 +270,41 @@
     font-weight: 600;
   }
   .founder-band__status-dot {
+    position: relative;
     width: 7px;
     height: 7px;
     border-radius: 50%;
     background: var(--color-success);
-    box-shadow: 0 0 0 2px rgba(var(--color-success-rgb), 0.22);
-    animation: founder-pulse 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     flex-shrink: 0;
+    will-change: opacity;
+    animation: founder-pulse-dot 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
-  @keyframes founder-pulse {
-    0%, 100% {
-      opacity: 1;
-      box-shadow: 0 0 0 2px rgba(var(--color-success-rgb), 0.22);
-    }
-    50% {
-      opacity: 0.65;
-      box-shadow: 0 0 0 6px rgba(var(--color-success-rgb), 0.06);
-    }
+  /* Pseudo-element ring uses only transform + opacity — both GPU-composited,
+     replacing the non-composite box-shadow that triggered Lighthouse CLS flag. */
+  .founder-band__status-dot::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--color-success);
+    transform-origin: center;
+    will-change: transform, opacity;
+    animation: founder-pulse-ring 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes founder-pulse-dot {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.65; }
+  }
+  @keyframes founder-pulse-ring {
+    0%, 100% { transform: scale(1);    opacity: 0.22; }
+    50%      { transform: scale(1.73); opacity: 0.06; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .founder-band__status-dot { animation: none; }
+    .founder-band__status-dot,
+    .founder-band__status-dot::after { animation: none; }
   }
   .founder-band__sep            { color: var(--color-text-faint); opacity: 0.5; }
   .founder-band__status-detail  { color: var(--color-text-faint); }

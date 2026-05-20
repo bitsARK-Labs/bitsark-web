@@ -475,7 +475,7 @@ const mobileLinks = isDolarMap ? [
         font-weight: 600;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: var(--color-text-faint);
+        color: var(--color-text-muted);
         text-decoration: none;
         padding: 0.2em 0.4em;
         border-radius: var(--radius-sm);
@@ -749,7 +749,8 @@ const mobileLinks = isDolarMap ? [
             <a href={l('/about')}                    class="footer__link">{t('footer.about')}</a>
             <a href={l('/about#hiring')}             class="footer__link">{t('footer.contact')}</a>
             <a href="https://github.com/bitsARK-Labs/exchanges-api"
-               class="footer__link" target="_blank" rel="noopener noreferrer">
+               class="footer__link" target="_blank" rel="noopener noreferrer"
+               aria-label="Exchanges API on GitHub">
               {t('footer.github')}
             </a>
           </div>

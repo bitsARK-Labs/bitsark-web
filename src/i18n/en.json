@@ -491,7 +491,8 @@
       "settingsTitle": "Configure columns",
       "visibleCols": "Visible columns",
       "cols": {
-        "exchange": "Exchange / CNPJ",
+        "exchange": "Exchange",
+        "cnpj": " / CNPJ",
         "country": "Country",
         "rfb": "RFB Report",
         "maker": "Maker",
