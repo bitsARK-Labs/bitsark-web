@@ -656,6 +656,26 @@ h4 { font-size: var(--text-base); font-weight: 600; }
   color: var(--color-primary);
   opacity: 0.85;
 }
+.eyebrow--icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.eyebrow--icon::before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  width: 9px;
+  height: 9px;
+  margin-right: 6px;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor);
+  background-size: 4px 4px, 4px 4px;
+  background-position: top left, bottom right;
+  background-repeat: no-repeat;
+  opacity: .8;
+}
 
 /* ── Centered ──────────────────────────────────────────────── */
 .centered {

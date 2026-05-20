@@ -31,18 +31,6 @@
     margin: 0 auto clamp(2rem, 4vw, 3rem);
     text-align: center;
   }
-  .rep-section-head .eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-  .rep-section-head .eyebrow::before {
-    content: "";
-    width: 18px;
-    height: 1px;
-    background: currentColor;
-    opacity: 0.6;
-  }
   .rep-section-title {
     font-size: clamp(1.8rem, 3.6vw, 2.5rem);
     line-height: 1.15;

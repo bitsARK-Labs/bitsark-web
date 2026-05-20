@@ -57,6 +57,8 @@
   }
 
   .eyebrow--centered {
+    display: flex;
+    justify-content: center;
     text-align: center;
     margin-bottom: 0.5rem;
   }

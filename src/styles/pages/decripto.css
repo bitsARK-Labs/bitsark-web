@@ -45,18 +45,6 @@
     margin-bottom: var(--space-4);
   }
 
-  /* ── Eyebrow ─────────────────────────────────────────────── */
-  .dc-eyebrow {
-    font-family: var(--dc-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--dc-primary);
-    margin: 0 0 var(--space-3);
-    display: block;
-  }
-
   /* ── Section head ────────────────────────────────────────── */
   .dc-section-head {
     text-align: center;

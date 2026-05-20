@@ -1,29 +1,29 @@
----
+﻿---
 import Base from "@layouts/Base.astro";
 import t    from "@i18n/pt.json";
 import "@styles/pages/receber-exterior-pj.css";
 
-/* ─── Constantes editoriais ───────────────────────────────────────── */
-const locale        = "pt-BR";   /* trocar para "en-US" na versão inglesa */
+/* â”€â”€â”€ Constantes editoriais â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+const locale        = "pt-BR";   /* trocar para "en-US" na versÃ£o inglesa */
 const canonical     = "https://bitsark.com/pt/stablecoins-brasil/receber-exterior-pj/";
 const datePublished = "2026-05-16";
 const dateModified  = "2026-05-16";
 
-/* PTAX-venda hardcoded · atualizar editorialmente com dateModified */
+/* PTAX-venda hardcoded Â· atualizar editorialmente com dateModified */
 const ptaxRef     = 5.12;
 const ptaxRefDate = "2026-05-15";
 
-/* IOF projetado · consulta pública (CP 99/2026), sem lei sancionada */
-const iofProposed     = 0.035;   /* stablecoin · projetado */
-const iofSwiftCurrent = 0.0038;  /* câmbio ingresso PJ atual */
+/* IOF projetado Â· consulta pÃºblica (CP 99/2026), sem lei sancionada */
+const iofProposed     = 0.035;   /* stablecoin Â· projetado */
+const iofSwiftCurrent = 0.0038;  /* cÃ¢mbio ingresso PJ atual */
 
-/* Simulador · presets editoriais (em percentual; JS divide por 100) */
+/* Simulador Â· presets editoriais (em percentual; JS divide por 100) */
 const fxPresets = {
   wire:    { charge: 2.5, fixed: 35 },
   fintech: { charge: 1.0, fixed: 0  },
 };
 const stablePresets = { spread: 0.1, fee: 1.0 };
-const iofCambioPct       = 0.38;  /* IOF de câmbio (wire + fintech) */
+const iofCambioPct       = 0.38;  /* IOF de cÃ¢mbio (wire + fintech) */
 const iofStableProposedPct = 3.5; /* IOF stablecoin (CP 99/2026) */
 
 const rep = t.receber_exterior_pj;
@@ -37,7 +37,7 @@ const ptaxDateFormatted = new Date(ptaxRefDate + "T12:00:00Z").toLocaleDateStrin
 const iofCambioFormatted = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(iofCambioPct) + "%";
 const iofStableFormatted = new Intl.NumberFormat(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(iofStableProposedPct) + "%";
 
-/* ─── Timeline regulatória com status dinâmico (build-time) ───────── */
+/* â”€â”€â”€ Timeline regulatÃ³ria com status dinÃ¢mico (build-time) â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const now = new Date();
 const timelineConfig = [
   { date: new Date("2022-12-21"), end: new Date("2023-12-11T23:59:59") },
@@ -59,7 +59,7 @@ const alternates = [
   { hreflang: "x-default", href: "https://bitsark.com/stablecoins-brasil/receber-exterior-pj/" }
 ];
 
-/* ─── Schema.org @graph ───────────────────────────────────────────── */
+/* â”€â”€â”€ Schema.org @graph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const allFaqs = rep.faq.categories.flatMap(c => c.questions);
 
 const schemaGraph = {
@@ -80,15 +80,15 @@ const schemaGraph = {
         "url": "https://bitsark.com",
       },
       "about": [
-        { "@type": "Legislation", "name": "Lei nº 14.478/2022",                 "alternateName": "Marco dos Ativos Virtuais", "legislationType": "Lei Ordinária Federal",   "jurisdiction": "Brasil", "dateEnacted": "2022-12-21" },
-        { "@type": "Legislation", "name": "Lei nº 14.754/2023",                 "alternateName": "Lei das Offshores",         "legislationType": "Lei Ordinária Federal",   "jurisdiction": "Brasil", "dateEnacted": "2023-12-12" },
-        { "@type": "Legislation", "name": "Instrução Normativa RFB nº 2.291/2025", "alternateName": "DeCripto",               "legislationType": "Instrução Normativa",     "jurisdiction": "Brasil", "dateEnacted": "2025-11-14" },
-        { "@type": "Legislation", "name": "Resolução BCB nº 521/2025",          "legislationType": "Resolução BCB",                                                          "jurisdiction": "Brasil", "dateEnacted": "2025-11-01" },
-        { "@type": "Legislation", "name": "Lei Complementar nº 116/2003",       "alternateName": "ISS sobre serviços",        "legislationType": "Lei Complementar",        "jurisdiction": "Brasil", "dateEnacted": "2003-07-31" },
+        { "@type": "Legislation", "name": "Lei nÂº 14.478/2022",                 "alternateName": "Marco dos Ativos Virtuais", "legislationType": "Lei OrdinÃ¡ria Federal",   "jurisdiction": "Brasil", "dateEnacted": "2022-12-21" },
+        { "@type": "Legislation", "name": "Lei nÂº 14.754/2023",                 "alternateName": "Lei das Offshores",         "legislationType": "Lei OrdinÃ¡ria Federal",   "jurisdiction": "Brasil", "dateEnacted": "2023-12-12" },
+        { "@type": "Legislation", "name": "InstruÃ§Ã£o Normativa RFB nÂº 2.291/2025", "alternateName": "DeCripto",               "legislationType": "InstruÃ§Ã£o Normativa",     "jurisdiction": "Brasil", "dateEnacted": "2025-11-14" },
+        { "@type": "Legislation", "name": "ResoluÃ§Ã£o BCB nÂº 521/2025",          "legislationType": "ResoluÃ§Ã£o BCB",                                                          "jurisdiction": "Brasil", "dateEnacted": "2025-11-01" },
+        { "@type": "Legislation", "name": "Lei Complementar nÂº 116/2003",       "alternateName": "ISS sobre serviÃ§os",        "legislationType": "Lei Complementar",        "jurisdiction": "Brasil", "dateEnacted": "2003-07-31" },
       ],
       "audience": {
         "@type": "Audience",
-        "audienceType": "Empresários PJ no Brasil que prestam serviços ao exterior",
+        "audienceType": "EmpresÃ¡rios PJ no Brasil que prestam serviÃ§os ao exterior",
       },
       "breadcrumb": { "@id": `${canonical}#breadcrumb` },
       "mainEntity": [
@@ -108,8 +108,8 @@ const schemaGraph = {
       "author":    { "@type": "Organization", "name": "bitsARK Labs", "url": "https://bitsark.com" },
       "publisher": { "@type": "Organization", "name": "bitsARK Labs", "url": "https://bitsark.com" },
       "image": "https://bitsark.com/og/receber-exterior-pj.png",
-      "articleSection": "Tributação Cripto-PJ",
-      "keywords": "receber USDT exterior, USDC exportação serviço, CNPJ stablecoin, Wise Business PJ, Husky câmbio fintech, Remessa Online PJ, prestador serviço exterior, exportação serviço cripto, freelancer cripto Brasil, nômade digital CNPJ, DeCripto PJ",
+      "articleSection": "TributaÃ§Ã£o Cripto-PJ",
+      "keywords": "receber USDT exterior, USDC exportaÃ§Ã£o serviÃ§o, CNPJ stablecoin, Wise Business PJ, Husky cÃ¢mbio fintech, Remessa Online PJ, prestador serviÃ§o exterior, exportaÃ§Ã£o serviÃ§o cripto, freelancer cripto Brasil, nÃ´made digital CNPJ, DeCripto PJ",
       "mentions": [
         { "@type": "Organization", "name": "Wise Business",   "url": "https://wise.com/business" },
         { "@type": "Organization", "name": "Husky",           "url": "https://huskypay.com" },
@@ -121,7 +121,7 @@ const schemaGraph = {
       "@type": "BreadcrumbList",
       "@id": `${canonical}#breadcrumb`,
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Início",                       "item": "https://bitsark.com/pt/" },
+        { "@type": "ListItem", "position": 1, "name": "InÃ­cio",                       "item": "https://bitsark.com/pt/" },
         { "@type": "ListItem", "position": 2, "name": "Stablecoins no Brasil",        "item": "https://bitsark.com/pt/stablecoins-brasil/" },
         { "@type": "ListItem", "position": 3, "name": "Receber do exterior como PJ",  "item": canonical },
       ],
@@ -154,7 +154,7 @@ const schemaGraph = {
   ],
 };
 
-/* ─── Icons (inline SVG) ──────────────────────────────────────────── */
+/* â”€â”€â”€ Icons (inline SVG) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 const icons = {
   shield:    '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
   building:  '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M8 10h.01M16 10h.01M8 14h.01M16 14h.01"/></svg>',
@@ -172,11 +172,11 @@ const icons = {
   arrow:     '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
 };
 
-/* helper para resolver ícone do TLDR */
+/* helper para resolver Ã­cone do TLDR */
 const tldrIcon = (name) => icons[name] || icons.info;
 
 /* Status labels para timeline */
-const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "Próximo" };
+const timelineStatusLabel = { past: "ConcluÃ­do", active: "Em vigor", future: "PrÃ³ximo" };
 ---
 
 <Base
@@ -190,9 +190,9 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
 >
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schemaGraph)} />
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        HERO
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-hero" aria-labelledby="page-heading" id="top">
     <div class="rep-hero__atmos" aria-hidden="true">
       <div class="rep-hero__halo"></div>
@@ -204,9 +204,9 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
 
       <nav class="rep-breadcrumb" aria-label="Breadcrumb">
         <a href="/pt/">{rep.hero.breadcrumbHome}</a>
-        <span aria-hidden="true">›</span>
+        <span aria-hidden="true">â€º</span>
         <a href="/pt/stablecoins-brasil/">{rep.hero.breadcrumbHub}</a>
-        <span aria-hidden="true">›</span>
+        <span aria-hidden="true">â€º</span>
         <span aria-current="page">{rep.hero.breadcrumbCurrent}</span>
       </nav>
 
@@ -219,7 +219,7 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
           <time datetime={dateModified}>
             {rep.meta.lastReviewedLabel}: {dateModifiedDisplay}
           </time>
-          <span class="rep-hero__meta-sep" aria-hidden="true">·</span>
+          <span class="rep-hero__meta-sep" aria-hidden="true">Â·</span>
           <span class="rep-hero__meta-disc">{rep.meta.disclaimerNotLegal}</span>
         </p>
       </div>
@@ -247,13 +247,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        TL;DR
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-section--alt" id="tldr" aria-labelledby="tldr-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.tldr.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.tldr.eyebrow}</p>
         <h2 id="tldr-heading" class="rep-section-title">{rep.tldr.title}</h2>
         <p class="rep-section-sub">{rep.tldr.sub}</p>
       </header>
@@ -270,13 +270,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        POR QUE STABLECOIN
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section" id="why-stablecoin" aria-labelledby="porque-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.porQue.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.porQue.eyebrow}</p>
         <h2 id="porque-heading" class="rep-section-title">{rep.porQue.title}</h2>
         <p class="rep-section-sub">{rep.porQue.sub}</p>
       </header>
@@ -297,13 +297,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        COMO RECEBER (HowTo)
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-section--alt" id="how-to" aria-labelledby="howto-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.comoReceber.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.comoReceber.eyebrow}</p>
         <h2 id="howto-heading" class="rep-section-title">{rep.comoReceber.title}</h2>
         <p class="rep-section-sub">{rep.comoReceber.sub}</p>
       </header>
@@ -333,20 +333,20 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       COMPARATIVO SWIFT × STABLECOIN
-  ══════════════════════════════════════════════════════════════ -->
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       COMPARATIVO SWIFT Ã— STABLECOIN
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section" id="comparison" aria-labelledby="comparativo-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.comparativo.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.comparativo.eyebrow}</p>
         <h2 id="comparativo-heading" class="rep-section-title">{rep.comparativo.title}</h2>
         <p class="rep-section-sub">{rep.comparativo.sub}</p>
       </header>
 
       <div class="rep-compare-wrap">
         <table class="rep-compare-table data-table premium-table">
-          <caption class="sr-only">Comparativo entre recebimento via SWIFT bancário e via stablecoin USDT/USDC</caption>
+          <caption class="sr-only">Comparativo entre recebimento via SWIFT bancÃ¡rio e via stablecoin USDT/USDC</caption>
           <thead>
             <tr>
               {rep.comparativo.headers.map((h, i) => (
@@ -368,13 +368,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       SIMULADOR SWIFT × STABLECOIN
-  ══════════════════════════════════════════════════════════════ -->
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       SIMULADOR SWIFT Ã— STABLECOIN
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-section--alt" id="simulator" aria-labelledby="sim-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.simulador.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.simulador.eyebrow}</p>
         <h2 id="sim-heading" class="rep-section-title">{rep.simulador.title}</h2>
         <p class="rep-section-sub">{rep.simulador.sub}</p>
       </header>
@@ -437,7 +437,7 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
                   max="20"
                   step="0.01"
                   inputmode="decimal"
-                  aria-label={`${rep.simulador.ptaxLabel} - editável`}
+                  aria-label={`${rep.simulador.ptaxLabel} - editÃ¡vel`}
                 />
               </div>
             </div>
@@ -599,13 +599,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       TRIBUTAÇÃO
-  ══════════════════════════════════════════════════════════════ -->
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       TRIBUTAÃ‡ÃƒO
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section" id="taxation" aria-labelledby="trib-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.tributacao.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.tributacao.eyebrow}</p>
         <h2 id="trib-heading" class="rep-section-title">{rep.tributacao.title}</h2>
         <p class="rep-section-sub">{rep.tributacao.sub}</p>
       </header>
@@ -626,20 +626,20 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        CNPJ vs CPF
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-section--alt" id="legal-entity" aria-labelledby="vs-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.cnpjVsCpf.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.cnpjVsCpf.eyebrow}</p>
         <h2 id="vs-heading" class="rep-section-title">{rep.cnpjVsCpf.title}</h2>
         <p class="rep-section-sub">{rep.cnpjVsCpf.sub}</p>
       </header>
 
       <div class="rep-vs-wrap">
         <table class="rep-vs-table data-table premium-table">
-          <caption class="sr-only">Comparativo de aspectos fiscais entre receber como Pessoa Física (CPF) e Pessoa Jurídica (CNPJ)</caption>
+          <caption class="sr-only">Comparativo de aspectos fiscais entre receber como Pessoa FÃ­sica (CPF) e Pessoa JurÃ­dica (CNPJ)</caption>
           <thead>
             <tr>
               {rep.cnpjVsCpf.headers.map((h, i) => (
@@ -666,13 +666,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
-       REGULAÇÃO TIMELINE
-  ══════════════════════════════════════════════════════════════ -->
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+       REGULAÃ‡ÃƒO TIMELINE
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section" id="regulation-timeline" aria-labelledby="reg-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.regulacao.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.regulacao.eyebrow}</p>
         <h2 id="reg-heading" class="rep-section-title">{rep.regulacao.title}</h2>
         <p class="rep-section-sub">{rep.regulacao.sub}</p>
       </header>
@@ -699,13 +699,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        EXCHANGES
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-section--alt" id="exchanges" aria-labelledby="ex-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.exchanges.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.exchanges.eyebrow}</p>
         <h2 id="ex-heading" class="rep-section-title">{rep.exchanges.title}</h2>
         <p class="rep-section-sub">{rep.exchanges.sub}</p>
       </header>
@@ -716,7 +716,7 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
             <h3 class="rep-exchange-card__name">{ex.name}</h3>
             <p class="rep-exchange-card__note">{ex.note}</p>
             <a class="rep-exchange-card__link" href={ex.link}>
-              Comparar →
+              Comparar â†’
             </a>
           </article>
         ))}
@@ -728,13 +728,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        ERROS COMUNS
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section" id="errors" aria-labelledby="err-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.erros.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.erros.eyebrow}</p>
         <h2 id="err-heading" class="rep-section-title">{rep.erros.title}</h2>
         <p class="rep-section-sub">{rep.erros.sub}</p>
       </header>
@@ -757,13 +757,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        FAQ
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-section--alt" id="faq" aria-labelledby="faq-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.faq.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.faq.eyebrow}</p>
         <h2 id="faq-heading" class="rep-section-title">{rep.faq.title}</h2>
         <p class="rep-section-sub">{rep.faq.sub}</p>
       </header>
@@ -798,13 +798,13 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        FONTES
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section" id="sources" aria-labelledby="fontes-heading">
     <div class="container">
       <header class="rep-section-head">
-        <p class="eyebrow">{rep.fontes.eyebrow}</p>
+        <p class="eyebrow eyebrow--icon">{rep.fontes.eyebrow}</p>
         <h2 id="fontes-heading" class="rep-section-title">{rep.fontes.title}</h2>
         <p class="rep-section-sub">{rep.fontes.sub}</p>
       </header>
@@ -821,9 +821,9 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        CTA FINAL
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <section class="rep-section rep-cta-section" id="cta" aria-labelledby="cta-heading">
     <div class="rep-cta__glow" aria-hidden="true"></div>
     <div class="container">
@@ -840,9 +840,9 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     </div>
   </section>
 
-  <!-- ═══════════════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
        DISCLAIMER
-  ══════════════════════════════════════════════════════════════ -->
+  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <aside class="rep-disclaimer-band" role="note">
     <div class="container">
       <p set:html={rep.disclaimer} />
@@ -851,9 +851,9 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
 
 </Base>
 
-<!-- ═══════════════════════════════════════════════════════════
-     SIMULADOR · VANILLA JS
-══════════════════════════════════════════════════════════════ -->
+<!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+     SIMULADOR Â· VANILLA JS
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
 <script is:inline>
   (function () {
     const root = document.getElementById("rep-sim");
@@ -906,10 +906,10 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     const fmtBRL = (n) => new Intl.NumberFormat(lang, {
       style: "currency", currency: "BRL", maximumFractionDigits: 2
     }).format(n);
-    const fmtBRLneg = (n) => "−" + fmtBRL(Math.abs(n));
+    const fmtBRLneg = (n) => "âˆ’" + fmtBRL(Math.abs(n));
     const fmtPct = (n) => {
       const val = Math.abs(n).toLocaleString(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
-      return (n >= 0 ? "+" : "−") + val + "%";
+      return (n >= 0 ? "+" : "âˆ’") + val + "%";
     };
 
     /* a11y: focus input when clicking anywhere on the wrapper */
@@ -947,7 +947,7 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
         ptaxInput.value = state.ptax.toFixed(2);
         calc();
       } catch (e) {
-        console.warn("PTAX live indisponível, usando fallback.", e);
+        console.warn("PTAX live indisponÃ­vel, usando fallback.", e);
         if (!userEditedPtax) {
           state.ptax = PTAX_FALLBACK;
           ptaxInput.value = PTAX_FALLBACK.toFixed(2);
@@ -1083,7 +1083,7 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
       if (outs["stable-fee"])    outs["stable-fee"].textContent    = fmtBRLneg(stFeeUsd * state.ptax);
       if (outs["stable-net"])    outs["stable-net"].textContent    = fmtBRL(stNetBrl);
 
-      if (outs["savings"])     outs["savings"].textContent     = (savingsBrl >= 0 ? "+ " : "− ") + fmtBRL(Math.abs(savingsBrl));
+      if (outs["savings"])     outs["savings"].textContent     = (savingsBrl >= 0 ? "+ " : "âˆ’ ") + fmtBRL(Math.abs(savingsBrl));
       if (outs["savings-pct"]) outs["savings-pct"].textContent = fmtPct(savingsPct);
 
       if (iofRow) iofRow.style.opacity = state.iofStableOn ? "1" : "0.4";
@@ -1129,12 +1129,12 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
     if (!links.length) return;
     const sections = Array.from(links).map(l => document.querySelector(l.getAttribute("href")));
     function update() {
-      const threshold = 200; // Distância do topo da tela para ativar
+      const threshold = 200; // DistÃ¢ncia do topo da tela para ativar
       let idx = 0;
       sections.forEach((s, i) => {
         if (!s) return;
         const rect = s.getBoundingClientRect();
-        // Se o topo da seção já subiu o suficiente para cruzar o threshold
+        // Se o topo da seÃ§Ã£o jÃ¡ subiu o suficiente para cruzar o threshold
         if (rect.top <= threshold) idx = i;
       });
       links.forEach((l, i) => l.classList.toggle("active", i === idx));

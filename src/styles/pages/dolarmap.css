@@ -31,8 +31,8 @@
     .fade-up { opacity: 1; transform: none; transition: none; }
   }
 
-  /* Eyebrow refinement - bracket dev/terminal cue */
-  .eyebrow {
+  /* Eyebrow refinement - bracket dev/terminal cue (scoped to dm-* sections) */
+  :is(.dm-hero, .dm-strip, .dm-proof, .dm-problem, .dm-reel, .dm-pipeline, .dm-exch, .dm-priv, .dm-faq, .dm-final) .eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
@@ -44,8 +44,11 @@
     color: var(--color-primary);
     opacity: 0.9;
   }
-  .eyebrow--center { justify-content: center; display: flex; }
-  .eyebrow__bracket {
+  :is(.dm-hero, .dm-strip, .dm-proof, .dm-problem, .dm-reel, .dm-pipeline, .dm-exch, .dm-priv, .dm-faq, .dm-final) .eyebrow--center {
+    justify-content: center;
+    display: flex;
+  }
+  :is(.dm-hero, .dm-strip, .dm-proof, .dm-problem, .dm-reel, .dm-pipeline, .dm-exch, .dm-priv, .dm-faq, .dm-final) .eyebrow__bracket {
     color: var(--color-text-faint);
     opacity: 0.6;
     font-weight: 300;
