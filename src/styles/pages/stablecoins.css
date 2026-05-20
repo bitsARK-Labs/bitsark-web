@@ -30,8 +30,6 @@
     .sb-section        { padding-block: clamp(3.5rem, 7vw, 6rem); background: var(--color-bg); }
     .sb-section--tight { padding-block: clamp(2.5rem, 5vw, 4rem); }
     .sb-section--alt   { background: var(--color-surface); }
-    .sb-section p      { color: var(--color-text-muted); line-height: 1.7; }
-    .sb-section p + p  { margin-top: var(--space-4); }
     .sb-section strong { color: var(--color-text); }
     .sb-section-title {
       font-family: var(--font-display, serif);

@@ -656,6 +656,85 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
 
 
 <script>
+  // ── Floating sticky thead ──
+  // position:sticky inside overflow-x:auto is relative to that container, not the viewport.
+  // Solution: clone the thead into a position:fixed element outside the overflow container,
+  // sync column widths and horizontal scroll via JS.
+  const _nav = document.querySelector<HTMLElement>('.nav');
+  const _navH = _nav?.offsetHeight ?? 57;
+  document.documentElement.style.setProperty('--nav-h', `${_navH}px`);
+
+  let _syncFloat = () => {};
+
+  (function () {
+    const table   = document.getElementById('exchanges-table') as HTMLTableElement | null;
+    const realThead = table?.querySelector<HTMLElement>('thead');
+    const tableWrap = document.querySelector<HTMLElement>('.table-wrap');
+    if (!table || !realThead || !tableWrap) return;
+
+    const floatOuter = document.createElement('div');
+    floatOuter.id = 'exch-thead-float';
+    floatOuter.setAttribute('aria-hidden', 'true');
+
+    const floatTable = document.createElement('table');
+    floatTable.className = table.className;
+    const floatThead = realThead.cloneNode(true) as HTMLElement;
+    floatTable.appendChild(floatThead);
+    floatOuter.appendChild(floatTable);
+    document.body.appendChild(floatOuter);
+
+    let rafId = 0;
+    function syncFloat() {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const wrapRect   = tableWrap!.getBoundingClientRect();
+        const theadH     = realThead!.offsetHeight;
+        const theadBottom = realThead!.getBoundingClientRect().bottom;
+        const show = theadBottom <= _navH && wrapRect.bottom > _navH + theadH;
+
+        floatOuter.style.visibility = show ? 'visible' : 'hidden';
+        if (!show) return;
+
+        floatOuter.style.top    = `${_navH}px`;
+        floatOuter.style.left   = `${wrapRect.left}px`;
+        floatOuter.style.width  = `${wrapRect.width}px`;
+        floatOuter.style.height = `${theadH}px`;
+
+        // Sync column widths + col-hidden + aria-sort from real thead
+        const srcThs = realThead!.querySelectorAll<HTMLElement>('th');
+        const dstThs = floatThead.querySelectorAll<HTMLElement>('th');
+        srcThs.forEach((th, i) => {
+          const d = dstThs[i];
+          if (!d) return;
+          d.style.width    = `${th.offsetWidth}px`;
+          d.style.minWidth = `${th.offsetWidth}px`;
+          d.classList.toggle('col-hidden', th.classList.contains('col-hidden'));
+          const sort = th.getAttribute('aria-sort');
+          if (sort) d.setAttribute('aria-sort', sort);
+        });
+
+        // Shift inner table to match horizontal scroll of table-wrap
+        floatTable.style.width     = `${table!.offsetWidth}px`;
+        floatTable.style.transform = `translateX(-${tableWrap!.scrollLeft}px)`;
+      });
+    }
+
+    // Forward sort clicks to the real header cells
+    floatThead.addEventListener('click', e => {
+      const floatTh = (e.target as HTMLElement).closest('th');
+      if (!floatTh) return;
+      const idx = Array.from(floatThead.querySelectorAll('th')).indexOf(floatTh as HTMLElement);
+      (realThead!.querySelectorAll<HTMLElement>('th')[idx])?.click();
+    });
+
+    window.addEventListener('scroll', syncFloat, { passive: true });
+    window.addEventListener('resize', syncFloat, { passive: true });
+    tableWrap.addEventListener('scroll', syncFloat, { passive: true });
+    syncFloat();
+
+    _syncFloat = syncFloat;
+  })();
+
   const searchInput      = document.getElementById('exch-search') as HTMLInputElement | null;
   const searchClearBtn   = document.getElementById('search-clear-btn') as HTMLButtonElement | null;
   const resetFiltersBtn  = document.getElementById('reset-filters-btn') as HTMLButtonElement | null;
@@ -873,6 +952,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
       const curr = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
       curr[id] = t.checked;
       localStorage.setItem(COL_KEY, JSON.stringify(curr));
+      _syncFloat(); // keep floating header in sync with visible columns
     });
   });
 

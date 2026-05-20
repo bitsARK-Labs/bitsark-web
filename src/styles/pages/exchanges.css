@@ -730,15 +730,48 @@
     position: relative;
   }
 
-  /* Sticky Header */
+  /* Fix: Remove o scroll horizontal fantasma no PC causado pela interação entre sticky e collapse */
+  #exchanges-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    table-layout: auto;
+  }
+
+  /* Sticky Header (keeps th styled; vertical sticking is handled by #exch-thead-float) */
   .data-table thead th {
-    position: sticky;
-    top: 0;
-    z-index: 10;
     background: rgba(28, 30, 33, 0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--color-border);
+  }
+  
+  /* Garante que as bordas não sumam com o modelo 'separate' */
+  .data-table th, .data-table td {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Floating sticky thead — cloned by JS, position:fixed outside overflow container */
+  #exch-thead-float {
+    position: fixed;
+    overflow: hidden;
+    z-index: 50;
+    visibility: hidden;
+    background: rgba(22, 24, 27, 0.97);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.55);
+  }
+  #exch-thead-float table {
+    position: relative;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  #exch-thead-float th {
+    position: static;   /* cancel any sticky inherited from clone */
+    background: transparent;
+    border-bottom: none;
   }
 
   /* Sticky First Column (Mobile UX) */
@@ -748,6 +781,7 @@
     z-index: 2;
     background: var(--color-surface);
     border-right: 1px solid rgba(79, 152, 163, 0.08);
+
   }
 
   tr:hover .sticky-col {
