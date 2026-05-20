@@ -1,8 +1,9 @@
 ---
 import '../styles/global.css';
-import Logo         from '@components/Logo.astro';
-import DolarMapLogo from '@components/DolarMapLogo.astro';
-import MobileMenu   from '@components/MobileMenu.astro';
+import Logo              from '@components/Logo.astro';
+import DolarMapLogo      from '@components/DolarMapLogo.astro';
+import MobileMenu        from '@components/MobileMenu.astro';
+import EmailObfuscated   from '@components/EmailObfuscated.astro';
 import { ClientRouter } from 'astro:transitions';
 import { useTranslations } from '../i18n';
 
@@ -47,6 +48,15 @@ const {
 
 const path         = Astro.url.pathname;
 const canonicalURL = canonical ?? `https://bitsark.com${path}`;
+
+/**
+ * og:image deve ser SEMPRE URL absoluta. Facebook/LinkedIn/Twitter validators
+ * rejeitam paths relativos. Se uma página passar "/foo.png", convertemos
+ * para "https://bitsark.com/foo.png" automaticamente.
+ */
+const absoluteOgImage = ogImage.startsWith('http')
+  ? ogImage
+  : `https://bitsark.com${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
 
 // ── Normaliza o idioma para UI e SEO (padroniza em pt-BR) ──
 const normalizedLang = lang.startsWith('pt') ? 'pt-BR' : 'en';
@@ -194,8 +204,10 @@ const mobileLinks = isDolarMap ? [
     <!-- SEO Core -->
     <meta name="description"  content={description} />
     <meta name="robots"       content={noindex ? 'noindex, nofollow' : 'index, follow'} />
+    <meta name="googlebot"    content={noindex ? 'noindex, nofollow' : 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1'} />
     <link rel="canonical"     href={canonicalURL} />
-    <meta name="keywords"     content="exchanges brasil, corretoras crypto brasil, stablecoins brazil, dolarmap, câmbio brl usd, bcb crypto, decripto" />
+    <meta name="author"       content="Ricardo Delfino" />
+    <meta name="publisher"    content="bitsARK Labs" />
 
     <!-- 
       Fontes self-hosted (MIT - Geist by Vercel).
@@ -215,13 +227,18 @@ const mobileLinks = isDolarMap ? [
     ))}
 
     <!-- Open Graph -->
-    <meta property="og:type"        content={ogType} />
-    <meta property="og:url"         content={canonicalURL} />
-    <meta property="og:locale"      content={normalizedLang === 'pt-BR' ? 'pt_BR' : 'en_US'} />
-    <meta property="og:site_name"   content="bitsARK Labs" />
-    <meta property="og:title"       content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:image"       content={ogImage} />
+    <meta property="og:type"            content={ogType} />
+    <meta property="og:url"             content={canonicalURL} />
+    <meta property="og:locale"          content={normalizedLang === 'pt-BR' ? 'pt_BR' : 'en_US'} />
+    <meta property="og:site_name"       content="bitsARK Labs" />
+    <meta property="og:title"           content={title} />
+    <meta property="og:description"     content={description} />
+    <meta property="og:image"           content={absoluteOgImage} />
+    <meta property="og:image:secure_url" content={absoluteOgImage} />
+    <meta property="og:image:type"      content="image/png" />
+    <meta property="og:image:width"     content="1200" />
+    <meta property="og:image:height"    content="630" />
+    <meta property="og:image:alt"       content={title} />
     {alternates
       .filter(a => a.hreflang !== 'x-default' && a.hreflang !== normalizedLang)
       .map(alt => (
@@ -236,7 +253,8 @@ const mobileLinks = isDolarMap ? [
     <meta name="twitter:creator"     content="@bitsARKLabs" />
     <meta name="twitter:title"       content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image"       content={ogImage} />
+    <meta name="twitter:image"       content={absoluteOgImage} />
+    <meta name="twitter:image:alt"   content={title} />
 
     <!--
       View Transitions API (Astro 5 ClientRouter).
@@ -263,7 +281,13 @@ const mobileLinks = isDolarMap ? [
     <!-- Schema.org JSON-LD dinâmico (por página) -->
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
-    <!-- Schema Organization fixo (presente em todas as páginas) -->
+    <!--
+      Schema Organization fixo (fonte ÚNICA de verdade, presente em todas as páginas).
+      Páginas que precisarem referenciar a organização devem usar:
+        { "@id": "https://bitsark.com/#organization" }
+      e NUNCA redeclarar a Organization no @graph - duplicar o @id provoca
+      conflito de campos (ex: "url" duplicado) no Rich Results Test.
+    -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "Organization",
@@ -271,15 +295,33 @@ const mobileLinks = isDolarMap ? [
       "name": "bitsARK Labs",
       "legalName": "Tecnologia Atual Serviços LTDA",
       "taxID": "51.334.748/0001-61",
-      "url": "https://bitsark.com",
-      "logo": "https://bitsark.com/favicon.svg",
+      "url": "https://bitsark.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://bitsark.com/og-default.png",
+        "width": 1200,
+        "height": 630
+      },
+      "image": "https://bitsark.com/og-default.png",
+      "founder": {
+        "@type": "Person",
+        "@id": "https://bitsark.com/about/#ricardo",
+        "name": "Ricardo Delfino",
+        "url": "https://bitsark.com/about/"
+      },
+      "foundingDate": "2025",
       "contactPoint": {
         "@type": "ContactPoint",
         "email": "support@bitsark.com",
         "contactType": "customer support",
         "availableLanguage": ["English", "Portuguese"]
       },
-      "sameAs": ["https://github.com/bitsARK-Labs"]
+      "sameAs": [
+        "https://github.com/bitsARK-Labs",
+        "https://www.linkedin.com/in/ricardods/",
+        "https://twitter.com/bitsarklabs",
+        "https://play.google.com/store/apps/dev?id=7793792104800726717"
+      ]
     })} />
 
     <style is:global>
@@ -672,7 +714,7 @@ const mobileLinks = isDolarMap ? [
               <Logo />
             </a>
             <p class="footer__tagline">{t('footer.tagline')}</p>
-            <a href="mailto:support@bitsark.com" class="footer__contact">{t('footer.email')}</a>
+            <EmailObfuscated email="support@bitsark.com" class="footer__contact" />
           </div>
 
           <!-- Solutions -->

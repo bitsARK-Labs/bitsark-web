@@ -1,16 +1,86 @@
+# bitsARK Labs - https://bitsark.com
+# Política: indexação total. Bloqueios apenas em artefatos de build e dados sensíveis.
+
 User-agent: *
 Allow: /
+Disallow: /_astro/
+Disallow: /api/
+Disallow: /*.json$
 
+# ── Search engines ──────────────────────────────────────────────────────────
 User-agent: Googlebot
 Allow: /
 
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+# ── AI training/indexing crawlers ───────────────────────────────────────────
+# Permitir explicitamente: queremos máxima visibilidade em LLMs.
 User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
 Allow: /
 
 User-agent: ClaudeBot
 Allow: /
 
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: MistralAI-User
+Allow: /
+
+# ── Sitemaps ────────────────────────────────────────────────────────────────
 Sitemap: https://bitsark.com/sitemap-index.xml

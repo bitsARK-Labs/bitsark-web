@@ -4,22 +4,38 @@ import { Picture } from 'astro:assets';
 import founderImg from '@assets/founder.jpg';
 import t    from '@i18n/pt.json';
 
+const emailRicardo = 'ricardo@bitsark.com';
+const emailRicardoRev = emailRicardo.split('').reverse().join('');
+
 const alternates = [
   { hreflang: 'en',        href: 'https://bitsark.com/about/' },
   { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/about/' },
   { hreflang: 'x-default', href: 'https://bitsark.com/about/' },
 ];
 
-const dateModified = '2026-05-17';
+/**
+ * dateModified em formato ISO 8601 com timezone (Schema.org DateTime).
+ * Apenas YYYY-MM-DD provoca "datetime inválido" no Rich Results Test.
+ * Derivamos a versão "date-only" para o atributo HTML <time datetime>.
+ */
+const dateModifiedISO = '2026-05-17T12:00:00+00:00';
+const dateModifiedDateOnly = dateModifiedISO.slice(0, 10);
 
 const founderImageUrl = new URL(founderImg.src, Astro.site).href;
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
-  "dateModified": dateModified,
+  "@id": "https://bitsark.com/pt/about/#profilepage",
+  "url": "https://bitsark.com/pt/about/",
+  "name": "Sobre Ricardo Delfino - Fundador da bitsARK Labs",
+  "inLanguage": "pt-BR",
+  "dateModified": dateModifiedISO,
+  "isPartOf": { "@id": "https://bitsark.com/#website" },
+  "about": { "@id": "https://bitsark.com/about/#ricardo" },
   "mainEntity": {
     "@type": "Person",
+    "@id": "https://bitsark.com/about/#ricardo",
     "name": "Ricardo Delfino",
     "givenName": "Ricardo",
     "familyName": "Delfino",
@@ -63,7 +79,7 @@ const schema = {
   }
 };
 
-const lastUpdatedLabel = new Date(dateModified + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 ---
 
 <Base
@@ -104,7 +120,7 @@ const lastUpdatedLabel = new Date(dateModified + 'T12:00:00Z').toLocaleDateStrin
       </p>
 
       <p class="about-hero__updated">
-        <time datetime={dateModified}>Última atualização: {lastUpdatedLabel}</time>
+        <time datetime={dateModifiedDateOnly}>Última atualização: {lastUpdatedLabel}</time>
       </p>
 
       <div class="social-links">
@@ -120,9 +136,9 @@ const lastUpdatedLabel = new Date(dateModified + 'T12:00:00Z').toLocaleDateStrin
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
         </a>
-        <a href="mailto:ricardo@bitsark.com" class="social-link" aria-label="Email" data-cfasync="false">
+        <a href={`mailto:${emailRicardo}`} class="social-link" aria-label={`Email: ${emailRicardo}`}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-          ricardo@bitsark.com
+          <span style="unicode-bidi: bidi-override; direction: rtl;" aria-hidden="true">{emailRicardoRev}</span>
         </a>
       </div>
     </div>
@@ -225,9 +241,9 @@ const lastUpdatedLabel = new Date(dateModified + 'T12:00:00Z').toLocaleDateStrin
         <h2 id="hiring-heading" class="hiring-cta__title">{t.about.hiring.title}</h2>
         <p class="hiring-cta__body">{t.about.hiring.body}</p>
         <div class="hiring-cta__actions">
-          <a href="mailto:ricardo@bitsark.com" class="btn btn-primary" data-cfasync="false">
+          <a href={`mailto:${emailRicardo}`} class="btn btn-primary" aria-label={`Email: ${emailRicardo}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-            ricardo@bitsark.com
+            <span style="unicode-bidi: bidi-override; direction: rtl;" aria-hidden="true">{emailRicardoRev}</span>
           </a>
           <a href="https://www.linkedin.com/in/ricardods/" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{t.about.hiring.ctaLinkedin}</a>
         </div>

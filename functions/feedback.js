@@ -83,7 +83,7 @@ export const onRequestPost = async ({ request, env }) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: 'bitsARK System <system@bitsark.com>',
+          from: 'bitsARK Site Feedback <website@bitsark.com>',
           to: [env.EMAIL_TO],
           subject: `🚀 Feedback bitsARK: ${esc(type)}`,
           html: `

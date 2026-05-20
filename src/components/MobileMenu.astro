@@ -1,5 +1,6 @@
 ---
 import { useTranslations } from '../i18n';
+import EmailObfuscated from '@components/EmailObfuscated.astro';
 
 export interface Props {
   lang:        'en' | 'pt-BR';
@@ -356,9 +357,7 @@ const playstoreUrl = 'https://play.google.com/store/apps/details?id=com.bitsark.
       </section>
 
       <footer class="bm__footer" style={`--delay: ${footDelay}`}>
-        <a href="mailto:support@bitsark.com" class="bm__footer-email">
-          support@bitsark.com
-        </a>
+        <EmailObfuscated email="support@bitsark.com" class="bm__footer-email" />
         <p class="bm__footer-legal">{t('nav.menu.disclaimer')}</p>
       </footer>
 

@@ -40,18 +40,25 @@ const heroPoster = await getImage({
 const heroVideoPoster = heroPoster.src;
 
 // ── Schema.org ─────────────────────────────────────────────────────────────
+// aggregateRating é OPCIONAL no Rich Results: fabricar viola política do Google.
+// Adicionar apenas quando houver dados reais e atualizáveis do Google Play.
+// O @id é compartilhado com a versão EN (mesma entidade, dois idiomas).
 const schema = {
   "@context": "https://schema.org",
   "@type": "MobileApplication",
-  "@id": "https://bitsark.com/dolarmap#app",
-  "name": "DolarMap", // Product name, not translated
-  "url": lang === 'en' ? "https://bitsark.com/dolarmap/" : "https://bitsark.com/pt/dolarmap/",
+  "@id": "https://bitsark.com/dolarmap/#app",
+  "name": "DolarMap",
+  "url": "https://bitsark.com/pt/dolarmap/",
+  "inLanguage": "pt-BR",
   "description": t.dolarmap.meta.description,
   "applicationCategory": "FinanceApplication",
   "operatingSystem": "Android",
+  "downloadUrl": "https://play.google.com/store/apps/details?id=com.bitsark.dolarmap",
+  "installUrl": "https://play.google.com/store/apps/details?id=com.bitsark.dolarmap",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "BRL" },
   "author": { "@id": "https://bitsark.com/#organization" },
-  "publisher": { "@id": "https://bitsark.com/#organization" }
+  "publisher": { "@id": "https://bitsark.com/#organization" },
+  "isPartOf": { "@id": "https://bitsark.com/#website" }
 };
 
 // ── Feature spec - drives the alternating feature reel ─────────────────────

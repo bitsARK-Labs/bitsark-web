@@ -23,35 +23,22 @@ const alternates = [
   { hreflang: 'x-default', href: t.canonical },
 ];
 
+/**
+ * Schema da home: apenas WebSite.
+ * A Organization é declarada UMA ÚNICA VEZ em Base.astro (fonte de verdade).
+ * Aqui referenciamos via @id - duplicar a Organization causa "url duplicado"
+ * no Rich Results Test quando o validador unifica os dois nós pelo mesmo @id.
+ */
 const schema = {
   "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "Organization",
-      "@id": "https://bitsark.com/#organization",
-      "name": "bitsARK Labs",
-      "url": "https://bitsark.com/",
-      "logo": "https://bitsark.com/og-default.png",
-      "founder": {
-        "@type": "Person",
-        "name": "Ricardo Delfino",
-        "url": "https://bitsark.com/about/"
-      },
-      "sameAs": [
-        "https://www.linkedin.com/in/ricardods/",
-        "https://github.com/bitsARK-Labs",
-        "https://play.google.com/store/apps/dev?id=7793792104800726717"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "@id": "https://bitsark.com/#website",
-      "url": "https://bitsark.com/",
-      "name": "bitsARK Labs",
-      "inLanguage": "en",
-      "publisher": { "@id": "https://bitsark.com/#organization" }
-    }
-  ]
+  "@type": "WebSite",
+  "@id": "https://bitsark.com/#website",
+  "url": "https://bitsark.com/",
+  "name": "bitsARK Labs",
+  "alternateName": "bitsARK",
+  "description": t.meta.description,
+  "inLanguage": "en",
+  "publisher": { "@id": "https://bitsark.com/#organization" }
 };
 
 const lastModified = new Date().toISOString();
@@ -65,7 +52,7 @@ const lastModified = new Date().toISOString();
   canonical={t.canonical}
   alternates={alternates}
   schema={schema}
-  ogImage="/og-default.png"
+  ogImage="https://bitsark.com/og-default.png"
 >
   <meta slot="head" property="article:modified_time" content={lastModified} />
 

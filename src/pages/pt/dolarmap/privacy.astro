@@ -1,6 +1,7 @@
 ---
 import Base from '@layouts/Base.astro';
 import { useTranslations } from '@i18n/index';
+import EmailObfuscated from '@components/EmailObfuscated.astro';
 
 const t = useTranslations('pt-BR');
 const title = t('privacy.title');
@@ -43,7 +44,7 @@ const alternates = [
           O controlador dos dados pessoais coletados pelo DolarMap é a
           <strong>Tecnologia Atual Serviços LTDA</strong> (CNPJ 51.334.748/0001-61), uma empresa brasileira.
           Para exercer seus direitos ou obter esclarecimentos, entre em contato conosco pelo e-mail
-          <a href="mailto:support@bitsark.com">support@bitsark.com</a>.
+          <EmailObfuscated email="support@bitsark.com" />.
         </p>
       </section>
 
