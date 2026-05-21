@@ -20,9 +20,9 @@ function fmtCnpj(c: string | null | undefined): string | null {
 
 const countryNames: Record<string, string> = {
   BR: 'Brasil', US: 'Estados Unidos', GB: 'Reino Unido', KY: 'Ilhas Cayman',
-  SC: 'Seychelles', VG: 'Ilhas Virgens BritÃ¢nicas', SG: 'Singapura',
-  MT: 'Malta', LT: 'LituÃ¢nia', HK: 'Hong Kong', AU: 'AustrÃ¡lia',
-  EU: 'UniÃ£o Europeia', PA: 'PanamÃ¡', BZ: 'Belize',
+  SC: 'Seychelles', VG: 'Ilhas Virgens Britânicas', SG: 'Singapura',
+  MT: 'Malta', LT: 'Lituânia', HK: 'Hong Kong', AU: 'Austrália',
+  EU: 'União Europeia', PA: 'Panamá', BZ: 'Belize',
 };
 
 const exchangesData = exchanges.map((ex: any) => {
@@ -76,12 +76,12 @@ const faqSchema = {
 const COLUMNS: { id: string; label: string; default: boolean }[] = [
   { id: 'col-country',      label: t.exchanges.table.cols.country,  default: true },
   { id: 'col-rfb',          label: t.exchanges.table.cols.rfb,      default: true },
-  { id: 'col-fees',         label: 'Fees (Maker / Taker)',          default: true },
+  { id: 'col-fees',         label: t.exchanges.table.cols.fees_main,default: true },
   { id: 'col-pix',          label: t.exchanges.table.cols.pix,      default: true },
   { id: 'col-obligations',  label: t.exchanges.table.cols.rules,    default: true },
 ];
 
-/* â”€â”€ Page-last-updated stamp â”€â”€ */
+/*  Page-last-updated stamp  */
 const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 ---
 
@@ -95,7 +95,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
   schema={faqSchema}
 >
 
-  <!-- â”€â”€ Header â”€â”€ -->
+  <!--  Header  -->
   <section class="exch-header">
     <div class="exch-header-glow" aria-hidden="true"></div>
     <div class="exch-header-grid-bg" aria-hidden="true"></div>
@@ -104,7 +104,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
       <a href="/exchanges/decripto" class="decripto-banner fade-up">
         <span class="decripto-banner__badge">{t.exchanges.banner.badge}</span>
         <span class="decripto-banner__text" set:html={t.exchanges.banner.text} />
-        <span class="decripto-banner__arrow" aria-hidden="true">â†’</span>
+        <span class="decripto-banner__arrow" aria-hidden="true">→</span>
       </a>
 
       <div class="exch-header-tags">
@@ -129,7 +129,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ TL;DR Quick Answers â”€â”€ -->
+  <!--  TL;DR Quick Answers  -->
   <section class="section section--alt section--tight" id="tldr">
     <div class="container">
       <div class="exch-block-head">
@@ -163,8 +163,8 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ Filtros + Tabela â”€â”€ -->
-  <section class="section" id="table">
+  <!--  Filtros + Tabela  -->
+  <section class="section" id="table"> 
     <div class="container">
       <div class="exch-block-head exch-block-head--with-tag">
         <p class="eyebrow eyebrow--icon">{t.exchanges.table.eyebrow}</p>
@@ -172,7 +172,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
         <p class="exch-block-sub">{t.exchanges.table.sub}</p>
       </div>
 
-      <!-- â”€â”€ Toolbar Premium â”€â”€ -->
+      <!--  Toolbar Premium  -->
       <div class="exch-toolbar">
         <div class="exch-filters" role="group" aria-label={t.exchanges.filters.ariaLabel}>
           <button class="exch-chip exch-chip--active" data-filter="all"      aria-pressed="true">{t.exchanges.filters.all}</button>
@@ -253,12 +253,17 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                 </span>
               </th>
               <th scope="col" id="col-fees" class="sortable text-center" data-sort="maker" aria-sort="none"
-                  data-tooltip="Maker fee / Taker fee. Maker: order placed in book. Taker: order matched from book.">
-                Fees <span class="col-fees-sub">maker / taker</span>
-                <span class="sort-icon" aria-hidden="true">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
-                </span>
+                  data-tooltip={t.exchanges.table.tooltips.fees}>
+                <div class="th-stack">
+                  <div class="col-fees-label">
+                    {t.exchanges.table.cols.fees_main}
+                    <span class="col-fees-sub">{t.exchanges.table.cols.fees_sub}</span>
+                  </div>
+                  <span class="sort-icon" aria-hidden="true">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__up"><path d="m18 15-6-6-6 6"/></svg>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="sort-icon__down"><path d="m6 9 6 6 6-6"/></svg>
+                  </span>
+                </div>
               </th>
               <th scope="col" id="col-pix" class="sortable text-center" data-sort="pixStatus" aria-sort="none">
                 {t.exchanges.table.cols.pix}
@@ -306,9 +311,9 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                   </div>
                 </td>
 
-                <!-- PaÃ­s -->
+                <!-- País -->
                 <td headers="col-country" class="text-center">
-                  <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+                  <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                   <div class="exch-country-cell" data-tooltip={t.exchanges.table.tooltips.country} tabindex="0">
                     {ex.iso ? (
                       <>
@@ -331,7 +336,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                 <td headers="col-rfb" class="text-center">
                   {ex.hasIn1888
                     ? (
-                      <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+            <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                       <span
                         class="badge badge-success"
                         tabindex="0"
@@ -341,7 +346,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                     )
                     : ex.rfbReports.includes('decripto_annually')
                       ? (
-                        <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+              <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                         <span
                           class="badge badge-warning"
                           tabindex="0"
@@ -350,7 +355,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                         </span>
                       )
                       : (
-                        <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+              <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                         <span class="badge badge-neutral" tabindex="0" data-tooltip={t.exchanges.table.tooltips.rfb_none}>{t.exchanges.table.badges.none}</span>
                       )
                   }
@@ -399,7 +404,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                 <td class="exch-td-obrig" headers="col-obligations">
                   <div class="exch-oblig-wrap">
                     {ex.exemption > 0 && (
-                      <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+            <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                       <span
                         class="badge badge-success"
                         tabindex="0"
@@ -411,7 +416,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                     {ex.userActions.map((action: string) => {
                       if (action === 'report_in1888_if_traded_over_30k' || action === 'manual_report_over_30k_traded') {
                         return (
-                          <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+                <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                           <span
                             class="badge badge-warning"
                             tabindex="0"
@@ -422,7 +427,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
                         );
                       } else if (action === 'pay_darf_if_profit' || action === 'manual_darf_over_15k_profit') {
                         return (
-                          <!-- FIX: tabindex="0" para tooltip acessÃ­vel por teclado -->
+                <!-- FIX: tabindex="0" para tooltip acessível por teclado -->
                           <span
                             class="badge badge-warning"
                             tabindex="0"
@@ -445,7 +450,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
       <div class="exch-empty" id="exch-empty" aria-live="polite" hidden>
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="exch-empty__icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         <p class="exch-empty__msg" id="exch-empty-msg">{t.exchanges.table.empty}</p>
-        <button class="exch-empty__reset" id="reset-filters-btn">Clear all filters</button>
+        <button class="exch-empty__reset" id="reset-filters-btn">{t.exchanges.table.resetFilters}</button>
       </div>
 
       <div class="table-footer-notice">
@@ -459,7 +464,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ Decision flow â”€â”€ -->
+  <!--  Decision flow  -->
   <section class="section section--alt" id="decide">
     <div class="container">
       <div class="exch-block-head">
@@ -505,7 +510,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ Texto editorial (contextual bridge before calendar/SEO) â”€â”€ -->
+  <!--  Texto editorial (contextual bridge before calendar/SEO)  -->
   <section class="section section--editorial">
     <div class="container editorial">
       <p set:html={t.exchanges.editorial.p1} />
@@ -513,7 +518,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ Tax Calendar â”€â”€ -->
+  <!--  Tax Calendar  -->
   <section class="section" id="calendar">
     <div class="container">
       <div class="exch-block-head">
@@ -527,7 +532,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
           <li class:list={["exch-timeline-event", `exch-timeline-event--${ev.status}`]} style={`--stagger:${i}`}>
             <div class="exch-timeline-dot" aria-hidden="true">
               {ev.status === 'active' && <span class="exch-timeline-pulse"></span>}
-              {ev.status === 'upcoming' && <span class="exch-timeline-arrow">â€º</span>}
+              {ev.status === 'upcoming' && <span class="exch-timeline-arrow">›</span>}
             </div>
             <div class="exch-timeline-body">
               <div class="exch-timeline-meta">
@@ -543,7 +548,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ Bloco editorial SEO â”€â”€ -->
+  <!--  Bloco editorial SEO  -->
   <section class="section section--editorial-full">
     <div class="container editorial">
       <h2 set:html={t.exchanges.seoBlock.h2_1} />
@@ -562,7 +567,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ FAQ â”€â”€ -->
+  <!--  FAQ  -->
   <section class="section section--alt">
     <div class="container exch-faq">
       <p class="eyebrow eyebrow--faq">{t.exchanges.faq.eyebrow}</p>
@@ -579,7 +584,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
-  <!-- â”€â”€ Sources & methodology â”€â”€ -->
+  <!--  Sources & methodology  -->
   <section class="section" id="sources">
     <div class="container exch-narrow-md">
       <div class="exch-block-head">
@@ -610,7 +615,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
   <!-- Modal de Feedback -->
   <div id="feedback-modal" class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-title" hidden>
     <div class="feedback-modal-box">
-      <button class="feedback-close" id="close-feedback-btn" aria-label={t.exchanges.feedback.closeModal}>âœ•</button>
+      <button class="feedback-close" id="close-feedback-btn" aria-label={t.exchanges.feedback.closeModal}>✕</button>
       <h2 id="feedback-title" class="feedback-title">{t.exchanges.feedback.title}</h2>
       <p class="feedback-subtitle" set:html={t.exchanges.feedback.context} />
 
@@ -775,7 +780,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
       .replace('{s}', count !== 1 ? 's' : '');
   }
 
-  // â”€â”€ NavegaÃ§Ã£o por linha â”€â”€
+  //  Navegação por linha 
   const tbody = document.getElementById('exchanges-tbody');
   tbody?.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
@@ -791,7 +796,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     }
   });
 
-  // â”€â”€ Filtros â”€â”€
+  //  Filtros 
   function applyFilters() {
     let count = 0;
     rows.forEach(row => {
@@ -864,7 +869,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     });
   });
 
-  // â”€â”€ OrdenaÃ§Ã£o â”€â”€
+  //  Ordenação 
   function sortTable(col: string) {
     sortDir = sortCol === col ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
     sortCol = col;
@@ -894,15 +899,19 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
       return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
     });
     arr.forEach(r => tbody.appendChild(r));
+    _syncFloat();
   }
 
   sortableHeaders.forEach(th => {
     th.setAttribute('tabindex', '0');
-    th.addEventListener('click', () => sortTable(th.dataset.sort ?? ''));
+    th.addEventListener('click', () => {
+      sortTable(th.dataset.sort ?? '');
+      th.blur(); // Remove o foco do cabeçalho após o clique para esconder o tooltip
+    });
     th.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortTable(th.dataset.sort ?? ''); } });
   });
 
-  // â”€â”€ Settings â”€â”€
+  //  Settings 
   settingsToggle?.addEventListener('click', e => {
     e.stopPropagation();
     const open = settingsPanel?.hidden === false;
@@ -928,7 +937,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     }
   });
 
-  // â”€â”€ Column Persistence â”€â”€
+  //  Column Persistence 
   const COL_KEY = 'bitsark.exchanges.cols';
   const syncCol = (id: string, show: boolean) => {
     document.getElementById(id)?.classList.toggle('col-hidden', !show);
@@ -959,7 +968,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
   // Initial filter and count update on page load
   applyFilters();
 
-  // â”€â”€ Rotate hint (portrait mobile) â”€â”€
+  //  Rotate hint (portrait mobile) 
   const rotateHint = document.getElementById('rotate-hint');
   function updateRotateHint() {
     if (!rotateHint) return;
@@ -979,7 +988,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
 
     if (!show) {
       if (feedbackTextarea) feedbackTextarea.value = '';
-      if (feedbackTextarea) feedbackTextarea.value = '';
+      // if (feedbackTextarea) feedbackTextarea.value = ''; // Duplicate line removed
       if (feedbackEmail) feedbackEmail.value = '';
       if (feedbackStatus) feedbackStatus.setAttribute('hidden', '');
       feedbackTypeBtns.forEach(b => b.classList.remove('selected'));

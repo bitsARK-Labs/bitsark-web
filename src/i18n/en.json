@@ -497,6 +497,8 @@
         "rfb": "RFB Report",
         "maker": "Maker",
         "taker": "Taker",
+        "fees_main": "Fees",
+        "fees_sub": "maker / taker",
         "pix": "Pix",
         "rules": "Monthly Rules"
       },
@@ -510,6 +512,7 @@
         "rfb_none": "Offshore broker with no Brazilian base. No info is sent. The investor is 100% responsible for reporting trades >R$30k.",
         "maker": "Maker Fee: charged when creating orders in the book. Can be reduced by volume or native token holding.",
         "taker": "Taker Fee: charged when accepting existing orders. Can be reduced by volume or native token holding.",
+        "fees": "Maker fee / Taker fee. Maker: order placed in book. Taker: order matched from book.",
         "spread_only": "This broker does not have a traditional order book. It charges a single fee embedded in the final price (spread).",
         "spread_fee": "This broker does not have an order book. Besides the spread, it also charges a fee per operation.",
         "spread_fee_taker": "Fee charged per operation, in addition to the embedded spread in the price.",
@@ -530,6 +533,7 @@
       "pixDoesNotAccept": "Does not accept Pix",
       "results": "Displaying {count} exchange{s}",
       "empty": "No exchanges found for the selected filters.",
+      "resetFilters": "Clear all filters",
       "footer": "Informational data subject to frequent changes. bitsARK does not guarantee accuracy. <a href=\"/terms\" class=\"btn-text-link\">Terms of Use</a>. See something wrong? <button type=\"button\" id=\"open-feedback-btn-footer\" class=\"btn-text-link\">Send a correction</button>."
     },
     "filters": {
@@ -657,6 +661,8 @@
       "stats": {
         "maker": "Maker",
         "taker": "Taker",
+        "fees_main": "Fees",
+        "fees_sub": "maker / taker",
         "jurisdiction": "Jurisdiction",
         "notAvailable": "N/A"
       },

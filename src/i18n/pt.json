@@ -506,12 +506,14 @@
         "country": "País",
         "rfb": "Reporte RFB",
         "maker": "Maker",
-        "taker": "Taker",
+        "taker": "Taker", 
+        "fees_main": "Taxas",
+        "fees_sub": "maker / taker",
         "pix": "Pix",
         "rules": "Regras mensais"
       },
       "tooltips": {
-        "cnpj": "Nome da corretora e seu respectivo Cadastro Nacional da Pessoa Jurídica (CNPJ) para operações no Brasil.",
+        "cnpj": "Corretora e seu CNPJ para operações no Brasil.",
         "internationalJurisdiction": "Jurisdição Internacional",
         "country": "País de jurisdição onde a sede da empresa está legalmente constituída e cujas leis regem suas operações.",
         "countryUnknown": "País desconhecido",
@@ -519,6 +521,7 @@
         "rfb_decripto": "Reporte anual simplificado via e-Financeira. A Receita sabe que você opera na corretora, mas o detalhamento mensal das trocas costuma ser responsabilidade do investidor.",
         "rfb_none": "Corretora offshore sem sede no Brasil. Nenhuma informação é enviada ao fisco. O investidor assume 100% da responsabilidade de reportar negociações >R$30k e pagar DARF se tiver lucro.",
         "maker": "Taxa Maker: cobrada ao criar ordens no book. Pode ser reduzida com volume ou holding do token nativo.",
+        "fees": "Taxa Maker / Taxa Taker. Maker: ordem colocada no book. Taker: ordem executada do book.",
         "taker": "Taxa Taker: cobrada ao aceitar ordens existentes. Pode ser reduzida com volume ou holding do token nativo.",
         "spread_only": "Esta corretora não possui book de ofertas. Cobra uma taxa única embutida no preço final (spread).",
         "spread_fee": "Esta corretora não possui book de ofertas. Além do spread embutido no preço final, também cobra uma taxa de {fee} por operação.",
@@ -540,6 +543,7 @@
       "pixDoesNotAccept": "Não aceita Pix",
       "results": "Exibindo {count} corretora{s}",
       "empty": "Nenhuma corretora encontrada para os filtros selecionados.",
+      "resetFilters": "Limpar filtros",
       "footer": "Dados informativos sujeitos a alterações frequentes. A bitsARK não garante precisão. <a href=\"/terms\" class=\"btn-text-link\">Termos de Uso</a>. Viu algo errado? <button type=\"button\" id=\"open-feedback-btn-footer\" class=\"btn-text-link\">Envie uma correção</button>."
     },
     "sources": {

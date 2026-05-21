@@ -729,6 +729,12 @@
     box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255,255,255,0.02);
     position: relative;
   }
+  /* Th-stack para colunas com sub-label */
+  .th-stack {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   /* Fix: Remove o scroll horizontal fantasma no PC causado pela interação entre sticky e collapse */
   #exchanges-table {
@@ -740,12 +746,15 @@
 
   /* Sticky Header (keeps th styled; vertical sticking is handled by #exch-thead-float) */
   .data-table thead th {
-    background: rgba(28, 30, 33, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: var(--color-surface-2);
+    /* z-index 10 garante que o header e seus tooltips fiquem acima das células de dados (z-index 2) */
     border-bottom: 1px solid var(--color-border);
+    letter-spacing: 0.07em;
+    color: var(--color-text-muted);
+    padding: 1.25rem .8rem;
+    font-family: var(--font-body);
   }
-  
+
   /* Garante que as bordas não sumam com o modelo 'separate' */
   .data-table th, .data-table td {
     border-bottom: 1px solid var(--color-border);
@@ -778,10 +787,14 @@
   .sticky-col {
     position: sticky;
     left: 0;
-    z-index: 2;
+    z-index: 2; /* Células da primeira coluna (ex: Binance) */
     background: var(--color-surface);
     border-right: 1px solid rgba(79, 152, 163, 0.08);
+  }
 
+  /* O cabeçalho da coluna fixa precisa de um z-index maior que o resto do header e da coluna */
+  th.sticky-col {
+    z-index: 11;
   }
 
   tr:hover .sticky-col {
@@ -934,6 +947,10 @@
   .pix-icon--yes { color: var(--color-success); }
   .pix-icon--no { color: var(--color-error); opacity: 0.8; }
 
+  td[headers="col-pix"] svg {
+    margin-inline: auto;
+  }
+
   /* ── Refinamento da Coluna País ── */
   #col-country,
   td[headers="col-country"] {
@@ -1036,17 +1053,22 @@
     font-family: var(--font-mono);
     user-select: none;
   }
+  .col-fees-label {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    line-height: 1.1;
+  }
   .col-fees-sub {
     font-size: 10px;
     font-weight: 400;
     text-transform: lowercase;
     letter-spacing: 0;
     color: var(--color-text-faint);
-    display: block;
     font-family: var(--font-mono);
-    margin-top: 1px;
-    margin-left: 2px;
-    display: inline;
+    margin-top: 2px;
+    display: block;
     opacity: 0.9;
   }
 
@@ -1108,7 +1130,6 @@
     flex-wrap: wrap;
     gap: 0.3rem;
     align-items: center;
-    min-width: 160px;
   }
 
   /* ── Empty state improved ── */
@@ -1133,6 +1154,7 @@
     font-weight: 600;
     background: none;
     border: 1px solid var(--color-primary-border);
+    border-color: var(--color-primary-border);
     border-radius: var(--radius-full);
     padding: 0.35rem 0.9rem;
     cursor: pointer;

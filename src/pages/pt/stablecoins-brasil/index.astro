@@ -1,9 +1,9 @@
-﻿---
+﻿﻿---
 import Base from "@layouts/Base.astro";
 import t    from "@i18n/pt.json";
 import "@styles/pages/stablecoins.css";
 
-/* â”€â”€â”€ Data loading â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Data loading  */
 let marketData = { latestMarketCapUsd: 0, yoyGrowthPct: 0, monthly: [], updatedAt: null };
 let brazilData = { latestAccumulatedUsd: 0, latestMonth: null, monthly: [], isFallback: false };
 
@@ -16,7 +16,7 @@ try {
   console.warn("[stablecoins-brasil] Could not load data JSONs:", e.message);
 }
 
-/* â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Helpers  */
 function fmtBillion(n) {
   if (!n) return "-";
   if (n >= 1e12) return `$${(n / 1e12).toFixed(1)}T`;
@@ -34,8 +34,8 @@ const dataUpdatedAt = marketData.updatedAt
   ? new Date(marketData.updatedAt).toLocaleDateString(locale, { month: "long", year: "numeric" })
   : "-";
 
-/* RazÃ£o fluxo-Brasil-vs-estoque-global: proxy de intensidade de adoÃ§Ã£o,
-   NÃƒO posse direta. Caveats metodolÃ³gicos vÃ£o no insightNote. */
+/* Razão fluxo-Brasil-vs-estoque-global: proxy de intensidade de adoção,
+   NÃO posse direta. Caveats metodológicos vão no insightNote. */
 const brazilFlowToGlobalCapPct =
   marketData.latestMarketCapUsd && brazilData.latestAccumulatedUsd
     ? Math.round((brazilData.latestAccumulatedUsd / marketData.latestMarketCapUsd) * 100)
@@ -48,14 +48,14 @@ const otherShare = 5;
 const heroKpis = [
   { value: marketCap,                                label: t.stablecoins_page.hero.kpiGlobalCap,    meta: t.stablecoins_page.hero.kpiGlobalCapMeta,    accent: false, delta: yoy, deltaTone: "positive" },
   { value: yoy,                                      label: t.stablecoins_page.hero.kpiGrowth,       meta: t.stablecoins_page.hero.kpiGrowthMeta,       accent: false, deltaTone: "positive", noDelta: true },
-  { value: brazilAccum,                              label: t.stablecoins_page.hero.kpiBrazilInflow, meta: t.stablecoins_page.hero.kpiBrazilInflowMeta, accent: true,  delta: `â‰ˆ${brazilFlowToGlobalCapPct}% ${t.stablecoins_page.data.shareLabel}`, deltaTone: "accent" },
-  { value: `â‰ˆ${brazilFlowToGlobalCapPct}%`,          label: t.stablecoins_page.hero.kpiBrazilShare,  meta: t.stablecoins_page.hero.kpiBrazilShareMeta,  accent: false, noDelta: true },
+  { value: brazilAccum,                              label: t.stablecoins_page.hero.kpiBrazilInflow, meta: t.stablecoins_page.hero.kpiBrazilInflowMeta, accent: true,  delta: `≈${brazilFlowToGlobalCapPct}% ${t.stablecoins_page.data.shareLabel}`, deltaTone: "accent" },
+  { value: `≈${brazilFlowToGlobalCapPct}%`,          label: t.stablecoins_page.hero.kpiBrazilShare,  meta: t.stablecoins_page.hero.kpiBrazilShareMeta,  accent: false, noDelta: true },
 ];
 
 const chartMarket = JSON.stringify(marketData.monthly ?? []);
 const chartBrazil = JSON.stringify(brazilData.monthly ?? []);
 
-/* â”€â”€â”€ Schema.org â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+/*  Schema.org  */
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -80,17 +80,17 @@ const schema = {
         { "@type": "Thing", "name": "Criptomoedas no Brasil" },
         { "@type": "Thing", "name": "USDT" },
         { "@type": "Thing", "name": "USDC" },
-        { "@type": "Thing", "name": "RegulaÃ§Ã£o Banco Central Brasil" }
+        { "@type": "Thing", "name": "Regulação Banco Central Brasil" }
       ]
     },
     {
       "@type": "DefinedTerm",
       "@id": "https://bitsark.com/pt/stablecoins-brasil/#term-stablecoin",
       "name": "Stablecoin",
-      "description": "Criptomoeda atrelada 1:1 ao valor de uma moeda fiat, geralmente o dÃ³lar americano. As principais sÃ£o USDT (Tether) e USDC (Circle).",
+      "description": "Criptomoeda atrelada 1:1 ao valor de uma moeda fiat, geralmente o dólar americano. As principais são USDT (Tether) e USDC (Circle).",
       "inDefinedTermSet": {
         "@type": "DefinedTermSet",
-        "name": "GlossÃ¡rio Cripto bitsARK",
+        "name": "Glossário Cripto bitsARK",
         "url": "https://bitsark.com/pt/stablecoins-brasil/"
       }
     }
@@ -137,9 +137,9 @@ const alternates = [
   <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        HERO
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-hero">
     <div class="sb-hero-glow" aria-hidden="true"></div>
     <div class="sb-hero-grid-bg" aria-hidden="true"></div>
@@ -147,7 +147,7 @@ const alternates = [
 
       <nav class="sb-breadcrumb" aria-label="Breadcrumb">
         <a href="/pt/">{t.stablecoins_page.hero.breadcrumbHome}</a>
-        <span aria-hidden="true">â€º</span>
+        <span aria-hidden="true">›</span>
         <span aria-current="page">{t.stablecoins_page.hero.breadcrumbCurrent}</span>
       </nav>
 
@@ -186,9 +186,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        TL;DR
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section sb-section--alt sb-section--tight" id="tldr">
     <div class="sb-container">
       <div class="sb-tldr-head">
@@ -234,9 +234,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        BASICS
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section" id="basics">
     <div class="sb-container sb-narrow">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.basics.eyebrow}</p>
@@ -261,7 +261,7 @@ const alternates = [
         </div>
         <div class="sb-flow-connector" aria-hidden="true"></div>
         <div class="sb-flow-node">
-          <div class="sb-flow-circle">â‡„</div>
+          <div class="sb-flow-circle">⇄</div>
           <p set:html={t.stablecoins_page.basics.flow.step2} />
         </div>
         <div class="sb-flow-connector" aria-hidden="true"></div>
@@ -283,9 +283,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        MARKET DATA
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section sb-section--alt" id="data">
     <div class="sb-container">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.data.eyebrow}</p>
@@ -310,7 +310,7 @@ const alternates = [
               <caption>{t.stablecoins_page.data.globalTitle}</caption>
               <thead>
                 <tr>
-                  <th>MÃªs</th>
+                  <th>Mês</th>
                   <th>Market Cap (USD)</th>
                 </tr>
               </thead>
@@ -338,7 +338,7 @@ const alternates = [
             </div>
             <div class="sb-chart-figure">
               <span class="sb-chart-figure-value sb-chart-figure-value--accent">{brazilAccum}</span>
-              <span class="sb-chart-figure-delta sb-chart-figure-delta--accent">â‰ˆ{brazilFlowToGlobalCapPct}% {t.stablecoins_page.data.shareLabel}</span>
+              <span class="sb-chart-figure-delta sb-chart-figure-delta--accent">≈{brazilFlowToGlobalCapPct}% {t.stablecoins_page.data.shareLabel}</span>
             </div>
           </div>
           <div class="sb-chart-wrap" id="wrap-brazil">
@@ -347,7 +347,7 @@ const alternates = [
               <caption>{t.stablecoins_page.data.brazilTitle}</caption>
               <thead>
                 <tr>
-                  <th>MÃªs</th>
+                  <th>Mês</th>
                   <th>Entrada Acumulada (USD)</th>
                 </tr>
               </thead>
@@ -383,16 +383,16 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        RANKING - Brasil no mundo
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section" id="ranking">
     <div class="sb-container">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.ranking.eyebrow}</p>
       <h2 class="sb-section-title">{t.stablecoins_page.ranking.title}</h2>
       <p class="sb-section-sub">{t.stablecoins_page.ranking.sub}</p>
 
-      <div class="sb-rank-table" role="table" aria-label="Ranking de adoÃ§Ã£o por paÃ­s">
+      <div class="sb-rank-table" role="table" aria-label="Ranking de adoção por país">
         <div class="sb-rank-row sb-rank-row--head" role="row">
           <div class="sb-rank-cell sb-rank-cell--rank">{t.stablecoins_page.ranking.rank}</div>
           <div class="sb-rank-cell sb-rank-cell--country">{t.stablecoins_page.ranking.colCountry}</div>
@@ -428,9 +428,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        BREAKDOWN - USDT vs USDC
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section sb-section--alt" id="breakdown">
     <div class="sb-container sb-narrow-md">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.breakdown.eyebrow}</p>
@@ -479,7 +479,7 @@ const alternates = [
 
       <div class="sb-compare">
         <h3 class="sb-compare-title">{t.stablecoins_page.breakdown.compareTitle}</h3>
-        <div class="sb-compare-grid" role="table" aria-label="ComparaÃ§Ã£o USDT vs USDC">
+        <div class="sb-compare-grid" role="table" aria-label="Comparação USDT vs USDC">
           <div class="sb-compare-row sb-compare-row--head" role="row">
             <span></span>
             <span class="sb-compare-h sb-compare-h--usdt">USDT</span>
@@ -497,9 +497,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        WHY - use cases
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section" id="why">
     <div class="sb-container">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.why.eyebrow}</p>
@@ -538,9 +538,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       START / como comeÃ§ar
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  <!-- ═══════════════════════════════════════════════════════════
+       START / como começar
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section sb-section--alt" id="start">
     <div class="sb-container sb-narrow">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.start.eyebrow}</p>
@@ -577,9 +577,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        REGULATION - timeline + tax
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section" id="regulation">
     <div class="sb-container">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.regulation.eyebrow}</p>
@@ -597,7 +597,7 @@ const alternates = [
                 {ev.status === "active" && (
                   <span class="sb-timeline-pulse" aria-hidden="true"></span>
                 )}
-                {ev.status === "upcoming" && <span class="sb-timeline-arrow" aria-hidden="true">â€º</span>}
+                {ev.status === "upcoming" && <span class="sb-timeline-arrow" aria-hidden="true">›</span>}
               </div>
               <div class="sb-timeline-body">
                 <div class="sb-timeline-meta">
@@ -611,7 +611,7 @@ const alternates = [
           ))}
         </ol>
 
-        <aside class="sb-tax-box" aria-label="TributaÃ§Ã£o em um relance">
+        <aside class="sb-tax-box" aria-label="Tributação em um relance">
           <p class="sb-tax-title">{t.stablecoins_page.regulation.taxBox.title}</p>
           <ul class="sb-tax-list">
             {t.stablecoins_page.regulation.taxBox.items.map(item => (
@@ -629,9 +629,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        FAQ
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section sb-section--alt" id="faq">
     <div class="sb-container sb-narrow">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.faq.eyebrow}</p>
@@ -650,9 +650,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        SOURCES
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section" id="sources">
     <div class="sb-container sb-narrow-md">
       <p class="eyebrow eyebrow--icon">{t.stablecoins_page.sources.eyebrow}</p>
@@ -678,9 +678,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        CTA
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
   <section class="sb-section sb-section--cta">
     <div class="sb-container sb-narrow">
       <div class="sb-cta-inner">
@@ -698,9 +698,9 @@ const alternates = [
     </div>
   </section>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  <!-- ═══════════════════════════════════════════════════════════
        STYLES (mirror of EN)
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+  ══════════════════════════════════════════════════════════════ -->
 
   <script type="application/json" id="sb-chart-data-market" set:html={chartMarket}></script>
   <script type="application/json" id="sb-chart-data-brazil" set:html={chartBrazil}></script>
