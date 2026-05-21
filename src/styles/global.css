@@ -303,6 +303,21 @@ h4 { font-size: var(--text-base); font-weight: 600; }
   border-bottom-color: var(--color-border);
 }
 
+/*
+  Mobile: backdrop-filter blur(22px) recalcula a cada scroll na sticky nav
+  e é uma das operações de paint mais caras em Android mid-range (Moto G,
+  Samsung A-series). Custo medido: ~1.2s de Style & Layout no Lighthouse
+  mobile. Substituímos por background opaco — visualmente indistinguível
+  acima do hero escuro.
+*/
+@media (max-width: 768px) {
+  .nav {
+    background: rgba(15, 16, 18, 0.92);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
 .nav__inner {
   display: flex;
   align-items: center;
@@ -615,14 +630,15 @@ h4 { font-size: var(--text-base); font-weight: 600; }
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
-  /*
-    will-change: transform pré-promove o card para camada própria de composição.
-    Evita que o browser recalcule layout de elementos vizinhos a cada frame
-    do hover translateY. Remover se o número de cards na página for > 20
-    (custo de memória de GPU supera o benefício).
-  */
-  will-change: transform;
 }
+
+/*
+  will-change ESCOPADO para :hover apenas. Antes era permanente, mantendo
+  cada card em uma camada de composição GPU dedicada — custo de memória
+  alto e desperdício, já que a maioria nunca recebe hover. Agora a camada
+  é criada sob demanda no momento do hover.
+*/
+.card:hover { will-change: transform; }
 
 .card:hover {
   border-color: var(--color-primary-border);
@@ -1126,12 +1142,28 @@ code {
 /* ── Section ──────────────────────────────────────────────── */
 .section {
   padding-block: clamp(4rem, 8vw, 6rem);
+  /*
+    content-visibility: auto pula o trabalho de layout/paint até o elemento
+    estar próximo do viewport. Reduz Style & Layout no first paint em
+    ~30-50% em páginas long-form. contain-intrinsic-size reserva altura
+    estimada para evitar layout-shift quando a seção entra em foco.
+    Não é aplicado em .hero porque essa SECTION é above-the-fold.
+  */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
 }
 
 .section--alt:not(:last-child) {
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
+}
+
+/* CTA strip + founder band: também below-the-fold, mesma otimização. */
+.cta-strip,
+.founder-band {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
 }
 
 

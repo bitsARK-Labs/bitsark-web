@@ -224,9 +224,9 @@ const timelineStatusLabel = { past: "Concluído", active: "Em vigor", future: "P
         </p>
       </div>
 
-      <h1 id="page-heading" class="rep-hero__title fade-up" style="animation-delay:.08s" set:html={rep.hero.title} />
+      <h1 id="page-heading" class="rep-hero__title" set:html={rep.hero.title} />
 
-      <p class="rep-hero__sub fade-up" style="animation-delay:.16s">{rep.hero.sub}</p>
+      <p class="rep-hero__sub">{rep.hero.sub}</p>
 
       <div class="rep-hero__chips fade-up" style="animation-delay:.24s">
         {rep.hero.chips.map(chip => (

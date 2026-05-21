@@ -51,6 +51,19 @@
     -webkit-mask-image: radial-gradient(ellipse 80% 80% at center, black 40%, transparent 100%);
   }
 
+  /*
+    Mobile: as decorações .hero-glow-2 e .hero-grid são subtle e custam
+    paint (mask-image + dois linear-gradients são caros em GPU mid-range).
+    Acima do hero escuro em mobile o efeito é praticamente imperceptível,
+    então desligamos. Mantemos .hero-glow (radial único, barato e visível).
+  */
+  @media (max-width: 768px) {
+    .hero-glow-2,
+    .hero-grid {
+      display: none;
+    }
+  }
+
   .hero__inner {
     position: relative;
     z-index: 1;

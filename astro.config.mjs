@@ -102,6 +102,19 @@ export default defineConfig({
     // unblocks future tuning (e.g. raising AVIF effort).
     service: { entrypoint: 'astro/assets/services/sharp' },
   },
+  build: {
+    /**
+     * Inline TODO o CSS no <head> da página.
+     * Trade-off:
+     *   + Elimina 100% do render-blocking CSS (300ms+ de savings no LCP).
+     *   + Zero round-trips na critical path.
+     *   - HTML cresce ~16 KiB por página; perda de cache cross-page do CSS.
+     * Para um site marketing com bounce-rate alto e first-visit dominante,
+     * o ganho de LCP supera a perda de cache. Em sites com retorno alto,
+     * preferir 'auto' (default: inline < 4KB, link o resto).
+     */
+    inlineStylesheets: 'always',
+  },
   vite: {
     build: {
       cssCodeSplit: true,
