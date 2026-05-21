@@ -86,6 +86,14 @@ const logos = [
   will-change: transform;
 }
 
+/* 
+   Otimização: Pausa a animação quando o JS detecta que o componente
+   está fora do viewport, economizando ciclos de CPU/GPU.
+*/
+.marquee-track.is-offscreen {
+  animation-play-state: paused !important;
+}
+
 .marquee-wrapper:hover .marquee-track {
   animation-play-state: paused;
 }
@@ -213,3 +221,24 @@ const logos = [
   }
 }
 </style>
+
+<script>
+  /**
+   * Performance: IntersectionObserver para pausar animações fora da tela.
+   * Reduz o overhead de renderização durante o scroll da página.
+   */
+  const marqueeObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const track = entry.target.querySelector('.marquee-track');
+      if (!track) return;
+
+      if (entry.isIntersecting) {
+        track.classList.remove('is-offscreen');
+      } else {
+        track.classList.add('is-offscreen');
+      }
+    });
+  }, { threshold: 0 });
+
+  document.querySelectorAll('.marquee-wrapper').forEach(m => marqueeObserver.observe(m));
+</script>

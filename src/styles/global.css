@@ -55,7 +55,7 @@
   /* ── Texto ── */
   --color-text:         #d8d9db;
   --color-text-muted:   #949ba6;
-  --color-text-faint:   #5a6070;
+  --color-text-faint:   #828896;
   --color-text-inverse: #0f1012;
 
   /* ── Primary: Teal ── */
@@ -670,7 +670,6 @@ h4 { font-size: var(--text-base); font-weight: 600; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-primary);
-  opacity: 0.85;
 }
 .eyebrow--icon {
   display: inline-flex;

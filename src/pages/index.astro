@@ -559,7 +559,15 @@ const lastModified = new Date().toISOString();
       }
     }
 
-    document.addEventListener('astro:page-load', initHome);
+    // Executa em tempo ocioso para não bloquear o path crítico (Lighthouse improvement)
+    document.addEventListener('astro:page-load', () => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => initHome());
+      } else {
+        // Fallback para navegadores antigos (Safari < 14.1)
+        setTimeout(initHome, 32);
+      }
+    });
   </script>
 
 </Base>

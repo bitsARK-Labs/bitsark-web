@@ -1087,7 +1087,6 @@
     font-size: var(--text-xs);
     color: var(--color-primary);
     letter-spacing: 0.02em;
-    opacity: 0.85;
   }
 
   /* ── Principles atmosphere (subtle halo) ── */

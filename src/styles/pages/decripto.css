@@ -933,7 +933,6 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--dc-primary);
-    opacity: 0.8;
     margin: 0 0 var(--space-4);
     display: block;
   }
