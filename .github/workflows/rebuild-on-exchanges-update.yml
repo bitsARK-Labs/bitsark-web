@@ -1,0 +1,27 @@
+name: Rebuild on Exchanges Update
+
+on:
+  repository_dispatch:
+    types: [exchanges-data-updated]
+  workflow_dispatch: # permite rodar manualmente pelo GitHub UI
+
+permissions:
+  contents: write # commit vazio para acionar rebuild no Cloudflare Pages
+
+jobs:
+  trigger-rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push empty commit to trigger Cloudflare Pages rebuild
+        run: |
+          git config user.name  "bitsARK Data Bot"
+          git config user.email "bot@bitsark.com"
+          git commit --allow-empty -m "chore(data): rebuild triggered by exchanges-data-updated [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+          git push
