@@ -29,7 +29,7 @@
       "fee_url": "https://www.binance.com/pt-BR/fee/schedule",
       "note": "25% discount when paying fees with BNB."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/binance/"
   },
   {
     "id": "okx",
@@ -58,7 +58,7 @@
       "fee_url": "https://www.okx.com/pt-br/fees",
       "note": "Tiered fee structure based on 30-day volume and OKB holdings."
     },
-    "fiscal_status_br": "Internacional com Presença no Brasil"
+    "analysis_url": "https://bitsark.com/exchanges/okx/"
   },
   {
     "id": "bybit",
@@ -87,7 +87,7 @@
       "fee_url": "https://www.bybit.com/en/help-center/article/Trading-Fee-Structure",
       "note": "Spot maker/taker 0.1%. Futures fees differ."
     },
-    "fiscal_status_br": "Internacional com Presença no Brasil"
+    "analysis_url": "https://bitsark.com/exchanges/bybit/"
   },
   {
     "id": "bitget",
@@ -117,7 +117,7 @@
       "fee_url": "https://www.bitget.com/en/rate/fee",
       "note": "BGB token holders receive fee discounts."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/bitget/"
   },
   {
     "id": "kucoin",
@@ -147,7 +147,7 @@
       "fee_url": "https://www.kucoin.com/announcement/en-fee",
       "note": "KCS holders receive up to 20% fee discount."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/kucoin/"
   },
   {
     "id": "mexc",
@@ -177,7 +177,7 @@
       "fee_url": "https://www.mexc.com/fee",
       "note": "Spot maker/taker currently 0%. Futures fees apply separately."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/mexc/"
   },
   {
     "id": "foxbit",
@@ -206,7 +206,7 @@
       "fee_url": "https://foxbit.com.br/taxas/",
       "note": "Fees vary by trading volume. Pix deposits free; BRL withdrawals may incur a small fee."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/foxbit/"
   },
   {
     "id": "novadax",
@@ -235,7 +235,7 @@
       "fee_url": "https://www.novadax.com.br/taxas-e-limites",
       "note": "ONG token holders receive fee discounts. Pix available for BRL operations."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/novadax/"
   },
   {
     "id": "brasil-bitcoin",
@@ -264,7 +264,7 @@
       "fee_url": "https://brasilbitcoin.com.br/taxas",
       "note": "Flat 0.5% trading fee. Pix available for BRL deposits and withdrawals."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/brasil-bitcoin/"
   },
   {
     "id": "coinext",
@@ -293,7 +293,7 @@
       "fee_url": "https://coinext.com.br/taxas-limites-prazos",
       "note": "Pix available for BRL deposits and withdrawals."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/coinext/"
   },
   {
     "id": "bitso",
@@ -322,7 +322,7 @@
       "fee_url": "https://bitso.com/fees",
       "note": "Tiered maker/taker based on 30-day volume. Pix available in Brazil."
     },
-    "fiscal_status_br": "Internacional com Presença no Brasil"
+    "analysis_url": "https://bitsark.com/exchanges/bitso/"
   },
   {
     "id": "mercado-bitcoin",
@@ -351,7 +351,7 @@
       "fee_url": "https://www.mercadobitcoin.com.br/taxas-contas-limites",
       "note": "Largest Brazilian exchange by volume. Pix fully supported. Volume-based tiers."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/mercado-bitcoin/"
   },
   {
     "id": "bitypreco",
@@ -380,7 +380,7 @@
       "fee_url": "https://suporte.bity.com.br/pt-BR/articles/6967815-taxas",
       "note": "Brazilian retail-focused exchange. Pix available for BRL."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/bitypreco/"
   },
   {
     "id": "coinbase",
@@ -409,7 +409,7 @@
       "fee_url": "https://help.coinbase.com/en/exchange/trading-and-funding/exchange-fees",
       "note": "Advanced Trade fees. Simple Buy/Sell fees are higher."
     },
-    "fiscal_status_br": "Internacional com Presença no Brasil"
+    "analysis_url": "https://bitsark.com/exchanges/coinbase/"
   },
   {
     "id": "kraken",
@@ -438,7 +438,7 @@
       "fee_url": "https://www.kraken.com/features/fee-schedule",
       "note": "Tiered maker/taker. Pro fees lower than retail."
     },
-    "fiscal_status_br": "Internacional com Presença no Brasil"
+    "analysis_url": "https://bitsark.com/exchanges/kraken/"
   },
   {
     "id": "gate-io",
@@ -468,7 +468,7 @@
       "fee_url": "https://www.gate.com/fee",
       "note": "GT token holders receive fee discounts."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/gate-io/"
   },
   {
     "id": "htx",
@@ -498,7 +498,7 @@
       "fee_url": "https://www.htx.com/fee/",
       "note": "Formerly Huobi. HT token holders receive discounts."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/htx/"
   },
   {
     "id": "crypto-com",
@@ -527,7 +527,7 @@
       "fee_url": "https://crypto.com/exchange/document/fees-limits",
       "note": "CRO staking reduces fees significantly. Exchange and App are separate platforms."
     },
-    "fiscal_status_br": "Internacional com Presença no Brasil"
+    "analysis_url": "https://bitsark.com/exchanges/crypto-com/"
   },
   {
     "id": "bingx",
@@ -557,7 +557,7 @@
       "fee_url": "https://www.bingx.com/en/support/articles/360027240173",
       "note": "Copy trading fees may differ from standard spot fees."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/bingx/"
   },
   {
     "id": "bitmart",
@@ -587,7 +587,7 @@
       "fee_url": "https://www.bitmart.com/fee/en",
       "note": "BMX token holders receive fee discounts."
     },
-    "fiscal_status_br": "Internacional"
+    "analysis_url": "https://bitsark.com/exchanges/bitmart/"
   },
   {
     "id": "nubank",
@@ -616,7 +616,7 @@
       "fee_url": "https://nubank.com.br/nu/nubank-criptomoeda",
       "note": "Spread embedded in execution price. Integrated into the Nubank app."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/nubank/"
   },
   {
     "id": "mercado-pago",
@@ -645,7 +645,7 @@
       "fee_url": "https://www.mercadopago.com.br/cripto",
       "note": "Spread embedded in quote. Integrated into Mercado Pago account."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/mercado-pago/"
   },
   {
     "id": "mynt",
@@ -674,7 +674,7 @@
       "fee_url": "https://www.mynt.com.br/faq/",
       "note": "Spread embedded in quote; no explicit brokerage fee. Operated by BTG Pactual, BCB-authorized."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/mynt/"
   },
   {
     "id": "bipa",
@@ -703,6 +703,6 @@
       "fee_url": "https://suporte.bipa.app/hc/pt-br/articles/30249970786587-Quais-sao-as-taxas-de-negociacao-de-Bitcoin-e-USDT-na-Bipa",
       "note": "Zero fee on recurring purchases. Spread embedded on operations. BTC cashback card available."
     },
-    "fiscal_status_br": "Nacional"
+    "analysis_url": "https://bitsark.com/exchanges/bipa/"
   }
 ]

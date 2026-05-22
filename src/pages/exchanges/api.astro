@@ -21,7 +21,6 @@ const exampleSingle = `{
     "website": "https://www.mercadobitcoin.com.br",
     "logo_url": "https://assets.bitsark.com/logos/mercado-bitcoin.svg",
     "updated_at": "2026-04-22T21:56:00Z",
-    "fiscal_status_br": "Nacional",
     "operational_details_br": {
       "cnpj": "18.213.434/0001-35",
       "bcb_authorized": true,
@@ -39,7 +38,8 @@ const exampleSingle = `{
       "taker": 0.007,
       "fee_url": "https://www.mercadobitcoin.com.br/taxas-contas-limites",
       "note": "Largest Brazilian exchange by volume. Pix fully supported. Volume-based tiers."
-    }
+    },
+    "analysis_url": "https://bitsark.com/exchanges/mercado-bitcoin/"
   }
 }`;
 
@@ -438,7 +438,7 @@ const alternates = [
               <tr><td><code>website</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.website_desc')}</td></tr>
               <tr><td><code>logo_url</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.logo_url_desc')}</td></tr>
               <tr><td><code>updated_at</code></td><td>ISO 8601</td><td>{t('exchanges_api.schema_reference.fields.updated_at_desc')}</td></tr>
-              <tr><td><code>fiscal_status_br</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.fiscal_status_br_desc')}</td></tr>
+              <tr><td><code>analysis_url</code></td><td>string</td><td>{t('exchanges_api.schema_reference.fields.analysis_url_desc')}</td></tr>
               <tr>
                 <td colspan="3" class="data-table__group-header">{t('exchanges_api.schema_reference.fields.operational_details_br_group')}</td>
               </tr>
@@ -501,12 +501,6 @@ const alternates = [
                 <td>string</td>
                 <td>{t('exchanges_api.query_filters.fields.tax_regime_desc')}</td>
                 <td><code>?tax_regime=domestic_exchange</code></td>
-              </tr>
-              <tr>
-                <td><code>fiscal_status_br</code></td>
-                <td>string</td>
-                <td>{t('exchanges_api.query_filters.fields.fiscal_status_br_desc')}</td>
-                <td><code>?fiscal_status_br=Nacional</code></td>
               </tr>
             </tbody>
           </table>

@@ -33,3 +33,6 @@ scripts/_*
 
 # Documentação interna (estratégica/pessoal + instruções para Claude)
 docs/_internal/
+
+# Documentação interna de arquitetura (não pública)
+ARCHITECTURE.md

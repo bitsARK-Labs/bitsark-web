@@ -2957,7 +2957,7 @@
         "website_desc": "Official website URL",
         "logo_url_desc": "SVG logo hosted at assets.bitsark.com",
         "updated_at_desc": "Timestamp of the last data update for this record",
-        "fiscal_status_br_desc": "Human-readable Brazilian fiscal classification. One of: Nacional, Internacional com Presença no Brasil, Internacional. Derived from tax_regime.",
+        "analysis_url_desc": "BitsARK analysis page URL for this exchange (e.g. https://bitsark.com/exchanges/binance/)",
         "operational_details_br_group": "operational_details_br",
         "cnpj_desc": "Brazilian tax ID. null for pure offshore exchanges with no Brazilian legal entity",
         "bcb_authorized_desc": "Whether the exchange holds a PSAV (Payment Service - Virtual Asset) authorization from Brazil's Central Bank (BCB)",
@@ -2988,8 +2988,7 @@
         "brazil_registered_desc": "Filter by Brazilian legal entity presence (domestic_exchange or domestic_exchange_foreign_origin)",
         "bcb_licensed_desc": "Filter by BCB PSAV authorization status",
         "accepts_pix_desc": "Filter by Pix availability for BRL operations",
-        "tax_regime_desc": "Filter by exact tax regime value.",
-        "fiscal_status_br_desc": "Filter by human-readable fiscal status. One of: Nacional, Internacional com Presença no Brasil, Internacional."
+        "tax_regime_desc": "Filter by exact tax regime value."
       },
       "combined_example": "Combined example: Brazilian-registered, BCB-authorized exchanges that accept Pix:"
     },

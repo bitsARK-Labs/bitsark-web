@@ -57,7 +57,7 @@ bitsARK Labs builds and maintains free, open data APIs and tools for the Brazili
   - GET /v1/exchanges/fees - lightweight fee comparison projection
   - GET /v1/exchanges/brazil-registered - Brazilian legal entity exchanges
   - GET /v1/exchanges/{id} - single exchange by id or slug
-- Common filters: brazil_registered, bcb_licensed, accepts_pix, tax_regime, fiscal_status_br
+- Common filters: brazil_registered, bcb_licensed, accepts_pix, tax_regime
 - Fiscal fields explained:
   - tax_regime: "domestic_exchange" (Brazilian origin), "domestic_exchange_foreign_origin" (foreign origin, fully nationalized), "offshore_law_14754" (offshore)
   - exchange_rfb_reports: array - "in_1888_monthly" means the exchange files monthly reports under IN RFB 1888/2019. "decripto_annually" means annual filing via e-Financeira/DeCripto.
