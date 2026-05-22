@@ -1,12 +1,16 @@
 ---
 import Base from '@layouts/Base.astro';
 import { useTranslations } from '@i18n/index';
+import type { Lang } from '@i18n/index';
 import EmailObfuscated from '@components/EmailObfuscated.astro';
 
-const t = useTranslations('pt-BR');
-const title = t('privacy.title');
+const lang: Lang = 'pt-BR';
+const t = useTranslations(lang);
+const title       = t('privacy.title');
 const description = t('privacy.description');
 const lastUpdated = t('privacy.lastUpdated');
+
+const ensureArray = (val: any) => Array.isArray(val) ? val : [];
 
 const alternates = [
   { hreflang: 'en',        href: 'https://bitsark.com/dolarmap/privacy/' },
@@ -18,14 +22,15 @@ const alternates = [
 <Base
   title={title}
   description={description}
-  lang="pt-BR"
+  lang={lang}
   canonical="https://bitsark.com/pt/dolarmap/privacy/"
   alternates={alternates}
   noindex={true}
 >
-  <main class="legal-page">
+  <main class="section legal-page">
     <div class="legal-container">
       <header class="legal-header">
+        <p class="eyebrow">DolarMap</p>
         <h1>{t('privacy.header')}</h1>
         <p class="legal-meta">
           <strong>DolarMap</strong> · {t('privacy.meta')}: {lastUpdated}
@@ -33,332 +38,189 @@ const alternates = [
       </header>
 
       <section class="legal-section">
-        <h2>{t('privacy.sections.intro.title')}</h2>
-        <p>{t('privacy.sections.intro.p1')}</p>
-        <p>{t('privacy.sections.intro.p2')}</p>
+        <h2 set:html={t('privacy.sections.intro.title')} />
+        <p set:html={t('privacy.sections.intro.p1')} />
+        <p set:html={t('privacy.sections.intro.p2')} />
       </section>
 
       <section class="legal-section">
-        <h2>2. Controlador de Dados</h2>
-        <p>
-          O controlador dos dados pessoais coletados pelo DolarMap é a
-          <strong>Tecnologia Atual Serviços LTDA</strong> (CNPJ 51.334.748/0001-61), uma empresa brasileira.
-          Para exercer seus direitos ou obter esclarecimentos, entre em contato conosco pelo e-mail
-          <EmailObfuscated email="support@bitsark.com" />.
-        </p>
+        <h2 set:html={t('privacy.sections.controller.title')} />
+        <p><span set:html={t('privacy.sections.controller.p1')} /> <EmailObfuscated email="support@bitsark.com" /></p>
       </section>
 
       <section class="legal-section">
-        <h2>3. Quais Dados Coletamos</h2>
-        <p>
-          O DolarMap foi projetado com o princípio da minimização de dados: coletamos apenas o
-          estritamente necessário para o funcionamento do serviço.
-        </p>
+        <h2 set:html={t('privacy.sections.dataCollection.title')} />
+        <p set:html={t('privacy.sections.dataCollection.p1')} />
 
-        <h3>3.1 Identificador de Dispositivo (UUID)</h3>
-        <p>
-          Ao utilizar o aplicativo pela primeira vez, geramos automaticamente um UUID (Universally Unique
-          Identifier) para o seu dispositivo. Este identificador é anônimo - não está vinculado ao seu nome,
-          e-mail ou qualquer outra informação de identificação pessoal. Ele é usado para:
-        </p>
+        <h3 set:html={t('privacy.sections.dataCollection.uuid.title')} />
+        <p set:html={t('privacy.sections.dataCollection.uuid.p1')} />
         <ul>
-          <li>Associar seus alertas de preço ao seu dispositivo, sem exigir cadastro.</li>
-          <li>Autenticar requisições à API do DolarMap.</li>
+          {ensureArray(t('privacy.sections.dataCollection.uuid.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
 
-        <h3>3.2 Identificador Firebase (UID)</h3>
-        <p>
-          O UUID local é registrado no Firebase Authentication para gerar um token de autenticação seguro.
-          O UID do Firebase é armazenado em nosso banco de dados como a chave para os seus alertas.
-          Este identificador é gerado automaticamente e não revela sua identidade.
-        </p>
+        <h3 set:html={t('privacy.sections.dataCollection.firebase.title')} />
+        <p set:html={t('privacy.sections.dataCollection.firebase.p1')} />
 
-        <h3>3.3 Token FCM (Notificações Push)</h3>
-        <p>
-          Para enviar alertas de preço para o seu dispositivo, utilizamos o Firebase Cloud Messaging (FCM).
-          O FCM fornece um token específico para o seu dispositivo, que armazenamos associado aos seus alertas. Este token:
-        </p>
+        <h3 set:html={t('privacy.sections.dataCollection.fcm.title')} />
+        <p set:html={t('privacy.sections.dataCollection.fcm.p1')} />
         <ul>
-          <li>Identifica o dispositivo para fins de entrega de notificação, mas não identifica você pessoalmente.</li>
-          <li>É atualizado automaticamente pelo sistema operacional e sincronizado com nosso servidor.</li>
-          <li>É removido do nosso banco de dados quando os alertas associados são excluídos ou quando o token é invalidado pelo sistema.</li>
+          {ensureArray(t('privacy.sections.dataCollection.fcm.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
 
-        <h3>3.4 Dados de Alerta Configurados pelo Usuário</h3>
-        <p>Quando você cria um alerta, armazenamos:</p>
+        <h3 set:html={t('privacy.sections.dataCollection.alerts.title')} />
+        <p set:html={t('privacy.sections.dataCollection.alerts.p1')} />
         <ul>
-          <li>O ativo monitorado (ex: "USDT/BRL na Binance").</li>
-          <li>O preço alvo e a condição definida (ex: "abaixo de R$ 5,20").</li>
-          <li>As configurações do alerta: modo (compra/venda/arb), recorrência, status (ativo/pausado).</li>
-          <li>A data e hora de criação.</li>
+          {ensureArray(t('privacy.sections.dataCollection.alerts.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
-        <p>
-          Esses dados são de sua autoria e são utilizados exclusivamente para disparar as notificações
-          conforme você configurou.
-        </p>
+        <p set:html={t('privacy.sections.dataCollection.alerts.p2')} />
 
-        <h3>3.5 Sign in with Google (Opcional)</h3>
-        <p>
-          Se você optar pelo "Sign in with Google", o Firebase Authentication recebe seu Google UID (um
-          identificador opaco gerado pelo Google, não o seu e-mail ou nome). Armazenamos apenas esse UID para
-          migrar seus alertas do UUID temporário para uma conta permanente. Não armazenamos seu
-          e-mail, nome, foto de perfil ou qualquer outro dado do seu perfil Google.
-        </p>
+        <h3 set:html={t('privacy.sections.dataCollection.google.title')} />
+        <p set:html={t('privacy.sections.dataCollection.google.p1')} />
 
-        <h3>3.6 SDKs de Terceiros</h3>
-        <p>
-          O DolarMap integra os seguintes SDKs de terceiros que podem processar dados do dispositivo conforme
-          descrito nesta política:
-        </p>
+        <h3 set:html={t('privacy.sections.dataCollection.sdks.title')} />
+        <p set:html={t('privacy.sections.dataCollection.sdks.p1')} />
         <ul>
-          <li><strong>Firebase Authentication</strong> (Google LLC) – autenticação anônima e baseada em Google.</li>
-          <li><strong>Firebase Cloud Messaging</strong> (Google LLC) – entrega de notificações push.</li>
+          {ensureArray(t('privacy.sections.dataCollection.sdks.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
-        <p>
-          Nenhum outro SDK de análise de terceiros, publicidade ou relatório de erros está integrado ao
-          aplicativo.
-        </p>
+        <p set:html={t('privacy.sections.dataCollection.sdks.p2')} />
 
-        <h3>3.7 Dados que NÃO Coletamos</h3>
-        <p>O DolarMap não coleta:</p>
+        <h3 set:html={t('privacy.sections.dataCollection.notCollected.title')} />
+        <p set:html={t('privacy.sections.dataCollection.notCollected.p1')} />
         <ul>
-          <li>Nome, e-mail, CPF, número de telefone ou qualquer dado de identificação pessoal direta.</li>
-          <li>Localização geográfica.</li>
-          <li>Dados biométricos.</li>
-          <li>Histórico de navegação ou comportamento fora do aplicativo.</li>
-          <li>Dados financeiros, bancários ou de cartão de crédito.</li>
-          <li>Contatos, fotos ou outros dados do dispositivo.</li>
+          {ensureArray(t('privacy.sections.dataCollection.notCollected.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
 
-        <h3>3.8 Preferências do App</h3>
-        <p>
-          Armazenamos suas preferências de exibição (modo escuro, casas decimais, modo padrão) localmente no
-          seu dispositivo. Essas preferências não são enviadas aos nossos servidores nem vinculadas à sua identidade.
-        </p>
+        <h3 set:html={t('privacy.sections.dataCollection.preferences.title')} />
+        <p set:html={t('privacy.sections.dataCollection.preferences.p1')} />
       </section>
 
       <section class="legal-section">
-        <h2>4. Como Usamos os Dados</h2>
-        <p>Os dados coletados são utilizados exclusivamente para:</p>
+        <h2 set:html={t('privacy.sections.dataUsage.title')} />
+        <p set:html={t('privacy.sections.dataUsage.p1')} />
         <ul>
-          <li>Associar alertas de preço ao dispositivo ou conta do usuário.</li>
-          <li>Enviar notificações push quando as condições de alerta forem atingidas.</li>
-          <li>Manter uma sessão autenticada segura.</li>
-          <li>
-            Melhorar o desempenho e a estabilidade do serviço (dados técnicos e de uso agregados, sem identificação individual).
-          </li>
+          {ensureArray(t('privacy.sections.dataUsage.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
-        <p>
-          Não utilizamos dados pessoais para publicidade, profiling (perfilamento) ou qualquer finalidade alheia à
-          operação do próprio serviço.
-        </p>
+        <p set:html={t('privacy.sections.dataUsage.p2')} />
       </section>
 
       <section class="legal-section">
-        <h2>5. Base Legal (LGPD)</h2>
-        <p>
-          O tratamento de dados pelo DolarMap baseia-se nas seguintes fundamentações legais previstas no
-          Art. 7º da LGPD:
-        </p>
+        <h2 set:html={t('privacy.sections.legalBasis.title')} />
+        <p set:html={t('privacy.sections.legalBasis.p1')} />
         <ul>
-          <li>
-            <strong>Execução de contrato ou procedimentos preliminares (Art. 7º, V):</strong>
-            necessário para fornecer as funcionalidades solicitadas pelo usuário, como alertas e notificações.
-          </li>
-          <li>
-            <strong>Legítimo interesse (Art. 7º, IX):</strong> para geração do UUID e autenticação anônima, que
-            permitem o uso do aplicativo sem cadastro obrigatório, respeitando a privacidade do usuário.
-          </li>
-          <li>
-            <strong>Consentimento (Art. 7º, I):</strong> para o Sign in with Google, que é explicitamente
-            voluntário.
-          </li>
+          {ensureArray(t('privacy.sections.legalBasis.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
       </section>
 
       <section class="legal-section">
-        <h2>6. Compartilhamento de Dados</h2>
-        <p>
-          Não vendemos, alugamos ou comercializamos dados pessoais dos usuários. Os dados são compartilhados apenas com os
-          seguintes provedores de infraestrutura, estritamente necessários para o funcionamento do serviço:
-        </p>
+        <h2 set:html={t('privacy.sections.sharing.title')} />
+        <p set:html={t('privacy.sections.sharing.p1')} />
 
-        <h3>6.1 Google Firebase (Authentication e Cloud Messaging)</h3>
-        <p>
-          Utilizamos o Firebase Authentication para autenticação segura e o Firebase Cloud Messaging para
-          envio de notificações push. O Google recebe o UUID/UID e o token FCM dos dispositivos.
-          O Google possui política de privacidade própria, disponível em
-          <a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener noreferrer">
-            firebase.google.com/support/privacy
-          </a>.
-        </p>
+        <h3 set:html={t('privacy.sections.sharing.firebase.title')} />
+        <p set:html={t('privacy.sections.sharing.firebase.p1')} />
 
-        <h3>6.2 Servidor Próprio (TimescaleDB/PostgreSQL)</h3>
-        <p>
-          Os alertas e tokens são armazenados em nosso próprio banco de dados, hospedado em servidor dedicado. Não
-          compartilhamos estes dados com terceiros além do Firebase conforme descrito acima.
-        </p>
+        <h3 set:html={t('privacy.sections.sharing.server.title')} />
+        <p set:html={t('privacy.sections.sharing.server.p1')} />
 
-        <h3>6.3 Divulgação Legal</h3>
-        <p>
-          Podemos divulgar dados se exigido por lei, ordem judicial ou autoridade competente, na medida do
-          estritamente necessário para cumprir a obrigação legal.
-        </p>
+        <h3 set:html={t('privacy.sections.sharing.legal.title')} />
+        <p set:html={t('privacy.sections.sharing.legal.p1')} />
       </section>
 
       <section class="legal-section">
-        <h2>7. Retenção de Dados</h2>
-        <p>Retemos seus dados pelo tempo necessário para a prestação do serviço:</p>
+        <h2 set:html={t('privacy.sections.retention.title')} />
+        <p set:html={t('privacy.sections.retention.p1')} />
         <ul>
-          <li>
-            <strong>Alertas e tokens FCM:</strong> armazenados enquanto os alertas existirem. Ao excluir um
-            alerta, os dados associados são removidos.
-          </li>
-          <li>
-            <strong>Dados brutos de cotação de mercado:</strong> retidos por 30 dias e excluídos automaticamente.
-          </li>
-          <li>
-            <strong>Dados analíticos agregados</strong> (sem identificação individual): retidos
-            indefinidamente para análise histórica de câmbio.
-          </li>
-          <li>
-            <strong>UUID e Firebase UID:</strong> mantidos enquanto o usuário estiver ativo. Para
-            proteger sua privacidade, desativamos alertas automaticamente após 6 meses de inatividade
-            (contas anônimas) ou 12 meses (contas Google). Todos os dados associados ao identificador são removidos definitivamente após 7 ou 13 meses de inatividade, respectivamente.
-          </li>
+          {ensureArray(t('privacy.sections.retention.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
       </section>
 
       <section class="legal-section">
-        <h2>8. Segurança</h2>
-        <p>Adotamos as seguintes medidas técnicas para proteger os dados:</p>
+        <h2 set:html={t('privacy.sections.security.title')} />
+        <p set:html={t('privacy.sections.security.p1')} />
         <ul>
-          <li>Comunicação entre o aplicativo e o servidor via HTTPS (TLS).</li>
-          <li>Autenticação baseada em tokens assinados pelo Firebase.</li>
-          <li>Banco de dados em servidor privado, sem exposição direta à internet.</li>
-          <li>
-            Tokens FCM são invalidados automaticamente quando expiram ou são reportados como inválidos
-            pelo Google.
-          </li>
+          {ensureArray(t('privacy.sections.security.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
-        <p>
-          Nenhum sistema é 100% seguro. Caso ocorra um incidente de segurança que afete dados pessoais,
-          notificaremos os usuários afetados conforme exigido pela LGPD.
-        </p>
+        <p set:html={t('privacy.sections.security.p2')} />
       </section>
 
       <section class="legal-section">
-        <h2>9. Seus Direitos (LGPD – Art. 18)</h2>
-        <p>
-          Como titular de dados pessoais, você possui os seguintes direitos, que podem ser exercidos através do
-          e-mail de contato do desenvolvedor:
-        </p>
+        <h2 set:html={t('privacy.sections.rights.title')} />
+        <p set:html={t('privacy.sections.rights.p1')} />
         <ul>
-          <li><strong>Confirmação e acesso:</strong> saber quais dados temos sobre você e obter uma cópia.</li>
-          <li><strong>Correção:</strong> solicitar a correção de dados incompletos ou incorretos.</li>
-          <li>
-            <strong>Anonimização ou exclusão:</strong> solicitar que seus dados desnecessários ou tratados em
-            desconformidade com a lei sejam anonimizados ou excluídos.
-          </li>
-          <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado e legível.</li>
-          <li>
-            <strong>Revogação do consentimento:</strong> onde o tratamento for baseado em consentimento, você pode
-            revogá-lo a qualquer momento.
-          </li>
-          <li>
-            <strong>Oposição:</strong> opor-se ao tratamento realizado com base no legítimo interesse.
-          </li>
+          {ensureArray(t('privacy.sections.rights.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
-        <p>
-          Para dados de alertas, você pode exercer esses direitos diretamente no app, excluindo ou editando
-          seus alertas. Para remoção definitiva de conta e dados, utilize a opção <em>"Excluir minha conta"</em>
-          nas Configurações.
-        </p>
+        <p set:html={t('privacy.sections.rights.p2')} />
       </section>
 
       <section class="legal-section">
-        <h2>10. Cookies e Rastreamento</h2>
-        <p>
-          O DolarMap é um aplicativo móvel nativo e não utiliza cookies. Não há rastreamento comportamental,
-          pixels de publicidade ou SDKs de analytics de terceiros integrados ao aplicativo.
-        </p>
+        <h2 set:html={t('privacy.sections.cookies.title')} />
+        <p set:html={t('privacy.sections.cookies.p1')} />
       </section>
 
       <section class="legal-section">
-        <h2>11. Transferência Internacional de Dados</h2>
-        <p>
-          O Firebase Authentication e o Firebase Cloud Messaging são serviços do Google, cujos servidores
-          podem estar localizados fora do Brasil. Esta transferência é realizada com base nas
-          salvaguardas adequadas previstas no Art. 33 da LGPD, sendo o Google um provedor com políticas
-          de privacidade compatíveis com padrões internacionais reconhecidos.
-        </p>
+        <h2 set:html={t('privacy.sections.internationalTransfer.title')} />
+        <p set:html={t('privacy.sections.internationalTransfer.p1')} />
       </section>
 
       <section class="legal-section">
-        <h2>12. Menores</h2>
-        <p>
-          O aplicativo não é direcionado especificamente a crianças ou adolescentes menores de 13 anos. Não
-          coletamos intencionalmente dados de menores. Caso um responsável identifique que um menor sob sua
-          guarda forneceu dados ao aplicativo, entre em contato para que os dados sejam excluídos imediatamente.
-        </p>
+        <h2 set:html={t('privacy.sections.minors.title')} />
+        <p set:html={t('privacy.sections.minors.p1')} />
       </section>
 
       <section class="legal-section">
-        <h2>13. Alterações nesta Política</h2>
-        <p>
-          Esta Política pode ser atualizada periodicamente. Alterações significativas serão comunicadas via
-          aviso no app antes de entrarem em vigor. O uso continuado após a comunicação implica na
-          aceitação da nova versão. A versão atual está sempre disponível na tela de
-          <em>"Política de Privacidade"</em> do aplicativo.
-        </p>
+        <h2 set:html={t('privacy.sections.changes.title')} />
+        <p set:html={t('privacy.sections.changes.p1')} />
       </section>
 
       <section class="legal-section">
-        <h2>14. Contato e Encarregado de Proteção de Dados (DPO)</h2>
-        <p>
-          O DolarMap é operado pela Tecnologia Atual Serviços LTDA, que segue padrões de mercado em
-          privacidade e segurança. Para qualquer dúvida sobre privacidade, entre em contato via
-          e-mail em <a href="mailto:support@bitsark.com">support@bitsark.com</a>.
-        </p>
-        <p>Responderemos às solicitações em até 15 dias úteis, conforme previsto pela LGPD.</p>
+        <h2 set:html={t('privacy.sections.contactDPO.title')} />
+        <p set:html={t('privacy.sections.contactDPO.p1')} />
+        <p set:html={t('privacy.sections.contactDPO.p2')} />
       </section>
 
       <section class="legal-section">
-        <h2>15. Resumo de Privacidade da App Store</h2>
-        <p>
-          O resumo a seguir é fornecido em alinhamento com os requisitos de divulgação de privacidade da
-          Apple App Store e Google Play Store.
-        </p>
+        <h2 set:html={t('privacy.sections.summary.title')} />
+        <p set:html={t('privacy.sections.summary.p1')} />
 
-        <h3>Dados Não Vinculados a Você</h3>
-        <p>
-          Os seguintes dados podem ser coletados, mas não estão vinculados à sua identidade:
-        </p>
+        <h3 set:html={t('privacy.sections.summary.notLinked.title')} />
+        <p set:html={t('privacy.sections.summary.notLinked.p1')} />
         <ul>
-          <li><strong>Identificadores:</strong> UUID anônimo do dispositivo e UID do Firebase, usados exclusivamente para associar seus alertas ao seu dispositivo.</li>
-          <li><strong>Dados de Uso:</strong> Dados agregados e anonimizados de desempenho do serviço (sem identificação individual).</li>
+          {ensureArray(t('privacy.sections.summary.notLinked.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
 
-        <h3>Dados Vinculados a Você (Apenas Google Sign-In)</h3>
-        <p>
-          Se você opcionalmente fizer login com o Google, os seguintes dados serão vinculados à sua conta:
-        </p>
+        <h3 set:html={t('privacy.sections.summary.linked.title')} />
+        <p set:html={t('privacy.sections.summary.linked.p1')} />
         <ul>
-          <li><strong>Identificadores:</strong> Google UID (identificador opaco - não seu e-mail ou nome), usado para restaurar seus alertas em outros dispositivos.</li>
-          <li><strong>Conteúdo do Usuário:</strong> Seus alertas de preço configurados (ativo, preço alvo, condições).</li>
+          {ensureArray(t('privacy.sections.summary.linked.items')).map((item: string) => (
+            <li set:html={item} />
+          ))}
         </ul>
 
-        <h3>Dados Não Coletados</h3>
-        <p>
-          O DolarMap não coleta dados usados para rastrear você em apps ou sites de outras empresas, e
-          não utiliza dados para fins de publicidade ou profiling.
-        </p>
+        <h3 set:html={t('privacy.sections.summary.notCollectedSummary.title')} />
+        <p set:html={t('privacy.sections.summary.notCollectedSummary.p1')} />
 
-        <p>
-          Para solicitar a exclusão da sua conta e de todos os dados associados, acesse nossa
-          <a href="/pt/dolarmap/support#account-deletion">página de Suporte</a> ou utilize a opção
-          <em>"Excluir minha conta"</em> nas Configurações do app.
-        </p>
+        <p set:html={t('privacy.sections.summary.deletion')} />
       </section>
     </div>
   </main>
@@ -366,45 +228,48 @@ const alternates = [
 
 <style>
   .legal-page {
-    padding: 3rem 1.5rem 5rem;
-    background-color: var(--color-bg);
-    color: var(--color-text-muted);
+    padding: 3rem var(--space-4) 5rem;
     min-height: 100vh;
   }
 
   .legal-container {
     max-width: 780px;
-    margin: 0 auto;
+    margin-inline: auto;
   }
 
   .legal-header {
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-6);
     border-bottom: 1px solid var(--color-border);
   }
 
   .legal-header h1 {
-    font-size: 2rem;
+    font-size: var(--text-2xl);
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
     color: var(--color-primary);
+    letter-spacing: -0.02em;
   }
 
   .legal-meta {
-    font-size: 0.875rem;
+    font-size: var(--text-xs);
+    font-family: var(--font-mono);
     color: var(--color-text-faint);
   }
 
   .legal-section {
-    margin-bottom: 2.5rem;
+    margin-bottom: var(--space-10);
   }
 
   .legal-section h2 {
-    font-size: 1.2rem;
+    font-size: var(--text-lg);
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-4);
     color: var(--color-primary);
-    padding-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
   }
 
   .legal-section h3 {
@@ -415,31 +280,33 @@ const alternates = [
   }
 
   .legal-section p {
-    font-size: 0.95rem;
-    line-height: 1.75;
+    font-size: var(--text-base);
+    line-height: 1.8;
     color: var(--color-text-muted);
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-4);
   }
 
   .legal-section ul {
-    padding-left: 1.5rem;
-    margin: 0.5rem 0 0.75rem;
+    padding-left: var(--space-6);
+    margin: 0.5rem 0 var(--space-6);
+    list-style: disc;
   }
 
   .legal-section ul li {
-    font-size: 0.95rem;
+    font-size: var(--text-base);
     line-height: 1.75;
     color: var(--color-text-muted);
-    margin-bottom: 0.35rem;
+    margin-bottom: var(--space-2);
   }
 
   .legal-section a {
     color: var(--color-primary);
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
+    transition: color var(--transition);
   }
 
   .legal-section a:hover {
-    opacity: 0.8;
+    color: var(--color-primary-hover);
   }
 </style>

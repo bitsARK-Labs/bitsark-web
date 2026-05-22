@@ -661,409 +661,417 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
 
 
 <script>
-  // ── Floating sticky thead ──
-  // position:sticky inside overflow-x:auto is relative to that container, not the viewport.
-  // Solution: clone the thead into a position:fixed element outside the overflow container,
-  // sync column widths and horizontal scroll via JS.
-  const _nav = document.querySelector<HTMLElement>('.nav');
-  const _navH = _nav?.offsetHeight ?? 57;
-  document.documentElement.style.setProperty('--nav-h', `${_navH}px`);
+  // Limpa o thead flutuante antes do swap para evitar duplicatas entre navegações
+  document.addEventListener('astro:before-swap', () => {
+    document.getElementById('exch-thead-float')?.remove();
+  });
 
-  let _syncFloat = () => {};
+  function initExchangesPage() {
+    // ── Floating sticky thead ──
+    // position:sticky inside overflow-x:auto is relative to that container, not the viewport.
+    // Solution: clone the thead into a position:fixed element outside the overflow container,
+    // sync column widths and horizontal scroll via JS.
+    const _nav = document.querySelector<HTMLElement>('.nav');
+    const _navH = _nav?.offsetHeight ?? 57;
+    document.documentElement.style.setProperty('--nav-h', `${_navH}px`);
 
-  (function () {
-    const table   = document.getElementById('exchanges-table') as HTMLTableElement | null;
-    const realThead = table?.querySelector<HTMLElement>('thead');
-    const tableWrap = document.querySelector<HTMLElement>('.table-wrap');
-    if (!table || !realThead || !tableWrap) return;
+    let _syncFloat = () => {};
 
-    const floatOuter = document.createElement('div');
-    floatOuter.id = 'exch-thead-float';
-    floatOuter.setAttribute('aria-hidden', 'true');
+    (function () {
+      const table   = document.getElementById('exchanges-table') as HTMLTableElement | null;
+      const realThead = table?.querySelector<HTMLElement>('thead');
+      const tableWrap = document.querySelector<HTMLElement>('.table-wrap');
+      if (!table || !realThead || !tableWrap) return;
 
-    const floatTable = document.createElement('table');
-    floatTable.className = table.className;
-    const floatThead = realThead.cloneNode(true) as HTMLElement;
-    floatTable.appendChild(floatThead);
-    floatOuter.appendChild(floatTable);
-    document.body.appendChild(floatOuter);
+      const floatOuter = document.createElement('div');
+      floatOuter.id = 'exch-thead-float';
+      floatOuter.setAttribute('aria-hidden', 'true');
 
-    let rafId = 0;
-    function syncFloat() {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => {
-        const wrapRect   = tableWrap!.getBoundingClientRect();
-        const theadH     = realThead!.offsetHeight;
-        const theadBottom = realThead!.getBoundingClientRect().bottom;
-        const show = theadBottom <= _navH && wrapRect.bottom > _navH + theadH;
+      const floatTable = document.createElement('table');
+      floatTable.className = table.className;
+      const floatThead = realThead.cloneNode(true) as HTMLElement;
+      floatTable.appendChild(floatThead);
+      floatOuter.appendChild(floatTable);
+      document.body.appendChild(floatOuter);
 
-        floatOuter.style.visibility = show ? 'visible' : 'hidden';
-        if (!show) return;
+      let rafId = 0;
+      function syncFloat() {
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          const wrapRect   = tableWrap!.getBoundingClientRect();
+          const theadH     = realThead!.offsetHeight;
+          const theadBottom = realThead!.getBoundingClientRect().bottom;
+          const show = theadBottom <= _navH && wrapRect.bottom > _navH + theadH;
 
-        floatOuter.style.top    = `${_navH}px`;
-        floatOuter.style.left   = `${wrapRect.left}px`;
-        floatOuter.style.width  = `${wrapRect.width}px`;
-        floatOuter.style.height = `${theadH}px`;
+          floatOuter.style.visibility = show ? 'visible' : 'hidden';
+          if (!show) return;
 
-        // Sync column widths + col-hidden + aria-sort from real thead
-        const srcThs = realThead!.querySelectorAll<HTMLElement>('th');
-        const dstThs = floatThead.querySelectorAll<HTMLElement>('th');
-        srcThs.forEach((th, i) => {
-          const d = dstThs[i];
-          if (!d) return;
-          d.style.width    = `${th.offsetWidth}px`;
-          d.style.minWidth = `${th.offsetWidth}px`;
-          d.classList.toggle('col-hidden', th.classList.contains('col-hidden'));
-          const sort = th.getAttribute('aria-sort');
-          if (sort) d.setAttribute('aria-sort', sort);
+          floatOuter.style.top    = `${_navH}px`;
+          floatOuter.style.left   = `${wrapRect.left}px`;
+          floatOuter.style.width  = `${wrapRect.width}px`;
+          floatOuter.style.height = `${theadH}px`;
+
+          // Sync column widths + col-hidden + aria-sort from real thead
+          const srcThs = realThead!.querySelectorAll<HTMLElement>('th');
+          const dstThs = floatThead.querySelectorAll<HTMLElement>('th');
+          srcThs.forEach((th, i) => {
+            const d = dstThs[i];
+            if (!d) return;
+            d.style.width    = `${th.offsetWidth}px`;
+            d.style.minWidth = `${th.offsetWidth}px`;
+            d.classList.toggle('col-hidden', th.classList.contains('col-hidden'));
+            const sort = th.getAttribute('aria-sort');
+            if (sort) d.setAttribute('aria-sort', sort);
+          });
+
+          // Shift inner table to match horizontal scroll of table-wrap
+          floatTable.style.width     = `${table!.offsetWidth}px`;
+          floatTable.style.transform = `translateX(-${tableWrap!.scrollLeft}px)`;
         });
+      }
 
-        // Shift inner table to match horizontal scroll of table-wrap
-        floatTable.style.width     = `${table!.offsetWidth}px`;
-        floatTable.style.transform = `translateX(-${tableWrap!.scrollLeft}px)`;
+      // Forward sort clicks to the real header cells
+      floatThead.addEventListener('click', e => {
+        const floatTh = (e.target as HTMLElement).closest('th');
+        if (!floatTh) return;
+        const idx = Array.from(floatThead.querySelectorAll('th')).indexOf(floatTh as HTMLElement);
+        (realThead!.querySelectorAll<HTMLElement>('th')[idx])?.click();
       });
+
+      window.addEventListener('scroll', syncFloat, { passive: true });
+      window.addEventListener('resize', syncFloat, { passive: true });
+      tableWrap.addEventListener('scroll', syncFloat, { passive: true });
+      syncFloat();
+
+      _syncFloat = syncFloat;
+    })();
+
+    const searchInput      = document.getElementById('exch-search') as HTMLInputElement | null;
+    const searchClearBtn   = document.getElementById('search-clear-btn') as HTMLButtonElement | null;
+    const resetFiltersBtn  = document.getElementById('reset-filters-btn') as HTMLButtonElement | null;
+    const chips            = document.querySelectorAll<HTMLButtonElement>('.exch-chip');
+    const rows             = document.querySelectorAll<HTMLTableRowElement>('#exchanges-tbody tr');
+    const emptyMsg         = document.getElementById('exch-empty');
+    const emptyMsgText     = document.getElementById('exch-empty-msg');
+    const resultCountElement = document.getElementById('result-count');
+    const settingsToggle   = document.getElementById('settings-toggle') as HTMLButtonElement | null;
+    const settingsPanel    = document.getElementById('settings-panel') as HTMLElement | null;
+    const colToggles       = document.querySelectorAll<HTMLInputElement>('.exch-col-toggle');
+    const sortableHeaders  = document.querySelectorAll<HTMLTableCellElement>('th.sortable');
+
+    // Feedback Modal Elements
+    const modal = document.getElementById('feedback-modal');
+    const backdrop = document.getElementById('feedback-backdrop');
+    const openFeedbackBtn = document.getElementById('open-feedback-btn-footer');
+    const closeFeedbackBtn = document.getElementById('close-feedback-btn');
+    const feedbackTypeBtns = document.querySelectorAll('.feedback-type-btn');
+    const feedbackSubmitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement;
+    const feedbackStatus = document.getElementById('feedback-status');
+    const feedbackTextarea = document.getElementById('feedback-message') as HTMLTextAreaElement;
+    const feedbackEmail = document.getElementById('feedback-email') as HTMLInputElement;
+    const feedbackHp = document.getElementById('feedback-hp') as HTMLInputElement;
+
+    let modalOpenedAt = 0;
+    let selectedType = '';
+    let activeFilter = 'all';
+    let searchTerm   = '';
+    let sortCol      = '';
+    let sortDir      = 'asc';
+
+    function updateResultCount(count: number) {
+      if (!resultCountElement) return;
+      const template = resultCountElement.dataset.template || 'Displaying {count} exchange{s}';
+      resultCountElement.textContent = template
+        .replace('{count}', count.toString())
+        .replace('{s}', count !== 1 ? 's' : '');
     }
 
-    // Forward sort clicks to the real header cells
-    floatThead.addEventListener('click', e => {
-      const floatTh = (e.target as HTMLElement).closest('th');
-      if (!floatTh) return;
-      const idx = Array.from(floatThead.querySelectorAll('th')).indexOf(floatTh as HTMLElement);
-      (realThead!.querySelectorAll<HTMLElement>('th')[idx])?.click();
+    //  Navegação por linha
+    const tbody = document.getElementById('exchanges-tbody');
+    tbody?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const row = target.closest('tr');
+      if (!row) return;
+
+      if (target.closest('a, button')) return;
+
+      const link = row.querySelector('.exch-name-link') as HTMLAnchorElement;
+      if (link) {
+        if (e.ctrlKey || e.metaKey) window.open(link.href, '_blank');
+        else link.click();
+      }
     });
 
-    window.addEventListener('scroll', syncFloat, { passive: true });
-    window.addEventListener('resize', syncFloat, { passive: true });
-    tableWrap.addEventListener('scroll', syncFloat, { passive: true });
-    syncFloat();
+    //  Filtros
+    function applyFilters() {
+      let count = 0;
+      rows.forEach(row => {
+        const matches =
+          (row.dataset.name ?? '').includes(searchTerm.toLowerCase()) &&
+          (activeFilter === 'all' ||
+           (activeFilter === 'domestic'  && (row.dataset.regime ?? '').includes('domestic_exchange')) ||
+           (activeFilter === 'offshore'  && row.dataset.regime === 'offshore_law_14754') ||
+           (activeFilter === 'bcb'       && row.dataset.bcb    === 'true') ||
+           (activeFilter === 'pix'       && row.dataset.pix    === 'true') ||
+           (activeFilter === 'in1888'    && row.dataset.in1888 === 'true'));
+        row.hidden = !matches;
+        if (matches) count++;
+      });
+      updateResultCount(count);
 
-    _syncFloat = syncFloat;
-  })();
-
-  const searchInput      = document.getElementById('exch-search') as HTMLInputElement | null;
-  const searchClearBtn   = document.getElementById('search-clear-btn') as HTMLButtonElement | null;
-  const resetFiltersBtn  = document.getElementById('reset-filters-btn') as HTMLButtonElement | null;
-  const chips            = document.querySelectorAll<HTMLButtonElement>('.exch-chip');
-  const rows             = document.querySelectorAll<HTMLTableRowElement>('#exchanges-tbody tr');
-  const emptyMsg         = document.getElementById('exch-empty');
-  const emptyMsgText     = document.getElementById('exch-empty-msg');
-  const resultCountElement = document.getElementById('result-count');
-  const settingsToggle   = document.getElementById('settings-toggle') as HTMLButtonElement | null;
-  const settingsPanel    = document.getElementById('settings-panel') as HTMLElement | null;
-  const colToggles       = document.querySelectorAll<HTMLInputElement>('.exch-col-toggle');
-  const sortableHeaders  = document.querySelectorAll<HTMLTableCellElement>('th.sortable');
-
-  // Feedback Modal Elements
-  const modal = document.getElementById('feedback-modal');
-  const backdrop = document.getElementById('feedback-backdrop');
-  const openFeedbackBtn = document.getElementById('open-feedback-btn-footer');
-  const closeFeedbackBtn = document.getElementById('close-feedback-btn');
-  const feedbackTypeBtns = document.querySelectorAll('.feedback-type-btn');
-  const feedbackSubmitBtn = document.getElementById('feedback-submit-btn') as HTMLButtonElement;
-  const feedbackStatus = document.getElementById('feedback-status');
-  const feedbackTextarea = document.getElementById('feedback-message') as HTMLTextAreaElement;
-  const feedbackEmail = document.getElementById('feedback-email') as HTMLInputElement;
-  const feedbackHp = document.getElementById('feedback-hp') as HTMLInputElement;
-
-  let modalOpenedAt = 0;
-  let selectedType = '';
-  let activeFilter = 'all';
-  let searchTerm   = '';
-  let sortCol      = '';
-  let sortDir      = 'asc';
-
-  function updateResultCount(count: number) {
-    if (!resultCountElement) return;
-    const template = resultCountElement.dataset.template || 'Displaying {count} exchange{s}';
-    resultCountElement.textContent = template
-      .replace('{count}', count.toString())
-      .replace('{s}', count !== 1 ? 's' : '');
-  }
-
-  //  Navegação por linha 
-  const tbody = document.getElementById('exchanges-tbody');
-  tbody?.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    const row = target.closest('tr');
-    if (!row) return;
-
-    if (target.closest('a, button, [data-tooltip], .pix-icon')) return;
-
-    const link = row.querySelector('.exch-name-link') as HTMLAnchorElement;
-    if (link) {
-      if (e.ctrlKey || e.metaKey) window.open(link.href, '_blank');
-      else link.click();
-    }
-  });
-
-  //  Filtros 
-  function applyFilters() {
-    let count = 0;
-    rows.forEach(row => {
-      const matches =
-        (row.dataset.name ?? '').includes(searchTerm.toLowerCase()) &&
-        (activeFilter === 'all' ||
-         (activeFilter === 'domestic'  && (row.dataset.regime ?? '').includes('domestic_exchange')) ||
-         (activeFilter === 'offshore'  && row.dataset.regime === 'offshore_law_14754') ||
-         (activeFilter === 'bcb'       && row.dataset.bcb    === 'true') ||
-         (activeFilter === 'pix'       && row.dataset.pix    === 'true') ||
-         (activeFilter === 'in1888'    && row.dataset.in1888 === 'true'));
-      row.hidden = !matches;
-      if (matches) count++;
-    });
-    updateResultCount(count);
-
-    if (emptyMsg) {
-      emptyMsg.hidden = count > 0;
-      if (count === 0 && emptyMsgText) {
-        const parts: string[] = [];
-        if (searchTerm) parts.push(`"${searchTerm}"`);
-        if (activeFilter !== 'all') parts.push(`filter: ${activeFilter.toUpperCase()}`);
-        emptyMsgText.textContent = parts.length
-          ? `No exchanges found for ${parts.join(' + ')}.`
-          : 'No exchanges found for the selected filters.';
+      if (emptyMsg) {
+        emptyMsg.hidden = count > 0;
+        if (count === 0 && emptyMsgText) {
+          const parts: string[] = [];
+          if (searchTerm) parts.push(`"${searchTerm}"`);
+          if (activeFilter !== 'all') parts.push(`filter: ${activeFilter.toUpperCase()}`);
+          emptyMsgText.textContent = parts.length
+            ? `No exchanges found for ${parts.join(' + ')}.`
+            : 'No exchanges found for the selected filters.';
+        }
       }
     }
-  }
 
-  function resetAllFilters() {
-    searchTerm = '';
-    activeFilter = 'all';
-    if (searchInput) searchInput.value = '';
-    if (searchClearBtn) searchClearBtn.hidden = true;
-    chips.forEach(c => { c.classList.remove('exch-chip--active'); c.setAttribute('aria-pressed', 'false'); });
-    const allChip = document.querySelector<HTMLButtonElement>('.exch-chip[data-filter="all"]');
-    if (allChip) { allChip.classList.add('exch-chip--active'); allChip.setAttribute('aria-pressed', 'true'); }
-    applyFilters();
-  }
-
-  searchInput?.addEventListener('input', () => {
-    searchTerm = searchInput!.value;
-    if (searchClearBtn) searchClearBtn.hidden = searchTerm.length === 0;
-    applyFilters();
-  });
-
-  searchClearBtn?.addEventListener('click', () => {
-    searchTerm = '';
-    if (searchInput) searchInput.value = '';
-    searchClearBtn.hidden = true;
-    searchInput?.focus();
-    applyFilters();
-  });
-
-  resetFiltersBtn?.addEventListener('click', resetAllFilters);
-
-  chips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      activeFilter = chip.dataset.filter ?? 'all';
+    function resetAllFilters() {
+      searchTerm = '';
+      activeFilter = 'all';
+      if (searchInput) searchInput.value = '';
+      if (searchClearBtn) searchClearBtn.hidden = true;
       chips.forEach(c => { c.classList.remove('exch-chip--active'); c.setAttribute('aria-pressed', 'false'); });
-      chip.classList.add('exch-chip--active');
-      chip.setAttribute('aria-pressed', 'true');
-      // Reset search when switching filters for cleaner UX
-      if (searchInput && searchInput.value) {
-        searchTerm = '';
-        searchInput.value = '';
-        if (searchClearBtn) searchClearBtn.hidden = true;
-      }
+      const allChip = document.querySelector<HTMLButtonElement>('.exch-chip[data-filter="all"]');
+      if (allChip) { allChip.classList.add('exch-chip--active'); allChip.setAttribute('aria-pressed', 'true'); }
+      applyFilters();
+    }
+
+    searchInput?.addEventListener('input', () => {
+      searchTerm = searchInput!.value;
+      if (searchClearBtn) searchClearBtn.hidden = searchTerm.length === 0;
       applyFilters();
     });
-  });
 
-  //  Ordenação 
-  function sortTable(col: string) {
-    sortDir = sortCol === col ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
-    sortCol = col;
-
-    sortableHeaders.forEach(th => {
-      if (th.dataset.sort === col) {
-        th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
-      } else {
-        th.setAttribute('aria-sort', 'none');
-      }
+    searchClearBtn?.addEventListener('click', () => {
+      searchTerm = '';
+      if (searchInput) searchInput.value = '';
+      searchClearBtn.hidden = true;
+      searchInput?.focus();
+      applyFilters();
     });
 
-    const tbody = document.getElementById('exchanges-tbody');
-    if (!tbody) return;
-    const arr = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
-    arr.sort((a, b) => {
-      const av = a.dataset[col] ?? '';
-      const bv = b.dataset[col] ?? '';
+    resetFiltersBtn?.addEventListener('click', resetAllFilters);
 
-      const an = parseFloat(av);
-      const bn = parseFloat(bv);
-
-      if (!isNaN(an) && !isNaN(bn)) {
-        return sortDir === 'asc' ? an - bn : bn - an;
-      }
-
-      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        activeFilter = chip.dataset.filter ?? 'all';
+        chips.forEach(c => { c.classList.remove('exch-chip--active'); c.setAttribute('aria-pressed', 'false'); });
+        chip.classList.add('exch-chip--active');
+        chip.setAttribute('aria-pressed', 'true');
+        // Reset search when switching filters for cleaner UX
+        if (searchInput && searchInput.value) {
+          searchTerm = '';
+          searchInput.value = '';
+          if (searchClearBtn) searchClearBtn.hidden = true;
+        }
+        applyFilters();
+      });
     });
-    arr.forEach(r => tbody.appendChild(r));
-    _syncFloat();
-  }
 
-  sortableHeaders.forEach(th => {
-    th.setAttribute('tabindex', '0');
-    th.addEventListener('click', () => {
-      sortTable(th.dataset.sort ?? '');
-      th.blur(); // Remove o foco do cabeçalho após o clique para esconder o tooltip
-    });
-    th.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortTable(th.dataset.sort ?? ''); } });
-  });
+    //  Ordenação
+    function sortTable(col: string) {
+      sortDir = sortCol === col ? (sortDir === 'asc' ? 'desc' : 'asc') : 'asc';
+      sortCol = col;
 
-  //  Settings 
-  settingsToggle?.addEventListener('click', e => {
-    e.stopPropagation();
-    const open = settingsPanel?.hidden === false;
-    if (settingsPanel) settingsPanel.hidden = open;
-    settingsToggle.setAttribute('aria-expanded', String(!open));
-  });
-
-  document.addEventListener('click', e => {
-    if (settingsPanel && !settingsPanel.hidden) {
-      const wrap = settingsToggle?.closest('.exch-settings-wrap');
-      if (wrap && !wrap.contains(e.target as Node)) {
-        settingsPanel.hidden = true;
-        settingsToggle?.setAttribute('aria-expanded', 'false');
-      }
-    }
-  });
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && settingsPanel && !settingsPanel.hidden) {
-      settingsPanel.hidden = true;
-      settingsToggle?.setAttribute('aria-expanded', 'false');
-      settingsToggle?.focus();
-    }
-  });
-
-  //  Column Persistence 
-  const COL_KEY = 'bitsark.exchanges.cols';
-  const syncCol = (id: string, show: boolean) => {
-    document.getElementById(id)?.classList.toggle('col-hidden', !show);
-    document.querySelectorAll(`td[headers="${id}"]`).forEach(td => (td as HTMLElement).classList.toggle('col-hidden', !show));
-  };
-
-  const isMobileViewport = () => window.innerWidth <= 768;
-  const MOBILE_HIDDEN_COLS = new Set(['col-fees', 'col-pix']);
-
-  const savedCols = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
-  colToggles.forEach(t => {
-    const id = t.dataset.col || '';
-    if (savedCols[id] !== undefined) {
-      t.checked = savedCols[id];
-    } else if (isMobileViewport() && MOBILE_HIDDEN_COLS.has(id)) {
-      t.checked = false;
-    }
-    syncCol(id, t.checked);
-    t.addEventListener('change', () => {
-      syncCol(id, t.checked);
-      const curr = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
-      curr[id] = t.checked;
-      localStorage.setItem(COL_KEY, JSON.stringify(curr));
-      _syncFloat(); // keep floating header in sync with visible columns
-    });
-  });
-
-  // Initial filter and count update on page load
-  applyFilters();
-
-  //  Rotate hint (portrait mobile) 
-  const rotateHint = document.getElementById('rotate-hint');
-  function updateRotateHint() {
-    if (!rotateHint) return;
-    const isPortrait = window.matchMedia('(orientation: portrait) and (max-width: 768px)').matches;
-    rotateHint.classList.toggle('is-portrait', isPortrait);
-  }
-  updateRotateHint();
-  window.addEventListener('orientationchange', updateRotateHint);
-  window.matchMedia('(orientation: portrait)').addEventListener('change', updateRotateHint);
-
-  // Feedback Logic
-  function toggleModal(show: boolean) {
-    modal?.toggleAttribute('hidden', !show);
-    backdrop?.toggleAttribute('hidden', !show);
-    document.body.style.overflow = show ? 'hidden' : '';
-    if (show) modalOpenedAt = Date.now();
-
-    if (!show) {
-      if (feedbackTextarea) feedbackTextarea.value = '';
-      // if (feedbackTextarea) feedbackTextarea.value = ''; // Duplicate line removed
-      if (feedbackEmail) feedbackEmail.value = '';
-      if (feedbackStatus) feedbackStatus.setAttribute('hidden', '');
-      feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
-      if (feedbackSubmitBtn) {
-        feedbackSubmitBtn.disabled = true;
-        feedbackSubmitBtn.textContent = feedbackSubmitBtn.dataset.labelDefault || '';
-      }
-    }
-  }
-
-  openFeedbackBtn?.addEventListener('click', () => toggleModal(true));
-  closeFeedbackBtn?.addEventListener('click', () => toggleModal(false));
-  backdrop?.addEventListener('click', () => toggleModal(false));
-
-  feedbackTypeBtns.forEach(btn => btn.addEventListener('click', () => {
-    feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    selectedType = (btn as HTMLElement).dataset.type || '';
-    if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
-  }));
-
-  feedbackSubmitBtn?.addEventListener('click', async () => {
-    const timeTaken = Date.now() - modalOpenedAt;
-    if (feedbackHp?.value || timeTaken < 2000) {
-      toggleModal(false);
-      return;
-    }
-
-    feedbackSubmitBtn.disabled = true;
-    const originalText = feedbackSubmitBtn.textContent;
-    feedbackSubmitBtn.textContent = feedbackSubmitBtn.dataset.labelSending || 'Sending...';
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-
-    try {
-      const payload = {
-        type: selectedType,
-        message: feedbackTextarea?.value?.trim() ?? '',
-        email: feedbackEmail?.value?.trim() ?? '',
-        hp: feedbackHp?.value ?? '',
-        page: location.pathname,
-      };
-
-      const res = await fetch('/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-          signal: controller.signal
+      sortableHeaders.forEach(th => {
+        if (th.dataset.sort === col) {
+          th.setAttribute('aria-sort', sortDir === 'asc' ? 'ascending' : 'descending');
+        } else {
+          th.setAttribute('aria-sort', 'none');
+        }
       });
 
-      clearTimeout(timeoutId);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const tbody = document.getElementById('exchanges-tbody');
+      if (!tbody) return;
+      const arr = Array.from(tbody.querySelectorAll<HTMLTableRowElement>('tr'));
+      arr.sort((a, b) => {
+        const av = a.dataset[col] ?? '';
+        const bv = b.dataset[col] ?? '';
 
-      if (feedbackStatus) {
-        feedbackStatus.textContent = feedbackSubmitBtn.dataset.labelSuccess || '';
-        feedbackStatus.className = 'feedback-status feedback-status--success';
-        feedbackStatus.removeAttribute('hidden');
-      }
-      setTimeout(() => toggleModal(false), 2000);
-    } catch (err) {
-      clearTimeout(timeoutId);
-      console.error('[Feedback] error:', err);
+        const an = parseFloat(av);
+        const bn = parseFloat(bv);
 
-      let errorMsg = 'Error sending report. Please try again.';
-      if ((err as any).name === 'AbortError') errorMsg = 'Timeout: request took too long.';
+        if (!isNaN(an) && !isNaN(bn)) {
+          return sortDir === 'asc' ? an - bn : bn - an;
+        }
 
-      if (feedbackStatus) {
-        feedbackStatus.textContent = errorMsg;
-        feedbackStatus.className = 'feedback-status feedback-status--err';
-        feedbackStatus.removeAttribute('hidden');
-      }
-
-      feedbackSubmitBtn.disabled = false;
-      feedbackSubmitBtn.textContent = originalText;
+        return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      });
+      arr.forEach(r => tbody.appendChild(r));
+      _syncFloat();
     }
-  });
+
+    sortableHeaders.forEach(th => {
+      th.setAttribute('tabindex', '0');
+      th.addEventListener('click', () => {
+        sortTable(th.dataset.sort ?? '');
+        th.blur();
+      });
+      th.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortTable(th.dataset.sort ?? ''); } });
+    });
+
+    //  Settings
+    settingsToggle?.addEventListener('click', e => {
+      e.stopPropagation();
+      const open = settingsPanel?.hidden === false;
+      if (settingsPanel) settingsPanel.hidden = open;
+      settingsToggle.setAttribute('aria-expanded', String(!open));
+    });
+
+    document.addEventListener('click', e => {
+      if (settingsPanel && !settingsPanel.hidden) {
+        const wrap = settingsToggle?.closest('.exch-settings-wrap');
+        if (wrap && !wrap.contains(e.target as Node)) {
+          settingsPanel.hidden = true;
+          settingsToggle?.setAttribute('aria-expanded', 'false');
+        }
+      }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && settingsPanel && !settingsPanel.hidden) {
+        settingsPanel.hidden = true;
+        settingsToggle?.setAttribute('aria-expanded', 'false');
+        settingsToggle?.focus();
+      }
+    });
+
+    //  Column Persistence
+    const COL_KEY = 'bitsark.exchanges.cols';
+    const syncCol = (id: string, show: boolean) => {
+      document.getElementById(id)?.classList.toggle('col-hidden', !show);
+      document.querySelectorAll(`td[headers="${id}"]`).forEach(td => (td as HTMLElement).classList.toggle('col-hidden', !show));
+    };
+
+    const isMobileViewport = () => window.innerWidth <= 768;
+    const MOBILE_HIDDEN_COLS = new Set(['col-fees', 'col-pix']);
+
+    const savedCols = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
+    colToggles.forEach(t => {
+      const id = t.dataset.col || '';
+      if (savedCols[id] !== undefined) {
+        t.checked = savedCols[id];
+      } else if (isMobileViewport() && MOBILE_HIDDEN_COLS.has(id)) {
+        t.checked = false;
+      }
+      syncCol(id, t.checked);
+      t.addEventListener('change', () => {
+        syncCol(id, t.checked);
+        const curr = JSON.parse(localStorage.getItem(COL_KEY) || '{}');
+        curr[id] = t.checked;
+        localStorage.setItem(COL_KEY, JSON.stringify(curr));
+        _syncFloat();
+      });
+    });
+
+    // Initial filter and count update on page load
+    applyFilters();
+
+    //  Rotate hint (portrait mobile)
+    const rotateHint = document.getElementById('rotate-hint');
+    function updateRotateHint() {
+      if (!rotateHint) return;
+      const isPortrait = window.matchMedia('(orientation: portrait) and (max-width: 768px)').matches;
+      rotateHint.classList.toggle('is-portrait', isPortrait);
+    }
+    updateRotateHint();
+    window.addEventListener('orientationchange', updateRotateHint);
+    window.matchMedia('(orientation: portrait)').addEventListener('change', updateRotateHint);
+
+    // Feedback Logic
+    function toggleModal(show: boolean) {
+      modal?.toggleAttribute('hidden', !show);
+      backdrop?.toggleAttribute('hidden', !show);
+      document.body.style.overflow = show ? 'hidden' : '';
+      if (show) modalOpenedAt = Date.now();
+
+      if (!show) {
+        if (feedbackTextarea) feedbackTextarea.value = '';
+        if (feedbackEmail) feedbackEmail.value = '';
+        if (feedbackStatus) feedbackStatus.setAttribute('hidden', '');
+        feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
+        if (feedbackSubmitBtn) {
+          feedbackSubmitBtn.disabled = true;
+          feedbackSubmitBtn.textContent = feedbackSubmitBtn.dataset.labelDefault || '';
+        }
+      }
+    }
+
+    openFeedbackBtn?.addEventListener('click', () => toggleModal(true));
+    closeFeedbackBtn?.addEventListener('click', () => toggleModal(false));
+    backdrop?.addEventListener('click', () => toggleModal(false));
+
+    feedbackTypeBtns.forEach(btn => btn.addEventListener('click', () => {
+      feedbackTypeBtns.forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedType = (btn as HTMLElement).dataset.type || '';
+      if (feedbackSubmitBtn) feedbackSubmitBtn.disabled = false;
+    }));
+
+    feedbackSubmitBtn?.addEventListener('click', async () => {
+      const timeTaken = Date.now() - modalOpenedAt;
+      if (feedbackHp?.value || timeTaken < 2000) {
+        toggleModal(false);
+        return;
+      }
+
+      feedbackSubmitBtn.disabled = true;
+      const originalText = feedbackSubmitBtn.textContent;
+      feedbackSubmitBtn.textContent = feedbackSubmitBtn.dataset.labelSending || 'Sending...';
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      try {
+        const payload = {
+          type: selectedType,
+          message: feedbackTextarea?.value?.trim() ?? '',
+          email: feedbackEmail?.value?.trim() ?? '',
+          hp: feedbackHp?.value ?? '',
+          page: location.pathname,
+        };
+
+        const res = await fetch('/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+        if (feedbackStatus) {
+          feedbackStatus.textContent = feedbackSubmitBtn.dataset.labelSuccess || '';
+          feedbackStatus.className = 'feedback-status feedback-status--success';
+          feedbackStatus.removeAttribute('hidden');
+        }
+        setTimeout(() => toggleModal(false), 2000);
+      } catch (err) {
+        clearTimeout(timeoutId);
+        console.error('[Feedback] error:', err);
+
+        let errorMsg = 'Error sending report. Please try again.';
+        if ((err as any).name === 'AbortError') errorMsg = 'Timeout: request took too long.';
+
+        if (feedbackStatus) {
+          feedbackStatus.textContent = errorMsg;
+          feedbackStatus.className = 'feedback-status feedback-status--err';
+          feedbackStatus.removeAttribute('hidden');
+        }
+
+        feedbackSubmitBtn.disabled = false;
+        feedbackSubmitBtn.textContent = originalText;
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', initExchangesPage);
 </script>

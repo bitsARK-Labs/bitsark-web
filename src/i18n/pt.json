@@ -2111,8 +2111,8 @@
   "privacy": {
     "title": "Política de Privacidade – DolarMap",
     "description": "Política de Privacidade do DolarMap. Saiba como a Tecnologia Atual Serviços LTDA trata seus dados em conformidade com a LGPD e as políticas da Apple App Store e Google Play.",
-    "lastUpdated": "14 de maio de 2026",
-    "lastUpdatedISO": "2026-05-14",
+    "lastUpdated": "21 de maio de 2026",
+    "lastUpdatedISO": "2026-05-21",
     "header": "Política de Privacidade",
     "meta": "Última atualização",
     "sections": {
@@ -2131,8 +2131,10 @@
         "uuid": {
           "title": "3.1 Identificador de Dispositivo (UUID)",
           "p1": "Ao utilizar o aplicativo pela primeira vez, geramos automaticamente um UUID (Universally Unique Identifier) para o seu dispositivo. Este identificador é anônimo - não está vinculado ao seu nome, e-mail ou qualquer outra informação de identificação pessoal. Ele é usado para:",
-          "li1": "Associar seus alertas de preço ao seu dispositivo, sem exigir cadastro.",
-          "li2": "Autenticar requisições à API do DolarMap."
+          "items": [
+            "Associar seus alertas de preço ao seu dispositivo, sem exigir cadastro.",
+            "Autenticar requisições à API do DolarMap."
+          ]
         },
         "firebase": {
           "title": "3.2 Identificador Firebase (UID)",
@@ -2141,17 +2143,21 @@
         "fcm": {
           "title": "3.3 Token FCM (Notificações Push)",
           "p1": "Para enviar alertas de preço para o seu dispositivo, utilizamos o Firebase Cloud Messaging (FCM). O FCM fornece um token específico para o seu dispositivo, que armazenamos associado aos seus alertas. Este token:",
-          "li1": "Identifica o dispositivo para fins de entrega de notificação, mas não identifica você pessoalmente.",
-          "li2": "É atualizado automaticamente pelo sistema operacional e sincronizado com nosso servidor.",
-          "li3": "É removido do nosso banco de dados quando os alertas associados são excluídos ou quando o token é invalidado pelo sistema."
+          "items": [
+            "Identifica o dispositivo para fins de entrega de notificação, mas não identifica você pessoalmente.",
+            "É atualizado automaticamente pelo sistema operacional e sincronizado com nosso servidor.",
+            "É removido do nosso banco de dados quando os alertas associados são excluídos ou quando o token é invalidado pelo sistema."
+          ]
         },
         "alerts": {
           "title": "3.4 Dados de Alerta Configurados pelo Usuário",
           "p1": "Quando você cria um alerta, armazenamos:",
-          "li1": "O ativo monitorado (ex: \"USDT/BRL na Binance\").",
-          "li2": "O preço alvo e a condição definida (ex: \"abaixo de R$ 5,20\").",
-          "li3": "As configurações do alerta: modo (compra/venda/arb), recorrência, status (ativo/pausado).",
-          "li4": "A data e hora de criação.",
+          "items": [
+            "O ativo monitorado (ex: \"USDT/BRL na Binance\").",
+            "O preço alvo e a condição definida (ex: \"abaixo de R$ 5,20\").",
+            "As configurações do alerta: modo (compra/venda/arb), recorrência, status (ativo/pausado).",
+            "A data e hora de criação."
+          ],
           "p2": "Esses dados são de sua autoria e são utilizados exclusivamente para disparar as notificações conforme você configurou."
         },
         "google": {
@@ -2161,8 +2167,10 @@
         "sdks": {
           "title": "3.6 SDKs de Terceiros",
           "p1": "O DolarMap integra os seguintes SDKs de terceiros que podem processar dados do dispositivo conforme descrito nesta política:",
-          "li1": "<strong>Firebase Authentication</strong> (Google LLC) – autenticação anônima e baseada em Google.",
-          "li2": "<strong>Firebase Cloud Messaging</strong> (Google LLC) – entrega de notificações push.",
+          "items": [
+            "<strong>Firebase Authentication</strong> (Google LLC) – autenticação anônima e baseada em Google.",
+            "<strong>Firebase Cloud Messaging</strong> (Google LLC) – entrega de notificações push."
+          ],
           "p2": "Nenhum outro SDK de análise de terceiros, publicidade ou relatório de erros está integrado ao aplicativo."
         },
         "notCollected": {
@@ -2202,6 +2210,16 @@
           "<strong>Consentimento (Art. 7º, I):</strong> para o Sign in with Google, que é explicitamente voluntário."
         ]
       },
+      "security": {
+        "title": "8. Segurança",
+        "p1": "Adotamos as seguintes medidas técnicas para proteger seus dados:",
+        "items": [
+          "Comunicação entre o aplicativo e o servidor via HTTPS (TLS).",
+          "Autenticação baseada em tokens assinados pelo Firebase.",
+          "Banco de dados em servidor privado, sem exposição direta à internet."
+        ],
+        "p2": "Nenhum sistema é 100% seguro. Em caso de incidente de segurança afetando dados pessoais, notificaremos os usuários conforme exigido pela LGPD."
+      },
       "sharing": {
         "title": "6. Compartilhamento de Dados",
         "p1": "Não vendemos, alugamos ou comercializamos dados pessoais dos usuários. Os dados são compartilhados apenas com os seguintes provedores de infraestrutura, estritamente necessários para o funcionamento do serviço:",
@@ -2225,7 +2243,7 @@
           "<strong>Alertas e tokens FCM:</strong> armazenados enquanto os alertas existirem. Ao excluir um alerta, os dados associados são removidos.",
           "<strong>Dados brutos de cotação de mercado:</strong> retidos por 30 dias e excluídos automaticamente.",
           "<strong>Dados analíticos agregados:</strong> retidos indefinidamente para análise histórica de câmbio.",
-          "<strong>Inatividade:</strong> Desativamos alertas após 6 meses de inatividade (contas anônimas) ou 12 meses (contas Google). Todos os dados são removidos após 7 ou 13 meses, respectivamente."
+          "<strong>Inatividade:</strong> Todos os dados associados ao identificador (alertas e tokens) são removidos definitivamente após 90 dias de inatividade."
         ]
       },
       "rights": {
@@ -2241,11 +2259,33 @@
         ],
         "p2": "Para dados de alertas, você pode exercer esses direitos diretamente no app. Para remoção definitiva, utilize a opção \"Excluir minha conta\" nas Configurações."
       },
+      "cookies": {
+        "title": "10. Cookies e Rastreamento",
+        "p1": "O DolarMap é um aplicativo móvel nativo e não utiliza cookies. Não há rastreamento de comportamento, pixels de publicidade ou SDKs de análise de terceiros integrados."
+      },
+      "internationalTransfer": {
+        "title": "11. Transferência Internacional de Dados",
+        "p1": "O Firebase (Google) pode processar dados em servidores fora do Brasil. Essa transferência é realizada com base em salvaguardas adequadas, seguindo políticas compatíveis com padrões internacionais."
+      },
+      "minors": {
+        "title": "12. Menores de Idade",
+        "p1": "O aplicativo não é direcionado a crianças menores de 13 anos. Se um responsável identificar que um menor forneceu dados, entre em contato para exclusão imediata."
+      },
+      "changes": {
+        "title": "13. Alterações nesta Política",
+        "p1": "Esta Política pode ser atualizada periodicamente. Alterações significativas serão comunicadas através de um aviso no próprio aplicativo."
+      },
+      "contactDPO": {
+        "title": "14. Contato e Encarregado de Dados (DPO)",
+        "p1": "Para qualquer dúvida sobre privacidade, entre em contato conosco através do e-mail support@bitsark.com.",
+        "p2": "Responderemos às solicitações em até 15 dias úteis, conforme previsto na LGPD."
+      },
       "summary": {
         "title": "15. Resumo de Privacidade da App Store",
         "p1": "O resumo a seguir é fornecido em alinhamento com os requisitos de divulgação da Apple App Store e Google Play Store.",
         "notLinked": {
           "title": "Dados Não Vinculados a Você",
+          "p1": "Os seguintes dados podem ser coletados, mas não são vinculados à sua identidade:",
           "items": [
             "Identificadores anônimos (UUID/UID)",
             "Dados agregados de desempenho"
@@ -2253,12 +2293,17 @@
         },
         "linked": {
           "title": "Dados Vinculados a Você (Apenas Google Sign-In)",
+          "p1": "Se você optar pelo Sign-In com Google, os seguintes dados são vinculados à sua conta:",
           "items": [
             "Google UID (identificador opaco)",
             "Conteúdo do Usuário (Alertas configurados)"
           ]
         },
-        "deletion": "Para solicitar a exclusão de sua conta, acesse nossa página de Suporte."
+        "notCollectedSummary": {
+          "title": "Dados Não Coletados",
+          "p1": "O DolarMap não coleta dados usados para rastreá-lo em aplicativos ou sites de outras empresas, e não usa dados para fins de publicidade ou perfil."
+        },
+        "deletion": "Para solicitar a exclusão de sua conta, acesse nossa <a href=\"/pt/dolarmap/support#account-deletion\">página de Suporte</a>."
       }
     }
   },
@@ -2292,7 +2337,7 @@
         "li4": "Análise personalizada da situação financeira do usuário.",
         "p2": "As cotações exibidas refletem dados coletados automaticamente de fontes públicas e podem não corresponder exatamente ao preço efetivamente praticado no momento de uma transação real. Fatores como spreads operacionais das corretoras, limites de volume, taxas adicionais e latência de dados podem fazer com que o preço real difira do exibido no aplicativo.",
         "p3": "O usuário é o único responsável por suas decisões financeiras. Antes de realizar qualquer operação de câmbio, recomendamos consultar os termos e condições da corretora escolhida e, quando relevante, um profissional financeiro qualificado.",
-        "p4": "Ao usar o DolarMap, você também reconhece os termos gerais de nossa plataforma de infraestrutura principal, <a href=\"/terms\">bitsARK Labs</a>."
+        "p4": "Ao usar o DolarMap, você também reconhece os termos gerais de nossa plataforma de infraestrutura principal, <a href=\"/pt/terms\">bitsARK Labs</a>."
       },
       "dataSources": {
         "title": "4. Fontes de Dados",
