@@ -190,6 +190,7 @@ const schema = {
       "name": `${ex.name} - Fiscal and Operational Data in Brazil`,
       "description": `Fiscal and operational data for ${ex.name} in Brazil. CNPJ: ${op.cnpj ?? 'N/A'}. Tax regime: ${taxRegimeLabel(fd.tax_regime ?? '', lang)}. BCB authorized: ${op.bcb_authorized ? 'Yes' : 'No'}. Accepts Pix: ${op.accepts_pix ? 'Yes' : 'No'}. Maker fee: ${maker ?? 'N/A'}. Taker fee: ${taker ?? 'N/A'}.`,
       "url": pageUrl,
+      "license": "https://bitsark.com/terms",
       "dateModified": updatedAtISO,
       "creator": { "@id": "https://bitsark.com/#organization" },
       "distribution": {
@@ -237,6 +238,7 @@ const schema = {
         "name": "Ricardo Delfino",
         "url": "https://bitsark.com/about/"
       },
+      "license": "https://bitsark.com/terms",
       "datePublished": "2025-12-01",
       "dateModified": updatedAtISO,
       "publisher": { "@id": "https://bitsark.com/#organization" },
