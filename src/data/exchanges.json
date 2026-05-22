@@ -58,7 +58,7 @@
       "fee_url": "https://www.okx.com/pt-br/fees",
       "note": "Tiered fee structure based on 30-day volume and OKB holdings."
     },
-    "fiscal_status_br": "Internacional com PresenÃ§a no Brasil"
+    "fiscal_status_br": "Internacional com Presença no Brasil"
   },
   {
     "id": "bybit",
@@ -87,7 +87,7 @@
       "fee_url": "https://www.bybit.com/en/help-center/article/Trading-Fee-Structure",
       "note": "Spot maker/taker 0.1%. Futures fees differ."
     },
-    "fiscal_status_br": "Internacional com PresenÃ§a no Brasil"
+    "fiscal_status_br": "Internacional com Presença no Brasil"
   },
   {
     "id": "bitget",
@@ -322,7 +322,7 @@
       "fee_url": "https://bitso.com/fees",
       "note": "Tiered maker/taker based on 30-day volume. Pix available in Brazil."
     },
-    "fiscal_status_br": "Internacional com PresenÃ§a no Brasil"
+    "fiscal_status_br": "Internacional com Presença no Brasil"
   },
   {
     "id": "mercado-bitcoin",
@@ -355,7 +355,7 @@
   },
   {
     "id": "bitypreco",
-    "name": "BityPreÃ§o",
+    "name": "BityPreço",
     "slug": "bitypreco",
     "website": "https://bitypreco.com",
     "logo_url": "https://assets.bitsark.com/logos/bitypreco.svg",
@@ -409,7 +409,7 @@
       "fee_url": "https://help.coinbase.com/en/exchange/trading-and-funding/exchange-fees",
       "note": "Advanced Trade fees. Simple Buy/Sell fees are higher."
     },
-    "fiscal_status_br": "Internacional com PresenÃ§a no Brasil"
+    "fiscal_status_br": "Internacional com Presença no Brasil"
   },
   {
     "id": "kraken",
@@ -438,7 +438,7 @@
       "fee_url": "https://www.kraken.com/features/fee-schedule",
       "note": "Tiered maker/taker. Pro fees lower than retail."
     },
-    "fiscal_status_br": "Internacional com PresenÃ§a no Brasil"
+    "fiscal_status_br": "Internacional com Presença no Brasil"
   },
   {
     "id": "gate-io",
@@ -527,7 +527,7 @@
       "fee_url": "https://crypto.com/exchange/document/fees-limits",
       "note": "CRO staking reduces fees significantly. Exchange and App are separate platforms."
     },
-    "fiscal_status_br": "Internacional com PresenÃ§a no Brasil"
+    "fiscal_status_br": "Internacional com Presença no Brasil"
   },
   {
     "id": "bingx",
@@ -535,7 +535,7 @@
     "slug": "bingx",
     "website": "https://bingx.com",
     "logo_url": "https://assets.bitsark.com/logos/bingx.svg",
-    "updated_at": "2026-04-22T21:56:00Z",
+    "updated_at": "2026-05-21T21:56:00Z",
     "operational_details_br": {
       "cnpj": null,
       "bcb_authorized": false,
@@ -565,7 +565,7 @@
     "slug": "bitmart",
     "website": "https://www.bitmart.com",
     "logo_url": "https://assets.bitsark.com/logos/bitmart.svg",
-    "updated_at": "2026-04-22T21:56:00Z",
+    "updated_at": "2026-05-21T21:56:00Z",
     "operational_details_br": {
       "cnpj": null,
       "bcb_authorized": false,
@@ -590,12 +590,12 @@
     "fiscal_status_br": "Internacional"
   },
   {
-    "id": "nubank-cripto",
-    "name": "Nubank Cripto",
-    "slug": "nubank-cripto",
+    "id": "nubank",
+    "name": "Nubank",
+    "slug": "nubank",
     "website": "https://nubank.com.br/cripto",
     "logo_url": "https://assets.bitsark.com/logos/nubank.svg",
-    "updated_at": "2026-04-22T21:56:00Z",
+    "updated_at": "2026-05-22T21:56:00Z",
     "operational_details_br": {
       "cnpj": "44.342.498/0001-46",
       "bcb_authorized": false,
