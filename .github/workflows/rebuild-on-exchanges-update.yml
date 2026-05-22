@@ -1,17 +1,32 @@
 name: Rebuild on Exchanges Update
 
+# Quando exchanges-api/data/exchanges.json muda, o repo bitsARK-Labs/exchanges-api
+# envia repository_dispatch (event_type: exchanges-data-updated). Este workflow:
+#   1. Baixa o array de exchanges da API pública (api.bitsark.com/v1/exchanges)
+#      — mesma fonte que consumidores externos veem, com purge de cache já feito
+#      pelo workflow notify-web do repo exchanges-api antes do dispatch.
+#   2. Extrai .data (array) do envelope { success, notice, count, total, data }.
+#   3. Sobrescreve src/data/exchanges.json se houve mudança.
+#   4. Commit real → Cloudflare Pages rebuilda + git lastmod do sitemap recebe
+#      data nova (sinal de re-crawl pro Google). Sem mudança → commit vazio
+#      (cobre workflow_dispatch manual).
+
 on:
   repository_dispatch:
     types: [exchanges-data-updated]
-  workflow_dispatch: # permite rodar manualmente pelo GitHub UI
+  workflow_dispatch:
 
 permissions:
-  contents: write # commit vazio para acionar rebuild no Cloudflare Pages
+  contents: write
 
 jobs:
-  trigger-rebuild:
+  sync-and-rebuild:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+
+    env:
+      API_URL: https://api.bitsark.com/v1/exchanges
+      TARGET_PATH: src/data/exchanges.json
 
     steps:
       - name: Checkout repository
@@ -19,9 +34,59 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Push empty commit to trigger Cloudflare Pages rebuild
+      - name: Wait for cache purge to propagate
+        run: sleep 5
+
+      - name: Fetch latest exchanges from public API
         run: |
+          set -euo pipefail
+          # --fail: erro HTTP vira exit code != 0
+          # --retry: resiliência a falhas transitórias do Worker/CDN
+          # Cache-busting: garante que pegamos pós-purge (notify-web purga antes do dispatch,
+          # mas o cabeçalho explícito elimina qualquer cache intermediário).
+          curl --fail --silent --show-error \
+               --retry 3 --retry-delay 5 --retry-all-errors \
+               --max-time 30 \
+               -H "Cache-Control: no-cache" \
+               -o response.json \
+               "$API_URL"
+
+          # Valida envelope, extrai .data, valida que é array não-vazio.
+          jq -e '.success == true and (.data | type == "array") and (.data | length > 0)' \
+            response.json > /dev/null
+
+          jq '.data' response.json > exchanges.new.json
+
+      - name: Replace static copy if changed
+        id: sync
+        run: |
+          set -euo pipefail
+          if [ -f "$TARGET_PATH" ] && cmp -s exchanges.new.json "$TARGET_PATH"; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes detected in exchanges.json"
+          else
+            mkdir -p "$(dirname "$TARGET_PATH")"
+            mv exchanges.new.json "$TARGET_PATH"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Updated $TARGET_PATH"
+          fi
+          rm -f response.json exchanges.new.json
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
           git config user.name  "bitsARK Data Bot"
           git config user.email "bot@bitsark.com"
-          git commit --allow-empty -m "chore(data): rebuild triggered by exchanges-data-updated [$(date -u +'%Y-%m-%d %H:%M UTC')]"
+
+          TS="$(date -u +'%Y-%m-%d %H:%M UTC')"
+
+          if [ "${{ steps.sync.outputs.changed }}" = "true" ]; then
+            git add "$TARGET_PATH"
+            git commit -m "chore(data): sync exchanges.json from api.bitsark.com [$TS]"
+          else
+            # Commit vazio: garante que workflow_dispatch manual ainda dispare
+            # rebuild no Cloudflare Pages mesmo sem mudança de dados.
+            git commit --allow-empty -m "chore(data): rebuild triggered (no data change) [$TS]"
+          fi
+
           git push
