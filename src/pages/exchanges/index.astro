@@ -64,6 +64,7 @@ const exchangesData = exchanges.map((ex: any) => {
 const faqSchema = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "license": "https://bitsark.com/terms",
   "mainEntity": [
     ...t.exchanges.faq.items.map(item => ({
       "@type": "Question",

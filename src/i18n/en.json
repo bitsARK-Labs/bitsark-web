@@ -1508,8 +1508,8 @@
   "privacy": {
     "title": "Privacy Policy – DolarMap",
     "description": "DolarMap Privacy Policy. Learn how Tecnologia Atual Serviços LTDA handles your data in compliance with LGPD, Apple App Store, and Google Play policies.",
-    "lastUpdated": "May 21, 2026",
-    "lastUpdatedISO": "2026-05-21",
+    "lastUpdated": "April 29, 2026",
+    "lastUpdatedISO": "2026-04-29",
     "header": "Privacy Policy",
     "meta": "Last updated",
     "sections": {
@@ -1558,8 +1558,10 @@
         "sdks": {
           "title": "3.6 Third-Party SDKs",
           "p1": "DolarMap integrates the following third-party SDKs that may process device data as described in this policy:",
-          "li1": "<strong>Firebase Authentication</strong> (Google LLC) – anonymous and Google-based authentication.",
-          "li2": "<strong>Firebase Cloud Messaging</strong> (Google LLC) – push notification delivery.",
+          "items": [
+            "<strong>Firebase Authentication</strong> (Google LLC) – anonymous and Google-based authentication.",
+            "<strong>Firebase Cloud Messaging</strong> (Google LLC) – push notification delivery."
+          ],
           "p2": "No other third-party analytics, advertising, or crash-reporting SDKs are integrated into the application."
         },
         "notCollected": {
@@ -1622,7 +1624,7 @@
           "<strong>Alerts and FCM tokens:</strong> stored as long as the alerts exist. When an alert is deleted, the associated data is removed.",
           "<strong>Raw market quote data:</strong> retained for 30 days and then automatically deleted.",
           "<strong>Aggregated analytical data</strong> (without individual identification): retained indefinitely for historical exchange analysis.",
-          "<strong>Inactivity:</strong> All data associated with the identifier (alerts and tokens) is permanently removed after 90 days of inactivity."
+          "<strong>UUID and Firebase UID:</strong> maintained as long as the user is active. To protect your privacy, we automatically deactivate alerts after 6 months of inactivity (anonymous accounts) or 12 months (Google accounts). All data associated with the identifier is permanently removed after 7 or 13 months of inactivity, respectively."
         ]
       },
       "security": {
@@ -1631,8 +1633,7 @@
         "items": [
           "Communication between the application and the server via HTTPS (TLS).",
           "Authentication based on tokens signed by Firebase.",
-          "Database on a private server, without direct exposure to the internet.",
-          "FCM tokens are automatically invalidated when they expire or are reported as invalid by Google."
+          "Database on a private server, without direct exposure to the internet."
         ],
         "p2": "No system is 100% secure. In the event of a security incident affecting personal data, we will notify the affected users as required by the LGPD."
       },
@@ -1689,7 +1690,7 @@
             "<strong>User Content:</strong> Your configured price alerts (asset, target price, conditions)."
           ]
         },
-        "notCollected": {
+        "notCollectedSummary": {
           "title": "Data Not Collected",
           "p1": "DolarMap does not collect data used to track you across apps or websites owned by other companies, and does not use data for advertising or profiling purposes."
         },

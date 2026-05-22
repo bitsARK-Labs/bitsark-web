@@ -32,7 +32,7 @@ bitsARK Labs builds and maintains free, open data APIs and tools for the Brazili
 ### DolarMap (Android app)
 - URL: https://bitsark.com/dolarmap/
 - Portuguese URL: https://bitsark.com/pt/dolarmap/
-- Play Store: https://play.google.com/store/apps/details?id=com.bitsark.dolarmap
+- Play Store: https://play.google.com/store/apps/details?id=dolarmap.app
 - Privacy policy: https://bitsark.com/dolarmap/privacy/
 - Description: Live BRL/USD exchange-rate comparator. Tracks USDT/USDC/BUSD across 13+ Brazilian and international brokers, refreshes ~every 2 minutes, exposes price alerts and historical spreads. Free, no sign-up, no ads.
 - Operating system: Android (Flutter)
