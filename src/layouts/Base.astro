@@ -4,6 +4,7 @@ import Logo              from '@components/Logo.astro';
 import DolarMapLogo      from '@components/DolarMapLogo.astro';
 import MobileMenu        from '@components/MobileMenu.astro';
 import EmailObfuscated   from '@components/EmailObfuscated.astro';
+import LangBanner        from '@components/LangBanner.astro';
 import { ClientRouter } from 'astro:transitions';
 import { useTranslations } from '../i18n';
 
@@ -533,6 +534,10 @@ const mobileLinks = isDolarMap ? [
       {t('nav.skipLink')}
     </a>
 
+    {normalizedLang === 'en' && (
+      <LangBanner ptHref={langHrefs['pt-BR']} />
+    )}
+
     <!-- ── NAV ───────────────────────────────────────────── -->
     <nav class="nav" aria-label={t('nav.ariaLabel')}>
       <div class="container">
@@ -650,6 +655,7 @@ const mobileLinks = isDolarMap ? [
                   { active: langItem.code === normalizedLang },
                 ]}
                 aria-label={`Switch to ${langItem.label}`}
+                data-lang-choice={langItem.code}
               >
                 {langItem.label}
               </a>
@@ -804,6 +810,7 @@ const mobileLinks = isDolarMap ? [
                   { active: langItem.code === normalizedLang },
                 ]}
                 aria-label={`Switch to ${langItem.label}`}
+                data-lang-choice={langItem.code}
               >
                 {langItem.label}
               </a>
@@ -862,10 +869,31 @@ const mobileLinks = isDolarMap ? [
 
     <!-- ── Persistência de Idioma (Gold Standard UX) ── -->
     <script is:inline>
-      (function() {
+      function bsUpdatePreferredLang() {
         const currentLang = document.documentElement.lang; // 'en' ou 'pt-BR'
-        localStorage.setItem('preferred-lang', currentLang);
-      })();
+        try { localStorage.setItem('preferred-lang', currentLang); } catch (e) {}
+
+        // Captura escolha EXPLÍCITA do usuário em qualquer lang picker (desktop + mobile).
+        // Diferencia "última página vista" (preferred-lang) de "decisão consciente"
+        // (lang-choice-made) — esta última é usada pelo banner de sugestão de PT
+        // para não importunar quem já decidiu.
+        // Guard evita registrar o listener mais de uma vez entre navegações suaves.
+        if (!document.__bsLangChoiceBound) {
+          document.__bsLangChoiceBound = true;
+          document.addEventListener('click', function(ev) {
+            const target = ev.target instanceof Element
+              ? ev.target.closest('[data-lang-choice]')
+              : null;
+            if (!target) return;
+            try {
+              localStorage.setItem('lang-choice-made', '1');
+            } catch (e) {}
+          }, { capture: true });
+        }
+      }
+
+      bsUpdatePreferredLang();
+      document.addEventListener('astro:page-load', bsUpdatePreferredLang);
     </script>
 
   </body>

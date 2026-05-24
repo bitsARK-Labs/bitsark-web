@@ -114,6 +114,7 @@ const playstoreUrl = 'https://play.google.com/store/apps/details?id=dolarmap.app
             href={langHrefs[li.code]}
             class:list={['bm__lang-link', { 'bm__lang-link--active': li.code === lang }]}
             aria-label={`Switch to ${li.label}`}
+            data-lang-choice={li.code}
           >
             <span class="bm__lang-flag" aria-hidden="true">{li.flag}</span>
             <span class="bm__lang-code">{li.label}</span>

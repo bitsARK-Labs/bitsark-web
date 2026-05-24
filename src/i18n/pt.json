@@ -3,6 +3,13 @@
     "title": "bitsARK Labs - Infraestrutura Aberta para o Mercado Cripto Brasileiro",
     "description": "Infraestrutura de dados abertos para o mercado cripto e de câmbio brasileiro. Corretoras, DolarMap e Stablecoins - sem barreiras, sem cadastro."
   },
+  "langBanner": {
+    "ariaLabel": "Sugestão de idioma",
+    "message": "Este site também está disponível em português.",
+    "switch": "Ver em português",
+    "keep": "Manter em inglês",
+    "closeAria": "Fechar sugestão de idioma"
+  },
   "lang": "pt-BR",
   "canonical": "https://bitsark.com/pt/",
   "alternateEn": "https://bitsark.com/",
