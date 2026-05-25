@@ -228,8 +228,8 @@
       "github": "GitHub",
       "disclaimer": "Not financial advice.",
       "tag": {
-        "dolarmap": "Smart P2P FX",
-        "exchanges": "24 exchanges in Brazil",
+        "dolarmap": "Find the best USD/BRL rate",
+        "exchanges": "Crypto Tax Guide for Brazil",
         "stablecoins": "Market, data, regulation"
       },
       "sub": {
@@ -666,6 +666,7 @@
         "jurisdiction": "Jurisdiction",
         "notAvailable": "N/A"
       },
+
       "nav": {
         "operational": "Data",
         "fees": "Fees",
@@ -1528,8 +1529,10 @@
         "uuid": {
           "title": "3.1 Device Identifier (UUID)",
           "p1": "When you first use the application, we automatically generate a UUID (Universally Unique Identifier) for your device. This identifier is anonymous - it is not linked to your name, email, or any other personally identifiable information. It is used to:",
-          "li1": "Associate your price alerts with your device, without requiring registration.",
-          "li2": "Authenticate requests to the DolarMap API."
+          "items": [
+            "Associate your price alerts with your device, without requiring registration.",
+            "Authenticate requests to the DolarMap API."
+          ]
         },
         "firebase": {
           "title": "3.2 Firebase Identifier (UID)",
@@ -1538,17 +1541,21 @@
         "fcm": {
           "title": "3.3 FCM Token (Push Notifications)",
           "p1": "To send price alerts to your device, we use Firebase Cloud Messaging (FCM). FCM provides a specific token for your device, which we store associated with your alerts. This token:",
-          "li1": "Identifies the device for notification delivery purposes but does not identify you personally.",
-          "li2": "Is automatically updated by the operating system and synchronized with our server.",
-          "li3": "Is removed from our database when the associated alerts are deleted or when the token is invalidated by the system."
+          "items": [
+            "Identifies the device for notification delivery purposes but does not identify you personally.",
+            "Is automatically updated by the operating system and synchronized with our server.",
+            "Is removed from our database when the associated alerts are deleted or when the token is invalidated by the system."
+          ]
         },
         "alerts": {
           "title": "3.4 User-Configured Alert Data",
           "p1": "When you create an alert, we store:",
-          "li1": "The monitored asset (e.g., \"USDT/BRL on Binance\").",
-          "li2": "The target price and condition you set (e.g., \"below R$ 5.20\").",
-          "li3": "The alert settings: mode (buy/sell/arb), recurrence, status (active/paused).",
-          "li4": "The creation date and time.",
+          "items": [
+            "The monitored asset (e.g., \"USDT/BRL on Binance\").",
+            "The target price and condition you set (e.g., \"below R$ 5.20\").",
+            "The alert settings: mode (buy/sell/arb), recurrence, status (active/paused).",
+            "The creation date and time."
+          ],
           "p2": "This data is authored by you and is used exclusively to trigger notifications as you have configured."
         },
         "google": {
@@ -1666,7 +1673,7 @@
         "title": "13. Changes to This Policy",
         "p1": "This Policy may be updated periodically. Significant changes will be communicated via an in-app notice before they take effect. Continued use after the communication implies acceptance of the new version. The current version is always available on the <em>\"Privacy Policy\"</em> screen of the application."
       },
-      "contact": {
+      "contactDPO": {
         "title": "14. Contact and Data Protection Officer (DPO)",
         "p1": "DolarMap is operated by Tecnologia Atual Serviços LTDA, which follows industry-standard privacy and security practices. For any privacy-related questions, please contact us via email at <a href=\"mailto:support@bitsark.com\">support@bitsark.com</a>.",
         "p2": "We will respond to requests within 15 business days, as provided for by the LGPD."
@@ -1806,6 +1813,7 @@
     "contact": {
       "badge": "Direct Contact",
       "text": "Need specialized help? Reach our team directly:",
+      "email": "support@bitsark.com",
       "response": "Typical response time: <strong>2 business days</strong>."
     },
     "faq": {

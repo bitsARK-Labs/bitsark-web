@@ -110,6 +110,15 @@ Action - Add directive; Directive - max-age; Duration (seconds) - 31536000; Clou
 Action - Add directive; Directive - public; Cloudflare only -> OFF
 ```
 
+### 5.2c `assets.bitsark.com` — raiz redireciona para bitsark.com
+Redirect Rule (Rules → Redirect Rules, não Cache Rule):
+```
+Name: assets.bitsark.com -> root redirect to bitsark.com
+Expression: (http.host eq "assets.bitsark.com" and http.request.uri.path eq "/")
+Action: 301 redirect → https://bitsark.com/
+```
+> **Por que existe:** o GSC reportou 404 na raiz do subdomínio (sem conteúdo configurado). O redirect elimina o erro de cobertura sem afetar `/logos/*.svg`. Regra de redirect, não de cache — não interferir com §5.2b.
+
 ### 5.3 Site — sitemap/robots (TTL curto)
 ```
 Expression: (http.host eq "bitsark.com" and (http.request.uri.path eq "/robots.txt" or starts_with(http.request.uri.path, "/sitemap")))
@@ -222,6 +231,7 @@ Action: Block
 | SVGs de `assets.bitsark.com` sem cache (PSI reclama) | Cache Rule §5.2b ausente ou Transform Rule recriada no lugar errado | Confirmar §5.2b existe; deletar qualquer Transform Rule "Modify Response Header" para `/logos/` |
 | HSTS reclamando no hstspreload.org | `_headers` diz 2 anos, painel diz 12 meses — preload list lê do header que chega | Garantir `_headers` permanece em 63072000 |
 | Cache Rule "expressão inválida" ao salvar | Tentativa de usar brace `{a,b}` em wildcard | Usar `http.request.uri.path.extension in {...}` |
+| GSC reporta 404 em `assets.bitsark.com/` | Raiz do subdomínio sem conteúdo — Redirect Rule §5.2c ausente | Rules → Redirect Rules → confirmar §5.2c existe e está ativa |
 
 ---
 

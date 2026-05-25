@@ -668,6 +668,8 @@
       "stats": {
         "maker": "Maker",
         "taker": "Taker",
+        "fees_main": "Taxas",
+        "fees_sub": "maker / taker",
         "jurisdiction": "Jurisdição",
         "notAvailable": "N/D"
       },

@@ -147,7 +147,8 @@ export default defineConfig({
         !page.includes('/404') &&
         !page.includes('/dolarmap/privacy') &&
         !page.includes('/dolarmap/terms') &&
-        !page.includes('/dolarmap/support'),
+        !page.includes('/dolarmap/support') &&
+        !page.includes('/terms'),
       // i18n passado explicitamente para o integration gerar <xhtml:link rel="alternate" hreflang="..."> em cada URL.
       i18n: {
         defaultLocale: 'en',
