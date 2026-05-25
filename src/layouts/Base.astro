@@ -284,10 +284,19 @@ const mobileLinks = isDolarMap ? [
 
     <!--
       Schema Organization fixo (fonte ÚNICA de verdade, presente em todas as páginas).
-      Páginas que precisarem referenciar a organização devem usar:
-        { "@id": "https://bitsark.com/#organization" }
-      e NUNCA redeclarar a Organization no @graph - duplicar o @id provoca
-      conflito de campos (ex: "url" duplicado) no Rich Results Test.
+
+      SCHEMA POLICY:
+      - A Organization é declarada UMA única vez (logo abaixo).
+      - Outras páginas DEVEM referenciar via { "@id": "https://bitsark.com/#organization" }.
+      - NUNCA redeclarar "@type": "Organization" em outra página - duplicar o @id
+        provoca conflito de campos (ex: "url" duplicado) e o Rich Results Test
+        DESCARTA o @graph inteiro (incluindo BreadcrumbList, FAQPage, etc.).
+
+        Errado:  publisher: { "@type": "Organization", "name": "bitsARK Labs", "url": "..." }
+        Certo:   publisher: { "@id": "https://bitsark.com/#organization" }
+
+      Guard script: scripts/check-schema-duplicates.mjs roda no postbuild
+      e falha o build se qualquer HTML em dist/ tiver mais de uma Organization.
     -->
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",

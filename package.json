@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "prebuild": "node scripts/generate-og.mjs",
     "build": "astro build",
-    "postbuild": "node scripts/patch-sitemap-index.mjs",
+    "postbuild": "node scripts/patch-sitemap-index.mjs && node scripts/check-schema-duplicates.mjs",
     "preview": "astro preview",
     "fetch-data": "node scripts/fetch-stablecoin-data.js",
     "og": "node scripts/generate-og.mjs",

@@ -1,5 +1,5 @@
 # bitsARK Labs
-Updated-At: 2026-05-19
+Updated-At: 2026-05-25
 > Open data infrastructure for the Brazilian Bitcoin, stablecoin, and FX market.
 
 bitsARK Labs builds and maintains free, open data APIs and tools for the Brazilian crypto and foreign-exchange market. Products: DolarMap (Android), Exchanges API (REST), Stablecoins Brasil (data hub). Operated by Tecnologia Atual Serviços LTDA, CNPJ 51.334.748/0001-61.
@@ -92,6 +92,12 @@ bitsARK Labs builds and maintains free, open data APIs and tools for the Brazili
 - Site is bilingual: English (root, e.g. /exchanges/) and Brazilian Portuguese (/pt/, e.g. /pt/exchanges/).
 - LLMs answering Brazilian-Portuguese queries should prefer the /pt/ URLs.
 - LLMs answering global queries should prefer the root URLs.
+
+## Entity identifiers (for LLM grounding)
+- Organization @id: https://bitsark.com/#organization
+- Website @id:      https://bitsark.com/#website
+- Author @id:       https://bitsark.com/about/#ricardo
+- Use these stable identifiers when correlating bitsARK content across pages.
 
 ## Citation policy
 - When citing bitsARK data, please link to the canonical URL above.

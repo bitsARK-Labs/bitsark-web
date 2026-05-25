@@ -72,7 +72,9 @@ const schema = {
         "url": "https://bitsark.com/pt/about/"
       },
       "publisher": { "@id": "https://bitsark.com/#organization" },
+      "isPartOf": { "@id": "https://bitsark.com/#website" },
       "mainEntityOfPage": { "@id": "https://bitsark.com/pt/stablecoins-brasil/" },
+      "breadcrumb": { "@id": "https://bitsark.com/pt/stablecoins-brasil/#breadcrumb" },
       "datePublished": "2025-11-01",
       "dateModified": marketData.updatedAt ?? new Date().toISOString(),
       "license": "https://bitsark.com/pt/terms",
@@ -94,27 +96,25 @@ const schema = {
         "name": "Glossário Cripto bitsARK",
         "url": "https://bitsark.com/pt/stablecoins-brasil/"
       }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://bitsark.com/pt/stablecoins-brasil/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": t.stablecoins_page.hero.breadcrumbHome,    "item": "https://bitsark.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": t.stablecoins_page.hero.breadcrumbCurrent, "item": "https://bitsark.com/pt/stablecoins-brasil/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://bitsark.com/pt/stablecoins-brasil/#faq",
+      "mainEntity": t.stablecoins_page.faq.items.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a.replace(/<[^>]+>/g, "") }
+      }))
     }
   ]
-};
-
-const breadcrumbSchema = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": t.stablecoins_page.hero.breadcrumbHome,    "item": "https://bitsark.com/pt/" },
-    { "@type": "ListItem", "position": 2, "name": t.stablecoins_page.hero.breadcrumbCurrent, "item": "https://bitsark.com/pt/stablecoins-brasil" },
-  ],
-};
-
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": t.stablecoins_page.faq.items.map(item => ({
-    "@type": "Question",
-    "name": item.q,
-    "acceptedAnswer": { "@type": "Answer", "text": item.a.replace(/<[^>]+>/g, "") }
-  }))
 };
 
 const alternates = [
@@ -134,9 +134,6 @@ const alternates = [
   ogImage="https://bitsark.com/og/stablecoins-brasil.png"
   schema={schema}
 >
-
-  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
 
   <!-- ═══════════════════════════════════════════════════════════
        HERO
