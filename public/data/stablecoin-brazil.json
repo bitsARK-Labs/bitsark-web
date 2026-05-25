@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-05-19T18:14:43.095Z",
+  "updatedAt": "2026-05-25T15:46:38.037Z",
   "source": "BCB seed data (fallback) - dados históricos públicos. Atualizar BCB_XLSX_CANDIDATES ou STABLECOIN_LABELS no script quando a publicação do BCB mudar.",
   "sourceUrl": "https://www.bcb.gov.br/estatisticas/tabelasespeciais",
   "isFallback": true,

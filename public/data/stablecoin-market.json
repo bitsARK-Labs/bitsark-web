@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-05-19T18:14:41.053Z",
+  "updatedAt": "2026-05-25T15:46:35.197Z",
   "source": "DefiLlama Stablecoins API - peggedUSD aggregate (~180 stablecoins, all chains)",
   "sourceUrl": "https://defillama.com/stablecoins",
-  "latestMarketCapUsd": 321145719920,
-  "yoyGrowthPct": 30.5,
+  "latestMarketCapUsd": 320669125096,
+  "yoyGrowthPct": 30.3,
   "monthly": [
     {
       "month": "2017-11",
@@ -415,7 +415,7 @@
     },
     {
       "month": "2026-05",
-      "marketCapUsd": 321145719920
+      "marketCapUsd": 320669125096
     }
   ]
 }
