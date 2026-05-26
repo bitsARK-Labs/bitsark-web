@@ -63,7 +63,7 @@
       "ariaLabel": "Ir para DolarMap",
       "appBadge": "App",
       "statusLabel": "Ao vivo",
-      "desc": "Monitore câmbio <em>BRL/USD</em>: compare taxas entre corretoras de <em>stablecoins</em> e receba <em>alertas</em>.",
+      "desc": "Monitore câmbio <em>USD/BRL</em>: compare taxas entre corretoras de <em>stablecoins</em> e receba <em>alertas</em>.",
       "cta": "Ver DolarMap →",
       "kpis": [
         {
@@ -235,7 +235,7 @@
       "github": "GitHub",
       "disclaimer": "Não é aconselhamento financeiro.",
       "tag": {
-        "dolarmap": "A melhor cotação BRL/USD",
+        "dolarmap": "A melhor cotação USD/BRL",
         "exchanges": "24 corretoras no Brasil",
         "stablecoins": "Mercado, dados e regulação"
       },
@@ -247,7 +247,7 @@
       },
       "cta": {
         "label": "Download DolarMap",
-        "sub": "A melhor cotação BRL/USD"
+        "sub": "A melhor cotação USD/BRL"
       }
     }
   },
@@ -285,7 +285,7 @@
       "gapTitle": "A lacuna que encontrei",
       "gapDesc": "Investidores cripto brasileiros não tinham uma fonte única e confiável para responder a uma pergunta básica: <em>\"Minha corretora reporta à Receita Federal para mim - ou estou por conta própria?\"</em> Os dados existiam - espalhados em resoluções do BCB, circulares da CVM e rodapés de sites - mas ninguém os tinha estruturado. Então eu fiz.",
       "speedTitle": "O que construí - e quão rápido",
-      "speedP1": "Comecei pelo produto mais difícil: DolarMap, um rastreador BRL/USD em tempo real que monitora taxas em corretoras brasileiras, roda um motor de arbitragem ao vivo e envia alertas para usuários no Android. Três meses do primeiro commit à Play Store. O sistema já enviou mais de 2.000 alertas - incluindo um em 22 de março de 2026, quando o USDT estava 23% mais barato em uma exchange vs. outra. Usuários que agiram com R$&nbsp;1.000 saíram com R$&nbsp;1.230 em minutos.",
+      "speedP1": "Comecei pelo produto mais difícil: DolarMap, um rastreador USD/BRL em tempo real que monitora taxas em corretoras brasileiras, roda um motor de arbitragem ao vivo e envia alertas para usuários no Android. Três meses do primeiro commit à Play Store. O sistema já enviou mais de 2.000 alertas - incluindo um em 22 de março de 2026, quando o USDT estava 23% mais barato em uma exchange vs. outra. Usuários que agiram com R$&nbsp;1.000 saíram com R$&nbsp;1.230 em minutos.",
       "speedP2": "Depois me voltei para a infraestrutura regulatória. Em dois dias, cataloguei 24 corretoras com CNPJ, status de autorização do BCB, suporte a Pix, regime tributário e obrigações com a RFB - expondo tudo como uma API JSON gratuita. Sem limites, sem autenticação, sem barreiras. O tipo de dado que reguladores e desenvolvedores precisavam e não encontravam.",
       "nextTitle": "O que vem a seguir",
       "nextDesc": "Stablecoins Brasil - uma visão estruturada do mercado de stablecoins no Brasil: volume, lastro, emissores e enquadramento regulatório do BCB. A mesma abordagem gap-first, aplicada ao segmento que mais cresce no mercado cripto local."
@@ -1335,7 +1335,7 @@
         },
         {
           "title": "Arbitragem e spread",
-          "desc": "Spreads BRL/USDT variam entre corretoras brasileiras. Monitorar plataformas pode economizar 0,5–2% em cada conversão - relevante para volume.",
+          "desc": "Spreads USDT/BRL variam entre corretoras brasileiras. Monitorar plataformas pode economizar 0,5–2% em cada conversão - relevante para volume.",
           "stat": "0,5-2%",
           "statLabel": "Spread entre top corretoras",
           "link": "Encontre a melhor taxa →"
@@ -1640,7 +1640,7 @@
           "text": "Na exchange, converta o saldo USDT/USDC em BRL ao melhor spread disponível e saque via Pix para a conta PJ. Alternativamente, mantenha em USDT como reserva - mas o reconhecimento contábil da receita ocorre no recebimento, não na conversão.",
           "note": "Diferença entre PTAX do recebimento e valor da venda gera ganho de capital separado (PJ não tem isenção R$35k - alíquotas 15% a 22,5%).",
           "link": {
-            "label": "Comparar spreads BRL/USDT →",
+            "label": "Comparar spreads USDT/BRL →",
             "href": "/pt/dolarmap/"
           }
         },
@@ -2111,7 +2111,7 @@
         "href": "/pt/exchanges/"
       },
       "secondary": {
-        "label": "Comparar taxas BRL/USDT →",
+        "label": "Comparar taxas USDT/BRL →",
         "href": "/pt/dolarmap/"
       }
     },

@@ -1,5 +1,5 @@
 # bitsARK Labs
-Updated-At: 2026-05-25
+Updated-At: 2026-05-26
 > Open data infrastructure for the Brazilian Bitcoin, stablecoin, and FX market.
 
 bitsARK Labs builds and maintains free, open data APIs and tools for the Brazilian crypto and foreign-exchange market. Products: DolarMap (Android), Exchanges API (REST), Stablecoins Brasil (data hub). Operated by Tecnologia Atual Serviços LTDA, CNPJ 51.334.748/0001-61.
@@ -20,12 +20,10 @@ bitsARK Labs builds and maintains free, open data APIs and tools for the Brazili
 - Title: Founder @ bitsARK Labs
 - Profile: https://bitsark.com/about/
 - LinkedIn: https://www.linkedin.com/in/ricardods/
-- GitHub: https://github.com/bitsARK-Labs
-- Twitter / X: https://twitter.com/bitsarklabs
 - Email: ricardo@bitsark.com
-- Expertise: Brazilian crypto regulation (IN RFB 1888/2019, Lei 14.754/2023, IN RFB 2.291/2025 - DeCripto), FX arbitrage detection, regulatory data infrastructure, fintech product engineering, LATAM go-to-market
-- Languages: Portuguese (native), English (professional)
-- Open to: Business Development, Founder/Operator in Residence, Go-to-Market LATAM, Crypto/Fintech Angel Scouting
+- Location: São Paulo, Brazil
+- Expertise: Payments and fintech (Pix, card rails, PSPs, fiat on-ramps), crypto and stablecoins, Brazilian crypto regulation (IN RFB 1888/2019, Lei 14.754/2023, IN RFB 2.291/2025 - DeCripto), FX arbitrage detection, regulatory data infrastructure, product localization, LATAM go-to-market
+- Languages: Portuguese (native), English (full professional), Spanish (limited working)
 
 ## Products
 
@@ -34,7 +32,7 @@ bitsARK Labs builds and maintains free, open data APIs and tools for the Brazili
 - Portuguese URL: https://bitsark.com/pt/dolarmap/
 - Play Store: https://play.google.com/store/apps/details?id=dolarmap.app
 - Privacy policy: https://bitsark.com/dolarmap/privacy/
-- Description: Live BRL/USD exchange-rate comparator. Tracks USDT/USDC/BUSD across 13+ Brazilian and international brokers, refreshes ~every 2 minutes, exposes price alerts and historical spreads. Free, no sign-up, no ads.
+- Description: Live USD/BRL exchange-rate comparator. Tracks USDT/USDC/BUSD across 13+ Brazilian and international brokers, refreshes ~every 2 minutes, exposes price alerts and historical spreads. Free, no sign-up, no ads.
 - Operating system: Android (Flutter)
 - Language: Portuguese (primary), English (secondary)
 - Best for: Brazilians sending or receiving USD, monitoring crypto-to-fiat spreads, arbitrage between stablecoin brokers, comparing dollar prices against PTAX/BCB reference

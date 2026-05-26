@@ -44,8 +44,8 @@
     "photoAlt": "Ricardo Delfino - Founder of bitsARK Labs",
     "name": "Ricardo Delfino",
     "role": "Founder · bitsARK Labs",
-    "statusLabel": "Open to opportunities",
-    "statusDetail": "BizDev · Product · Engineering",
+    "statusLabel": "Payments & Fintech · LATAM",
+    "statusDetail": "Pix · Crypto rails · Regulatory data",
     "linkedinLabel": "LinkedIn",
     "aboutLabel": "About me →"
   },
@@ -56,7 +56,7 @@
       "ariaLabel": "Go to DolarMap",
       "appBadge": "App",
       "statusLabel": "Live",
-      "desc": "Monitor <em>BRL/USD</em> exchange rates: compare rates across <em>stablecoin</em> brokers and receive <em>alerts</em>.",
+      "desc": "Monitor <em>USD/BRL</em> exchange rates: compare rates across <em>stablecoin</em> brokers and receive <em>alerts</em>.",
       "cta": "View DolarMap →",
       "kpis": [
         {
@@ -171,10 +171,7 @@
     "ctaExchanges": "View Exchanges",
     "ctaGithub": "GitHub ↗",
     "aboutPrefix": "Want to understand the motivation behind the project?",
-    "aboutLink": "Learn more →",
-    "hiringTag": "Hiring?",
-    "hiringBody": "I'm open to remote roles in BizDev, Product, or Engineering at crypto / fintech companies building in or into Brazil.",
-    "hiringLink": "See my full background →"
+    "aboutLink": "Learn more →"
   },
   "nav": {
     "skipLink": "Skip to content",
@@ -201,7 +198,7 @@
     "stablecoins": {
       "size": "Market Size",
       "receiverPj": "Receive from Abroad (PJ)",
-      "dollar": "BRL/USD",
+      "dollar": "USD/BRL",
       "exchanges": "Exchanges"
     },
     "cta": {
@@ -240,7 +237,7 @@
       },
       "cta": {
         "label": "DolarMap on Google Play",
-        "sub": "Real-time BRL/USD alerts"
+        "sub": "Real-time USD/BRL alerts"
       }
     }
   },
@@ -265,84 +262,83 @@
   },
   "about": {
     "meta": {
-      "title": "About - bitsARK Labs",
-      "description": "Founder of bitsARK Labs. Built open data infrastructure for the Brazilian crypto market from zero - DolarMap, Exchanges API, and Stablecoins Brasil."
+      "title": "Ricardo Delfino - Founder, bitsARK Labs",
+      "description": "Founder of bitsARK Labs. Payments and fintech specialist building open data infrastructure for the Brazilian crypto-fiat market."
     },
     "hero": {
-      "eyebrow": "Founder",
-      "title": "I find gaps.<br />Then I build the thing that fills them.",
-      "sub": "Open data infrastructure for the Brazilian crypto and FX market - built from zero, shipped to production, used by real people."
+      "eyebrow": "Founder · bitsARK Labs",
+      "role": "Payments & Fintech · LATAM",
+      "title": "Building open data infrastructure for the Brazilian crypto-fiat market.",
+      "sub": "Payments and fintech specialist focused on digital assets, crypto-fiat rails, and product localization across LATAM.",
+      "location": "São Paulo, Brazil"
     },
-    "story": {
-      "title": "Story",
-      "gapTitle": "The gap I found",
-      "gapDesc": "Brazilian crypto investors had no single, reliable source to answer a basic question: <em>\"Does my exchange report to the Receita Federal for me - or am I on my own?\"</em> The data existed - scattered across BCB resolutions, CVM circulars, and exchange footers - but no one had structured it. So I did.",
-      "speedTitle": "What I built - and how fast",
-      "speedP1": "I started with the hardest product: DolarMap, a real-time BRL/USD tracker that monitors rates across Brazilian exchanges, runs a live arbitrage engine, and pushes alerts to users on Android. Three months from first commit to Play Store. The system has since sent over 2,000 alerts - including one on March 22, 2026, when USDT was 23% cheaper on one exchange vs. another. Users who acted on that alert with R$&nbsp;1,000 walked away with R$&nbsp;1,230 in minutes.",
-      "speedP2": "Then I turned to regulatory infrastructure. In two days I catalogued 24 exchanges with CNPJ, BCB authorization status, Pix support, tax regime, and RFB obligations - then exposed it as a free JSON API. No rate limits. No authentication. No paywall. The kind of data that regulators, developers, and compliance teams needed and couldn't find.",
-      "nextTitle": "What's next",
-      "nextDesc": "Stablecoins Brasil - a structured overview of the stablecoin market in Brazil: volume, backing, issuers, and BCB regulatory framing. The same gap-first approach, applied to the fastest-growing segment of the Brazilian crypto market."
+    "summary": {
+      "title": "About",
+      "body": "bitsARK Labs publishes the data and tooling Brazil's crypto-fiat market was missing - exchange metadata, regulatory classification, real-time FX, and stablecoin flows. The work sits at the intersection of payments, regulated finance, and digital assets, applied to the Brazilian market and broader LATAM."
     },
-    "execution": {
-      "eyebrow": "Execution",
-      "title": "What shipped, when",
-      "dolarmap": {
-        "label": "DolarMap",
-        "meta": "3 months · Android · Play Store",
-        "proof": "+2,000 alerts sent · +23% arbitrage found in real time"
-      },
-      "api": {
-        "label": "Exchanges API",
-        "meta": "2 days · 24 exchanges · public JSON API",
-        "proof": "CNPJ · BCB status · IN 1888 · Lei 14.754 - structured for the first time"
-      },
-      "stablecoins": {
-        "label": "Stablecoins Brasil",
-        "meta": "In progress",
-        "proof": "BCB regulatory framing · issuers · volume · backing"
-      }
-    },
-    "skills": {
-      "eyebrow": "Background",
-      "title": "Skills → bitsARK proof",
-      "table": {
-        "th1": "Skill",
-        "th2": "How bitsARK proves it"
-      },
+    "projects": {
+      "title": "What I'm building",
       "items": [
         {
-          "skill": "Gap identification",
-          "proof": "Found two structured data voids in the Brazilian market - FX arbitrage visibility and exchange regulatory compliance - before building either product."
+          "label": "DolarMap",
+          "url": "https://play.google.com/store/apps/details?id=dolarmap.app",
+          "meta": "Android · Play Store",
+          "desc": "Real-time USD/BRL alerts across 13+ stablecoin brokers. Free, no sign-up, no ads."
         },
         {
-          "skill": "Execution velocity",
-          "proof": "DolarMap: 3 months from zero to Play Store. Exchanges API: 2 days from idea to public endpoint. Both live, both used."
+          "label": "Exchanges API",
+          "url": "https://bitsark.com/exchanges/api/",
+          "meta": "Public REST · 24 exchanges",
+          "desc": "BCB authorization, Pix support, tax regime, and fees. No auth, no paywall."
         },
         {
-          "skill": "BR regulatory depth",
-          "proof": "Mapped IN RFB 1888, Lei 14.754, BCB authorization status, and Pix compliance across 24 exchanges - in structured form, publicly available, for free."
-        },
-        {
-          "skill": "BizDev / GTM",
-          "proof": "Designed organic acquisition around IRPF season as the primary pull channel. Built free tools that create inbound without paid distribution."
-        },
-        {
-          "skill": "Product thinking",
-          "proof": "Designed for zero friction by default: no API keys, no rate limits, no registration. Removed every barrier between the user and the data."
-        },
-        {
-          "skill": "Operations background",
-          "proof": "Prior background in e-commerce operations and business administration - understands unit economics, international market entry, and growth loops."
+          "label": "Stablecoins Brasil",
+          "url": "/stablecoins-brasil/",
+          "meta": "Data hub",
+          "desc": "Brazilian stablecoin volume vs. global market cap. BCB BoP × DefiLlama."
         }
       ]
     },
-    "hiring": {
-      "eyebrow": "Open to opportunities",
-      "title": "Let's talk",
-      "body": "I'm looking for roles in Business Development, Founder/Operator in Residence, Go-to-Market LATAM, or Crypto/Fintech Angel Scouting - at companies that need someone who knows the Brazilian market from the inside. If you're at Strike, Bitso, Coinbase, Chainalysis, Fireblocks, or any company building in or into Brazil, I'd like to hear from you.",
-      "ctaLinkedin": "LinkedIn →",
-      "disclaimer": "bitsARK Labs is an independent open-source project. Data is for informational purposes only and does not constitute financial or legal advice. Always verify with official sources (Receita Federal, BCB)."
-    }
+    "expertise": {
+      "title": "Expertise",
+      "groups": [
+        {
+          "label": "Payments & Card Business",
+          "items": ["Pix", "Card rails", "Visa/Mastercard", "PSPs", "Checkout", "Boleto", "Crypto payments", "Fiat on-ramps"]
+        },
+        {
+          "label": "Crypto & Stablecoins",
+          "items": ["Stablecoins", "BCB PSAV regime", "IN RFB 1888/2019", "IN RFB 2.291 (DeCripto)", "Lei 14.754/2023", "FX arbitrage"]
+        },
+        {
+          "label": "Regulatory & Compliance",
+          "items": ["BCB", "CVM", "BCRA", "Receita Federal", "LGPD-aware product"]
+        },
+        {
+          "label": "Product, GTM & BizDev",
+          "items": ["Product localization", "LATAM go-to-market", "Commercial negotiation", "Partner expansion"]
+        },
+        {
+          "label": "Finance & M&A",
+          "items": ["Financial modeling", "Valuation", "Due diligence", "Operational finance"]
+        }
+      ]
+    },
+    "languages": {
+      "title": "Languages",
+      "items": [
+        { "name": "Portuguese", "level": "native" },
+        { "name": "English", "level": "full professional" },
+        { "name": "Spanish", "level": "limited working" }
+      ]
+    },
+    "contact": {
+      "eyebrow": "Contact",
+      "title": "Get in touch",
+      "body": "For partnerships, market insight, or work on Brazilian payments and digital-asset infrastructure.",
+      "ctaLinkedin": "LinkedIn →"
+    },
+    "disclaimer": "bitsARK Labs is an independent open-source project. Data is for informational purposes only and does not constitute financial or legal advice. Always verify with official sources (Receita Federal, BCB)."
   },
   "exchanges": {
     "meta": {
@@ -1329,7 +1325,7 @@
         },
         {
           "title": "Arbitrage and spread",
-          "desc": "BRL/USDT spreads differ across Brazilian exchanges. Monitoring rates across platforms can shave 0.5–2% on every conversion - meaningful for size.",
+          "desc": "USDT/BRL spreads differ across Brazilian exchanges. Monitoring rates across platforms can shave 0.5–2% on every conversion - meaningful for size.",
           "stat": "0.5-2%",
           "statLabel": "Spread between top exchanges",
           "link": "Find the best rate →"
@@ -2088,7 +2084,7 @@
           "text": "At the exchange, convert USDT/USDC to BRL at the best available spread and withdraw via Pix to the PJ bank account. Alternatively, hold USDT as a reserve - but revenue is recognized on receipt, not conversion.",
           "note": "The difference between PTAX on receipt and sale price triggers capital gains (PJ has no R$35k exemption).",
           "link": {
-            "label": "Compare BRL/USDT spreads →",
+            "label": "Compare USDT/BRL spreads →",
             "href": "/dolarmap/"
           }
         },
@@ -2559,7 +2555,7 @@
         "href": "/exchanges/"
       },
       "secondary": {
-        "label": "Compare BRL/USDT rates →",
+        "label": "Compare USDT/BRL rates →",
         "href": "/dolarmap/"
       }
     },

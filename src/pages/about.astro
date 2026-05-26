@@ -3,6 +3,7 @@ import Base from '@layouts/Base.astro';
 import { Picture } from 'astro:assets';
 import founderImg from '@assets/founder.jpg';
 import t    from '@i18n/en.json';
+import '@styles/pages/about.css';
 
 const emailRicardo = 'ricardo@bitsark.com';
 const emailRicardoRev = emailRicardo.split('').reverse().join('');
@@ -19,7 +20,7 @@ const alternates = [
  * O <time datetime> no HTML aceita YYYY-MM-DD; por isso derivamos a versão
  * "date-only" abaixo.
  */
-const dateModifiedISO = '2026-05-17T12:00:00+00:00';
+const dateModifiedISO = '2026-05-26T12:00:00+00:00';
 const dateModifiedDateOnly = dateModifiedISO.slice(0, 10);
 
 const founderImageUrl = new URL(founderImg.src, Astro.site).href;
@@ -49,26 +50,39 @@ const schema = {
     },
     "jobTitle": "Founder",
     "email": "ricardo@bitsark.com",
-    "description": "Founder of bitsARK Labs. Building open data infrastructure for the Brazilian crypto and FX market - DolarMap, Exchanges API, and Stablecoins Brasil.",
+    "description": "Founder of bitsARK Labs. Payments and fintech specialist focused on digital assets, crypto-fiat rails, and product localization across LATAM.",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "São Paulo",
+      "addressCountry": "BR"
+    },
     "worksFor": { "@id": "https://bitsark.com/#organization" },
     "knowsAbout": [
-      "Bitcoin",
+      "Payments",
+      "Pix",
+      "Card rails",
+      "PSPs",
+      "Crypto on-ramps",
+      "Fiat on-ramps",
       "Stablecoins",
+      "Bitcoin",
       "Brazilian crypto regulation",
       "Receita Federal IN RFB 1888",
       "Receita Federal IN RFB 2.291 (DeCripto)",
       "Lei 14.754/2023",
       "BCB authorization (PSAV)",
+      "CVM",
+      "BCRA",
       "FX arbitrage",
-      "Fintech product engineering",
+      "M&A analysis",
+      "Financial modeling",
+      "Product localization",
       "LATAM go-to-market"
     ],
-    "knowsLanguage": ["pt-BR", "en"],
+    "knowsLanguage": ["pt-BR", "en", "es"],
     "nationality": { "@type": "Country", "name": "Brazil" },
     "sameAs": [
       "https://www.linkedin.com/in/ricardods/",
-      "https://github.com/bitsARK-Labs",
-      "https://twitter.com/bitsarklabs",
       "https://play.google.com/store/apps/dev?id=7793792104800726717"
     ]
   }
@@ -86,7 +100,7 @@ const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('en-US', {
   schema={schema}
 >
 
-  <!-- ── About Hero ─────────────────────────────────────────── -->
+  <!-- ── Hero ─────────────────────────────────────────────── -->
   <section class="about-hero">
     <div class="container">
       <div class="about-hero__byline">
@@ -105,29 +119,21 @@ const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('en-US', {
         <div class="about-hero__byline-text">
           <p class="eyebrow">{t.about.hero.eyebrow}</p>
           <p class="about-hero__name">Ricardo Delfino</p>
-          <p class="about-hero__role">Founder · bitsARK Labs</p>
+          <p class="about-hero__role">{t.about.hero.role}</p>
         </div>
       </div>
 
-      <h1 set:html={t.about.hero.title} />
-      <p class="about-hero__sub">
-        {t.about.hero.sub}
-      </p>
+      <h1>{t.about.hero.title}</h1>
+      <p class="about-hero__sub">{t.about.hero.sub}</p>
 
       <p class="about-hero__updated">
-        <time datetime={dateModifiedDateOnly}>Last updated: {lastUpdatedLabel}</time>
+        <span>{t.about.hero.location}</span>
+        <span aria-hidden="true"> · </span>
+        <time datetime={dateModifiedDateOnly}>Updated {lastUpdatedLabel}</time>
       </p>
 
       <div class="social-links">
-        <a href="https://github.com/bitsark-labs" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
-          GitHub
-        </a>
-        <a href="https://twitter.com/bitsarklabs" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="Twitter / X">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          Twitter / X
-        </a>
-        <a href="https://linkedin.com/in/ricardods" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <a href="https://www.linkedin.com/in/ricardods/" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
           LinkedIn
         </a>
@@ -139,400 +145,81 @@ const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('en-US', {
     </div>
   </section>
 
-  <!-- ── Story ──────────────────────────────────────────────── -->
-  <section class="section" aria-labelledby="story-heading">
+  <!-- ── Summary ──────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="summary-heading">
     <div class="container about-layout">
-      <div class="about-content">
-
-        <h2 id="story-heading" class="about-content__title">{t.about.story.title}</h2>
-
-        <h3>{t.about.story.gapTitle}</h3>
-        <p set:html={t.about.story.gapDesc} />
-
-        <h3>{t.about.story.speedTitle}</h3>
-        <p set:html={t.about.story.speedP1} />
-        <p set:html={t.about.story.speedP2} />
-
-        <h3>{t.about.story.nextTitle}</h3>
-        <p>{t.about.story.nextDesc}</p>
-
-      </div>
+      <h2 id="summary-heading" class="about-section-title">{t.about.summary.title}</h2>
+      <p class="about-summary">{t.about.summary.body}</p>
     </div>
   </section>
 
-  <!-- ── Execution strip ────────────────────────────────────── -->
-  <section class="section section--alt" aria-labelledby="execution-heading">
+  <!-- ── What I'm building ────────────────────────────────── -->
+  <section class="section section--alt" aria-labelledby="projects-heading">
     <div class="container">
-      <p class="eyebrow" style="text-align:center; margin-bottom: 0.5rem;">{t.about.execution.eyebrow}</p>
-      <h2 id="execution-heading" class="section__title">{t.about.execution.title}</h2>
+      <h2 id="projects-heading" class="section__title">{t.about.projects.title}</h2>
 
       <div class="exec-strip">
-
-        <a class="exec-item exec-item--link"
-           href="https://play.google.com/store/apps/details?id=dolarmap.app"
-           target="_blank"
-           rel="noopener noreferrer">
-          <span class="exec-item__label">{t.about.execution.dolarmap.label}</span>
-          <span class="exec-item__meta">{t.about.execution.dolarmap.meta}</span>
-          <span class="exec-item__proof">{t.about.execution.dolarmap.proof}</span>
-        </a>
-
-        <div class="exec-divider" aria-hidden="true"></div>
-
-        <a class="exec-item exec-item--link"
-           href="https://github.com/bitsARK-Labs/exchanges-api"
-           target="_blank"
-           rel="noopener noreferrer">
-          <span class="exec-item__label">{t.about.execution.api.label}</span>
-          <span class="exec-item__meta">{t.about.execution.api.meta}</span>
-          <span class="exec-item__proof">{t.about.execution.api.proof}</span>
-        </a>
-
-        <div class="exec-divider" aria-hidden="true"></div>
-
-        <a class="exec-item exec-item--link exec-item--pending"
-           href="/stablecoins-brasil/">
-          <span class="exec-item__label">{t.about.execution.stablecoins.label}</span>
-          <span class="exec-item__meta">{t.about.execution.stablecoins.meta}</span>
-          <span class="exec-item__proof">{t.about.execution.stablecoins.proof}</span>
-        </a>
-
+        {t.about.projects.items.map((item, i) => {
+          const isExternal = item.url.startsWith('http');
+          return (
+            <a class:list={['exec-item', 'exec-item--link', { 'exec-item--bordered': i > 0 }]}
+               href={item.url}
+               target={isExternal ? '_blank' : undefined}
+               rel={isExternal ? 'noopener noreferrer' : undefined}>
+              <span class="exec-item__label">{item.label}</span>
+              <span class="exec-item__meta">{item.meta}</span>
+              <span class="exec-item__proof">{item.desc}</span>
+            </a>
+          );
+        })}
       </div>
     </div>
   </section>
 
-  <!-- ── Skills → proof ─────────────────────────────────────── -->
-  <section class="section" aria-labelledby="skills-heading">
-    <div class="container">
-      <p class="eyebrow" style="text-align:center; margin-bottom: 0.5rem;">{t.about.skills.eyebrow}</p>
-      <h2 id="skills-heading" class="section__title">{t.about.skills.title}</h2>
+  <!-- ── Expertise ────────────────────────────────────────── -->
+  <section class="section" aria-labelledby="expertise-heading">
+    <div class="container about-layout">
+      <h2 id="expertise-heading" class="section__title">{t.about.expertise.title}</h2>
 
-      <div class="table-wrap">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>{t.about.skills.table.th1}</th>
-              <th>{t.about.skills.table.th2}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {t.about.skills.items.map(item => (
-              <tr>
-                <td><strong>{item.skill}</strong></td>
-                <td>{item.proof}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <dl class="expertise-list">
+        {t.about.expertise.groups.map(group => (
+          <div class="expertise-group">
+            <dt class="expertise-group__label">{group.label}</dt>
+            <dd class="expertise-group__items">{group.items.join(' · ')}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
-  <!-- ── Hiring CTA + Disclaimer ───────────────────────────── -->
-  <section class="section section--alt" id="hiring" aria-labelledby="hiring-heading">
+  <!-- ── Languages ────────────────────────────────────────── -->
+  <section class="section section--alt" aria-labelledby="languages-heading">
+    <div class="container about-layout">
+      <h2 id="languages-heading" class="section__title">{t.about.languages.title}</h2>
+      <p class="languages-line">
+        {t.about.languages.items.map(lang => `${lang.name} (${lang.level})`).join(' · ')}
+      </p>
+    </div>
+  </section>
+
+  <!-- ── Contact + Disclaimer ─────────────────────────────── -->
+  <section class="section" id="contact" aria-labelledby="contact-heading">
     <div class="container">
-      <div class="hiring-cta">
-        <p class="eyebrow">{t.about.hiring.eyebrow}</p>
-        <h2 id="hiring-heading" class="hiring-cta__title">{t.about.hiring.title}</h2>
-        <p class="hiring-cta__body">{t.about.hiring.body}</p>
-        <div class="hiring-cta__actions">
+      <div class="contact-card">
+        <p class="eyebrow">{t.about.contact.eyebrow}</p>
+        <h2 id="contact-heading" class="contact-card__title">{t.about.contact.title}</h2>
+        <p class="contact-card__body">{t.about.contact.body}</p>
+        <div class="contact-card__actions">
           <a href={`mailto:${emailRicardo}`} class="btn btn-primary" aria-label={`Email: ${emailRicardo}`}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
             <span style="unicode-bidi: bidi-override; direction: rtl;" aria-hidden="true">{emailRicardoRev}</span>
           </a>
-          <a href="https://www.linkedin.com/in/ricardods/" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{t.about.hiring.ctaLinkedin}</a>
+          <a href="https://www.linkedin.com/in/ricardods/" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">{t.about.contact.ctaLinkedin}</a>
         </div>
       </div>
 
-      <p class="disclaimer__text">{t.about.hiring.disclaimer}</p>
+      <p class="disclaimer__text">{t.about.disclaimer}</p>
     </div>
   </section>
 
 </Base>
-
-<style>
-  /* ── About Hero ── */
-  .about-hero {
-    padding-block: clamp(3rem, 8vw, 6rem);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .about-hero h1 {
-    font-size: clamp(1.75rem, 1rem + 3vw, 2.75rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-top: 1.5rem;
-    max-width: 600px;
-  }
-
-  .about-hero__sub {
-    font-size: var(--text-base);
-    color: var(--color-text-muted);
-    margin-top: 1rem;
-    max-width: 560px;
-    line-height: 1.7;
-  }
-
-  /* ── Byline (foto + nome + role) ────────────────────────── */
-  .about-hero__byline {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .about-hero__photo {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid var(--color-border);
-    background: var(--color-surface-2);
-    flex-shrink: 0;
-  }
-
-  .about-hero__byline-text {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .about-hero__byline-text .eyebrow {
-    margin: 0 0 0.35rem;
-  }
-
-  .about-hero__name {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin: 0;
-    letter-spacing: -0.01em;
-  }
-
-  .about-hero__role {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    color: var(--color-text-faint);
-    margin: 0;
-    letter-spacing: 0.02em;
-  }
-
-  .about-hero__updated {
-    margin-top: 1.25rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--color-text-faint);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .social-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 1.75rem;
-  }
-
-  .social-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    transition: color var(--transition), border-color var(--transition);
-  }
-
-  .social-link:hover {
-    color: var(--color-text);
-    border-color: var(--color-text-faint);
-  }
-
-  /* ── Story layout ── */
-  .section__title {
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: clamp(1.4rem, 1rem + 1.5vw, 2rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-
-  .about-layout {
-    max-width: 720px;
-  }
-
-  /* h2 visually hidden - serves only as section label for SR and schema */
-  .about-content__title {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
-  }
-
-  .about-content h3 {
-    margin-top: 2.25rem;
-    margin-bottom: 0.75rem;
-    font-size: var(--text-lg);
-    font-weight: 600;
-    color: var(--color-text);
-  }
-
-  .about-content h3:first-of-type {
-    margin-top: 0;
-  }
-
-  .about-content p {
-    margin-bottom: 1rem;
-    line-height: 1.75;
-    color: var(--color-text-muted);
-    font-size: var(--text-base);
-  }
-
-  .about-content em {
-    color: var(--color-text);
-    font-style: italic;
-  }
-
-  /* ── Execution strip ── */
-  .exec-strip {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr auto 1fr;
-    align-items: center;
-    gap: 0;
-    max-width: 900px;
-    margin-inline: auto;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-
-  @media (max-width: 760px) {
-    .exec-strip {
-      grid-template-columns: 1fr;
-    }
-    .exec-divider {
-      width: 100%;
-      height: 1px !important;
-    }
-  }
-
-  .exec-item {
-    padding: 1.5rem 1.75rem;
-    background: var(--color-surface-2);
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    height: 100%;
-  }
-
-  .exec-item--link {
-    text-decoration: none;
-    color: inherit;
-    transition: background var(--transition), transform var(--transition);
-  }
-
-  .exec-item--link:hover,
-  .exec-item--link:focus-visible {
-    background: var(--color-primary-highlight);
-  }
-
-  .exec-item--pending {
-    opacity: 0.65;
-  }
-
-  .exec-divider {
-    width: 1px;
-    height: 100%;
-    background: var(--color-border);
-    flex-shrink: 0;
-  }
-
-  .exec-item__label {
-    font-size: var(--text-sm);
-    font-weight: 700;
-    color: var(--color-text);
-  }
-
-  .exec-item__meta {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--color-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-  }
-
-  .exec-item__proof {
-    font-size: 0.78rem;
-    color: var(--color-text-faint);
-    line-height: 1.5;
-    margin-top: 0.15rem;
-  }
-
-  /* ── Table ── */
-  .section--alt {
-    background: var(--color-surface);
-    border-top: 1px solid var(--color-border);
-    
-  }
-
-  .table-wrap {
-    overflow-x: auto;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    max-width: 860px;
-    margin-inline: auto;
-  }
-
-  /* ── Hiring CTA ── */
-  .hiring-cta {
-    max-width: 640px;
-    margin-inline: auto;
-    text-align: center;
-    padding: 3rem 2rem 2.5rem;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
-    background: var(--color-surface-2);
-    margin-bottom: 2.5rem;
-  }
-
-  .hiring-cta__title {
-    font-size: var(--text-xl);
-    font-weight: 700;
-    margin-top: 0.5rem;
-    margin-bottom: 1rem;
-    letter-spacing: -0.02em;
-  }
-
-  .hiring-cta__body {
-    color: var(--color-text-muted);
-    line-height: 1.75;
-    margin-bottom: 1.75rem;
-    font-size: var(--text-sm);
-  }
-
-  .hiring-cta__actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  /* ── Disclaimer ── */
-  .disclaimer__text {
-    margin-top: 0;
-    font-size: var(--text-xs);
-    color: var(--color-text-faint);
-    line-height: 1.7;
-    text-align: center;
-    max-width: 600px;
-    margin-inline: auto;
-  }
-</style>
