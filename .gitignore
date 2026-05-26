@@ -31,6 +31,9 @@ scripts/_*
 *.log
 .claude/
 
+# Cache de assets pré-rasterizados (logos OG baixados de assets.bitsark.com)
+.cache/
+
 # Documentação interna (estratégica/pessoal + instruções para Claude)
 docs/_internal/
 
