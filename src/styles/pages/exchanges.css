@@ -227,10 +227,9 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: -0.005em;
     padding: 4px 10px;
     border-radius: 9999px;
     font-weight: 600;
@@ -346,19 +345,17 @@
     flex-wrap: wrap;
   }
   .exch-timeline-date {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: -0.005em;
     color: var(--color-text-faint);
   }
   .exch-timeline-badge {
     display: inline-flex;
     align-items: center;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: -0.005em;
     padding: 2px 8px;
     border-radius: 9999px;
     font-weight: 600;
@@ -410,10 +407,9 @@
   }
   .exch-source-item:last-child { border-bottom: 0; }
   .exch-source-label {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: -0.005em;
     color: var(--color-text-faint);
   }
   .exch-source-link {
@@ -495,11 +491,10 @@
     background: var(--color-primary);
     color: var(--color-text-inverse);
     font-size: 10px;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-weight: 700;
     padding: 0.1rem 0.5rem;
     border-radius: var(--radius-full);
-    letter-spacing: 0.05em;
+    letter-spacing: -0.005em;
   }
   .decripto-banner__text {
     font-size: 13px;
@@ -700,8 +695,7 @@
     font-size: var(--text-xs);
     font-weight: 600;
     color: var(--color-text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: -0.005em;
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--color-border);
@@ -977,8 +971,7 @@
     font-size: var(--text-xs);
     font-weight: 600;
     color: var(--color-primary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: -0.005em;
     transition: gap var(--transition), color var(--transition);
   }
   .exch-view-link:hover {

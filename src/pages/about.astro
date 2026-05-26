@@ -128,8 +128,6 @@ const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('en-US', {
 
       <p class="about-hero__updated">
         <span>{t.about.hero.location}</span>
-        <span aria-hidden="true"> · </span>
-        <time datetime={dateModifiedDateOnly}>Updated {lastUpdatedLabel}</time>
       </p>
 
       <div class="social-links">
@@ -149,7 +147,11 @@ const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('en-US', {
   <section class="section" aria-labelledby="summary-heading">
     <div class="container about-layout">
       <h2 id="summary-heading" class="about-section-title">{t.about.summary.title}</h2>
-      <p class="about-summary">{t.about.summary.body}</p>
+      <div class="about-summary">
+        {t.about.summary.body.map((para: string) => (
+          <p>{para}</p>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -218,7 +220,6 @@ const lastUpdatedLabel = new Date(dateModifiedISO).toLocaleDateString('en-US', {
         </div>
       </div>
 
-      <p class="disclaimer__text">{t.about.disclaimer}</p>
     </div>
   </section>
 

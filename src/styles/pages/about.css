@@ -67,11 +67,10 @@
 
 .about-hero__updated {
   margin-top: 1.25rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.72rem;
   color: var(--color-text-faint);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.005em;
 }
 
 .social-links {
@@ -129,7 +128,14 @@
   font-size: var(--text-base);
   line-height: 1.75;
   color: var(--color-text-muted);
-  margin: 0;
+}
+
+.about-summary p {
+  margin: 0 0 1.5rem;
+}
+
+.about-summary p:last-child {
+  margin-bottom: 0;
 }
 
 /* ── Projects strip (3 cards) ─────────────────────────── */
@@ -188,11 +194,10 @@
 }
 
 .exec-item__meta {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.72rem;
   color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: -0.005em;
 }
 
 .exec-item__proof {
@@ -239,11 +244,10 @@
 }
 
 .expertise-group__label {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.72rem;
   color: var(--color-primary);
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: -0.005em;
   margin: 0;
   font-weight: 600;
 }

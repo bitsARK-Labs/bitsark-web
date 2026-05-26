@@ -202,10 +202,9 @@
       background: var(--color-success);
     }
     .sb-kpi-meta {
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
       order: -1;
     }
@@ -571,10 +570,9 @@
 
     .sb-rank-row--head {
       background: var(--color-surface-2);
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
       padding-block: var(--space-3);
       animation: none;
@@ -815,20 +813,18 @@
     .sb-compare-row:last-child { border-bottom: 0; }
     .sb-compare-row--head {
       background: var(--color-surface-2);
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
       animation: none;
     }
     .sb-compare-h--usdt { color: #26a17b; font-weight: 600; }
     .sb-compare-h--usdc { color: #2775ca; font-weight: 600; }
     .sb-compare-label {
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
     }
 
@@ -890,10 +886,9 @@
       font-variant-numeric: tabular-nums;
     }
     .sb-use-stat-label {
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
     }
     .sb-use-card h3 {
@@ -1068,20 +1063,18 @@
       flex-wrap: wrap;
     }
     .sb-timeline-date {
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
     }
     .sb-timeline-badge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: -0.005em;
       padding: 2px 8px;
       border-radius: 9999px;
       font-weight: 500;
@@ -1126,10 +1119,9 @@
       top: 6rem;
     }
     .sb-tax-title {
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.7rem !important;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint) !important;
       margin-bottom: var(--space-5) !important;
       padding-bottom: var(--space-4);
@@ -1194,10 +1186,9 @@
     }
     .sb-source-item:last-child { border-bottom: 0; }
     .sb-source-label {
-      font-family: var(--font-mono);
+      font-family: var(--font-body);
       font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: -0.005em;
       color: var(--color-text-faint);
     }
     .sb-source-link {

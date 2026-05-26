@@ -52,7 +52,7 @@
     "name": "Ricardo Delfino",
     "role": "Fundador · bitsARK Labs",
     "statusLabel": "Aberto a oportunidades",
-    "statusDetail": "BizDev · Product · Engenharia",
+    "statusDetail": "Pagamentos · Cripto-fiat · Brasil e América Latina",
     "linkedinLabel": "LinkedIn",
     "aboutLabel": "Sobre mim →"
   },
@@ -62,7 +62,7 @@
     "dolarmap": {
       "ariaLabel": "Ir para DolarMap",
       "appBadge": "App",
-      "statusLabel": "Ao vivo",
+      "statusLabel": "live",
       "desc": "Monitore câmbio <em>USD/BRL</em>: compare taxas entre corretoras de <em>stablecoins</em> e receba <em>alertas</em>.",
       "cta": "Ver DolarMap →",
       "kpis": [
@@ -77,7 +77,7 @@
           "label": "corretoras comparadas"
         },
         {
-          "num": "Ao vivo",
+          "num": "ao vivo",
           "label": "desde 2025"
         }
       ]
@@ -111,7 +111,7 @@
       "ariaLabel": "Ver tabela de corretoras",
       "productName": "Exchanges",
       "productSub": "no Brasil",
-      "statusLabel": "Ao vivo",
+      "statusLabel": "live",
       "badge1": "24 corretoras",
       "badge2": "Dados fiscais",
       "desc": "Índice regulatório das corretoras que atuam no Brasil: CNPJ, taxas, Pix e obrigações fiscais (IN 1888, DeCripto).",
@@ -178,10 +178,7 @@
     "ctaExchanges": "Ver Corretoras",
     "ctaGithub": "GitHub ↗",
     "aboutPrefix": "Quer entender a motivação por trás do projeto?",
-    "aboutLink": "Saiba mais →",
-    "hiringTag": "Contratando?",
-    "hiringBody": "Estou aberto a vagas remotas em BizDev, Product ou Engenharia em empresas de cripto / fintech que operam no ou para o Brasil.",
-    "hiringLink": "Conheça meu trabalho completo →"
+    "aboutLink": "Saiba mais →"
   },
   "nav": {
     "skipLink": "Pular para o conteúdo",
@@ -276,9 +273,120 @@
       "description": "Fundador da bitsARK Labs. Construí infraestrutura de dados abertos para o mercado cripto brasileiro do zero - DolarMap, Exchanges API e Stablecoins Brasil."
     },
     "hero": {
-      "eyebrow": "Fundador",
-      "title": "Eu encontro lacunas.<br />Depois construo o que as preenche.",
-      "sub": "Infraestrutura de dados abertos para o mercado cripto e de câmbio brasileiro - construída do zero, em produção, usada por pessoas reais."
+      "eyebrow": "Fundador · bitsARK Labs",
+      "role": "Pagamentos · Cripto-fiat · Brasil",
+      "title": "Construindo infraestrutura de dados abertos para o mercado cripto-fiat brasileiro.",
+      "sub": "Operador de produto e GTM, com foco em pagamentos, fiat on-ramps, infraestrutura regulatória e execução de mercado no Brasil e na América Latina.",
+      "location": "São Paulo, Brasil"
+    },
+    "summary": {
+      "title": "Sobre",
+      "body": [
+        "A bitsARK Labs publica os dados e as ferramentas que faltavam ao mercado cripto-fiat do Brasil — metadados de corretoras, classificação regulatória, inteligência cambial em tempo real e visibilidade do mercado de stablecoins.",
+        "O trabalho está na interseção de pagamentos, finanças reguladas e ativos digitais, com foco no Brasil e na América Latina.",
+        "Atuo em produto, inteligência de mercado e execução — identificando lacunas locais, definindo o que será construído e transformando a complexidade do mercado em ferramentas no ar que tornam o mercado cripto-fiat brasileiro mais fácil de navegar."
+      ]
+    },
+    "projects": {
+      "title": "O que estou construindo",
+      "items": [
+        {
+          "label": "DolarMap",
+          "url": "https://play.google.com/store/apps/details?id=dolarmap.app",
+          "meta": "App Android · No ar",
+          "desc": "Acompanhe preços de USD/BRL entre corretoras brasileiras de stablecoins, com alertas em tempo real e uma experiência mobile sem fricção."
+        },
+        {
+          "label": "Guia Fiscal de Corretoras & API",
+          "url": "https://bitsark.com/pt/exchanges/",
+          "meta": "API REST pública · No ar",
+          "desc": "Inteligência estruturada sobre corretoras no Brasil: regime tributário, jurisdição, autorização do BCB, suporte a Pix e comparação de taxas."
+        },
+        {
+          "label": "Stablecoins Brasil",
+          "url": "/pt/stablecoins-brasil/",
+          "meta": "Hub de pesquisa · No ar",
+          "desc": "Inteligência de mercado conectando os fluxos brasileiros de stablecoins aos dados globais de oferta, para facilitar o entendimento das dinâmicas locais."
+        }
+      ]
+    },
+    "expertise": {
+      "title": "Expertise",
+      "groups": [
+        {
+          "label": "Produto & GTM (LATAM)",
+          "items": [
+            "Go-to-market LATAM",
+            "Entrada no mercado brasileiro",
+            "Localização de produto",
+            "Expansão com parceiros",
+            "Negociação comercial",
+            "Estratégia GTM para cripto/fintech"
+          ]
+        },
+        {
+          "label": "Pagamentos & Rails Locais",
+          "items": [
+            "Pix",
+            "Visa/Mastercard",
+            "PSPs",
+            "Checkout",
+            "Boleto",
+            "Pagamentos em cripto",
+            "Fiat on-ramps"
+          ]
+        },
+        {
+          "label": "Mercado Brasileiro & Regulação",
+        "items": [
+          "Stablecoins e dinâmicas de USDT/USDC",
+          "Regime PSAV do BCB",
+          "IN RFB 1888/2019",
+          "IN RFB 2.291 (DeCripto)",
+          "Lei 14.754/2023",
+          "Arbitragem cambial e análise de spread BRL",
+          "BCB",
+          "CVM",
+          "Supervisão do BCRA",
+          "Reporte cripto à Receita Federal",
+          "Produto orientado à LGPD",
+          "Bitcoin L2 (Lightning e Liquid)"
+        ]
+        },
+        {
+          "label": "Familiaridade com o Mercado",
+          "items": [
+            "Trading spot de cripto",
+            "Trading de câmbio",
+            "Análise de gráficos",
+            "Tipos de ordem",
+            "Indicadores técnicos"
+          ]
+        },
+        {
+          "label": "Finanças & M&A",
+          "items": [
+            "Modelagem financeira",
+            "Valuation",
+            "Due diligence",
+            "Finanças operacionais"
+          ]
+        }
+      ]
+    },
+    "languages": {
+      "title": "Idiomas",
+      "items": [
+        { "name": "Português", "level": "nativo" },
+        { "name": "Inglês", "level": "profissional pleno" },
+        { "name": "Espanhol", "level": "profissional limitado" }
+      ]
+    },
+    "contact": {
+      "eyebrow": "Contato",
+      "title": "Vamos nos conectar",
+      "body": "Interessado em cripto/fintech, pagamentos ou no que estamos construindo na bitsARK?",
+      "ctaLinkedin": "LinkedIn →"
     },
     "story": {
       "title": "História",
@@ -342,13 +450,6 @@
           "proof": "Histórico prévio em operações de e-commerce e administração de empresas - entende unit economics, entrada em mercados internacionais e growth loops."
         }
       ]
-    },
-    "hiring": {
-      "eyebrow": "Aberto a oportunidades",
-      "title": "Vamos conversar",
-      "body": "Estou buscando posições em Business Development, Founder/Operator in Residence, Go-to-Market LATAM ou Crypto/Fintech Angel Scouting - em empresas que precisam de alguém que conheça o mercado brasileiro por dentro. Se você está na Strike, Bitso, Coinbase, Chainalysis, Fireblocks ou qualquer empresa construindo no Brasil, adoraria conversar.",
-      "ctaLinkedin": "LinkedIn →",
-      "disclaimer": "bitsARK Labs é um projeto de código aberto independente. Os dados são para fins informativos e não constituem conselho financeiro ou jurídico. Sempre verifique com fontes oficiais (Receita Federal, BCB)."
     }
   },
   "exchanges": {
@@ -2971,7 +3072,7 @@
         "website_desc": "URL oficial da exchange",
         "logo_url_desc": "Logo em SVG hospedado em assets.bitsark.com",
         "updated_at_desc": "Timestamp da última atualização desse registro",
-        "analysis_url_desc": "URL da página de análise do BitsARK para esta exchange (ex.: https://bitsark.com/exchanges/binance/)",
+        "analysis_url_desc": "URL da página de análise do BitsARK para esta exchange (ex.: https://bitsark.com/pt/exchanges/binance/)",
         "operational_details_br_group": "operational_details_br",
         "cnpj_desc": "CNPJ. null para exchanges puramente offshore sem entidade legal brasileira",
         "bcb_authorized_desc": "Se a exchange possui autorização PSAV (Prestador de Serviços de Ativos Virtuais) do Banco Central do Brasil (BCB)",

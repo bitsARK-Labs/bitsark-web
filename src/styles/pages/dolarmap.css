@@ -121,10 +121,10 @@
     border: 1px solid rgba(var(--color-success-rgb), 0.3);
     background: rgba(var(--color-success-rgb), 0.08);
     border-radius: var(--radius-full, 9999px);
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.7rem;
     color: var(--color-success);
-    letter-spacing: 0.04em;
+    letter-spacing: -0.005em;
   }
   .dm-livepill__dot {
     width: 7px;
@@ -271,11 +271,10 @@
     line-height: 1;
   }
   .dm-cta__small {
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.6rem;
     color: var(--color-text-faint);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
     margin-bottom: 2px;
   }
   .dm-cta__big {
@@ -517,11 +516,10 @@
   }
 
   .dm-float__refLabel {
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.58rem;
     color: var(--color-text-faint);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
   }
   .dm-float__refPrice {
     font-family: var(--dm-display);
@@ -561,11 +559,10 @@
     z-index: 2;
   }
   .dm-hero__cueLabel {
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.62rem;
     color: var(--color-text-faint);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
+    letter-spacing: 0.02em;
     opacity: 0.55;
   }
   .dm-hero__cueLine {
@@ -648,11 +645,10 @@
   .dm-strip__lbl {
     display: block;
     margin-top: 0.55rem;
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.65rem;
     color: var(--color-text-muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
   }
 
   @media (max-width: 720px) {
@@ -1045,12 +1041,11 @@
     min-width: 120px;
   }
   .dm-cell__chip-lbl {
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.58rem;
     color: var(--color-text-faint);
-    letter-spacing: 0.12em;
-    font-weight: 700;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
+    font-weight: 600;
   }
   .dm-cell__chip-val {
     font-family: var(--dm-display);
@@ -1241,12 +1236,11 @@
     border-bottom: 1px dashed var(--dm-edge);
   }
   .dm-exch__colTag {
-    font-family: var(--dm-mono);
+    font-family: var(--font-body);
     font-size: 0.7rem;
     color: var(--color-text-muted);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    font-weight: 700;
+    letter-spacing: -0.005em;
+    font-weight: 600;
   }
   .dm-exch__colTag--official { color: var(--color-primary); }
   .dm-exch__colCount {

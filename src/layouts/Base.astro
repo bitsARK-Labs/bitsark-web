@@ -276,7 +276,7 @@ const mobileLinks = isDolarMap ? [
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#4f98a3" />
     <meta name="apple-mobile-web-app-title" content="bitsARK" />
     <meta name="msapplication-TileColor"    content="#0f1012" />
-    <meta name="theme-color"                content="#0f1012" />
+    <meta name="theme-color"                content="#0a0b0d" />
     <link rel="shortcut icon" href="/favicon.ico?v=1.0" />
 
     <!-- Schema.org JSON-LD dinâmico (por página) -->
@@ -369,11 +369,10 @@ const mobileLinks = isDolarMap ? [
       /* "by" separator - editorial dashes (never a pipe) */
       .dm-identity-nav__by {
         position: relative;
-        font-family: var(--font-mono);
+        font-family: var(--font-body);
         font-size: 0.55rem;
         color: var(--color-text-faint);
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
+        letter-spacing: 0.02em;
         font-weight: 600;
         opacity: 0.55;
         padding: 0 0.65rem;
@@ -480,10 +479,10 @@ const mobileLinks = isDolarMap ? [
         opacity: 0.5;
       }
       .nav__lang-link {
-        font-family: var(--font-mono);
+        font-family: var(--font-body);
         font-size: 0.7rem;
         font-weight: 600;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.02em;
         text-transform: uppercase;
         color: var(--color-text-muted);
         text-decoration: none;
@@ -762,7 +761,7 @@ const mobileLinks = isDolarMap ? [
           <div class="footer__col">
             <p class="footer__heading">{t('footer.company')}</p>
             <a href={l('/about')}                    class="footer__link">{t('footer.about')}</a>
-            <a href={l('/about#hiring')}             class="footer__link">{t('footer.contact')}</a>
+            <a href={l('/about#contact')}            class="footer__link">{t('footer.contact')}</a>
             <a href="https://github.com/bitsARK-Labs/exchanges-api"
                class="footer__link" target="_blank" rel="noopener noreferrer"
                aria-label="Exchanges API on GitHub">

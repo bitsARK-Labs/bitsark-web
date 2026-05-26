@@ -153,9 +153,8 @@
   .hero__stat-label {
     font-size: var(--text-xs);
     color: var(--color-text-faint);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
+    letter-spacing: -0.005em;
   }
 
   /*
@@ -277,51 +276,6 @@
     letter-spacing: 0.02em;
     line-height: 1.5;
   }
-  .founder-band__status {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    color: var(--color-success);
-    font-weight: 600;
-  }
-  .founder-band__status-dot {
-    position: relative;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--color-success);
-    flex-shrink: 0;
-    will-change: opacity;
-    animation: founder-pulse-dot 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  /* Pseudo-element ring uses only transform + opacity — both GPU-composited,
-     replacing the non-composite box-shadow that triggered Lighthouse CLS flag. */
-  .founder-band__status-dot::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    width: 11px;
-    height: 11px;
-    border-radius: 50%;
-    background: var(--color-success);
-    transform-origin: center;
-    will-change: transform, opacity;
-    animation: founder-pulse-ring 2.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  @keyframes founder-pulse-dot {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.65; }
-  }
-  @keyframes founder-pulse-ring {
-    0%, 100% { transform: scale(1);    opacity: 0.22; }
-    50%      { transform: scale(1.73); opacity: 0.06; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .founder-band__status-dot,
-    .founder-band__status-dot::after { animation: none; }
-  }
-  .founder-band__sep            { color: var(--color-text-faint); opacity: 0.5; }
   .founder-band__status-detail  { color: var(--color-text-faint); }
 
   .founder-band__actions {
@@ -333,7 +287,7 @@
 
   .founder-band__link {
     font-size: var(--text-xs);
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     color: var(--color-text-muted);
     text-decoration: none;
     display: inline-flex;
@@ -347,7 +301,7 @@
       color var(--transition),
       border-color var(--transition),
       background var(--transition);
-    letter-spacing: 0.02em;
+    letter-spacing: -0.005em;
     white-space: nowrap;
   }
   .founder-band__link:hover {
@@ -617,10 +571,10 @@
   .product-card--stablecoins .product-card__icon { color: var(--color-success); }
 
   .product-card__type {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.7rem;
     font-weight: 500;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
     padding: 0.1em 0.8em;
     border-radius: var(--radius-sm);
     display: inline-block;
@@ -686,11 +640,10 @@
   }
 
   .kpi__label {
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 0.6rem;
     font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    letter-spacing: -0.005em;
     color: var(--color-text-faint);
     line-height: 1.4;
     margin: 0;
@@ -763,11 +716,10 @@
   }
 
   .product-card__app-badge {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
     color: var(--color-primary);
     border: 1px solid var(--color-primary-border);
     border-radius: var(--radius-sm);

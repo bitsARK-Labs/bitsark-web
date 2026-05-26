@@ -45,7 +45,7 @@
     "name": "Ricardo Delfino",
     "role": "Founder · bitsARK Labs",
     "statusLabel": "Payments & Fintech · LATAM",
-    "statusDetail": "Pix · Crypto rails · Regulatory data",
+    "statusDetail": "Payments · Crypto-fiat · Brazil & LATAM",
     "linkedinLabel": "LinkedIn",
     "aboutLabel": "About me →"
   },
@@ -263,18 +263,21 @@
   "about": {
     "meta": {
       "title": "Ricardo Delfino - Founder, bitsARK Labs",
-      "description": "Founder of bitsARK Labs. Payments and fintech specialist building open data infrastructure for the Brazilian crypto-fiat market."
+      "description": "Product Manager and fintech specialist with 5+ years in crypto, payments, and LATAM markets. Founder of bitsARK Labs, building open data infrastructure for the Brazilian crypto-fiat market."
     },
     "hero": {
       "eyebrow": "Founder · bitsARK Labs",
-      "role": "Payments & Fintech · LATAM",
+      "role": "Payments · Crypto-fiat · Brazil",
       "title": "Building open data infrastructure for the Brazilian crypto-fiat market.",
-      "sub": "Payments and fintech specialist focused on digital assets, crypto-fiat rails, and product localization across LATAM.",
+      "sub": "Product & GTM operator focused on payments, fiat on-ramps, regulatory infrastructure, and local market execution across Brazil and LATAM.",
       "location": "São Paulo, Brazil"
     },
     "summary": {
       "title": "About",
-      "body": "bitsARK Labs publishes the data and tooling Brazil's crypto-fiat market was missing - exchange metadata, regulatory classification, real-time FX, and stablecoin flows. The work sits at the intersection of payments, regulated finance, and digital assets, applied to the Brazilian market and broader LATAM."
+      "body":  ["bitsARK Labs publishes the data and tooling Brazil's crypto-fiat market was missing — exchange metadata, regulatory classification, real-time FX intelligence, and stablecoin market visibility.",
+"The work sits at the intersection of payments, regulated finance, and digital assets, with a focus on Brazil and broader LATAM.",
+"I work across product, market insight, and execution — identifying local gaps, shaping what gets built, and turning market complexity into live tools used to make the Brazilian crypto-fiat market easier to navigate."
+              ]
     },
     "projects": {
       "title": "What I'm building",
@@ -282,47 +285,87 @@
         {
           "label": "DolarMap",
           "url": "https://play.google.com/store/apps/details?id=dolarmap.app",
-          "meta": "Android · Play Store",
-          "desc": "Real-time USD/BRL alerts across 13+ stablecoin brokers. Free, no sign-up, no ads."
+          "meta": "Android app · Live",
+          "desc": "Track USD/BRL pricing across Brazilian stablecoin brokers, with alerts and a frictionless mobile experience."
         },
         {
-          "label": "Exchanges API",
+          "label": "Exchanges Tax Guide & API",
           "url": "https://bitsark.com/exchanges/api/",
-          "meta": "Public REST · 24 exchanges",
-          "desc": "BCB authorization, Pix support, tax regime, and fees. No auth, no paywall."
+          "meta": "Public REST API · Live",
+          "desc": "Exchange intelligence for Brazil, covering tax regime, jurisdiction, BCB authorization, Pix support, and fee comparison."
         },
         {
           "label": "Stablecoins Brasil",
           "url": "/stablecoins-brasil/",
-          "meta": "Data hub",
-          "desc": "Brazilian stablecoin volume vs. global market cap. BCB BoP × DefiLlama."
+          "meta": "Research hub · Live",
+          "desc": "Market intelligence connecting Brazilian stablecoin flows with global supply data, designed to make local market shifts easier to understand."
         }
       ]
     },
     "expertise": {
       "title": "Expertise",
       "groups": [
-        {
-          "label": "Payments & Card Business",
-          "items": ["Pix", "Card rails", "Visa/Mastercard", "PSPs", "Checkout", "Boleto", "Crypto payments", "Fiat on-ramps"]
-        },
-        {
-          "label": "Crypto & Stablecoins",
-          "items": ["Stablecoins", "BCB PSAV regime", "IN RFB 1888/2019", "IN RFB 2.291 (DeCripto)", "Lei 14.754/2023", "FX arbitrage"]
-        },
-        {
-          "label": "Regulatory & Compliance",
-          "items": ["BCB", "CVM", "BCRA", "Receita Federal", "LGPD-aware product"]
-        },
-        {
-          "label": "Product, GTM & BizDev",
-          "items": ["Product localization", "LATAM go-to-market", "Commercial negotiation", "Partner expansion"]
-        },
-        {
-          "label": "Finance & M&A",
-          "items": ["Financial modeling", "Valuation", "Due diligence", "Operational finance"]
-        }
-      ]
+  {
+    "label": "Product & GTM (LATAM)",
+    "items": [
+      "LATAM go-to-market",
+      "Brazilian market entry",
+      "Product localization",
+      "Partner expansion",
+      "Commercial negotiation",
+      "Go-to-market strategy for crypto/fintech"
+    ]
+  },
+  {
+    "label": "Payments & Local Rails",
+    "items": [
+      "Pix",
+      "Card rails",
+      "Visa/Mastercard",
+      "PSPs",
+      "Checkout",
+      "Boleto",
+      "Crypto payments",
+      "Fiat on-ramps"
+    ]
+  },
+  {
+    "label": "Brazilian Market & Regulation",
+    "items": [
+      "Stablecoins & USDT/USDC dynamics",
+      "BCB PSAV regime",
+      "IN RFB 1888/2019",
+      "IN RFB 2.291 (DeCripto)",
+      "Lei 14.754/2023",
+      "FX arbitrage & BRL spread analysis",
+      "BCB",
+      "CVM",
+      "BCRA oversight",
+      "Receita Federal crypto reporting",
+      "LGPD-aware product",
+      "Bitcoin L2 (Lightning & Liquid)"
+    ]
+  },
+  {
+    "label": "Market Familiarity",
+    "items": [
+      "Crypto spot trading",
+      "FX trading",
+      "Chart analysis",
+      "Order types",
+      "Technical indicators"
+    ]
+  },
+  {
+    "label": "Finance & M&A",
+    "items": [
+      "Financial modeling",
+      "Valuation",
+      "Due diligence",
+      "Operational finance"
+    ]
+  }
+]
     },
     "languages": {
       "title": "Languages",
@@ -334,8 +377,8 @@
     },
     "contact": {
       "eyebrow": "Contact",
-      "title": "Get in touch",
-      "body": "For partnerships, market insight, or work on Brazilian payments and digital-asset infrastructure.",
+      "title": "Let's connect",
+      "body": "Interested in crypto/fintech, payments, or what we're building at bitsARK?",
       "ctaLinkedin": "LinkedIn →"
     },
     "disclaimer": "bitsARK Labs is an independent open-source project. Data is for informational purposes only and does not constitute financial or legal advice. Always verify with official sources (Receita Federal, BCB)."
