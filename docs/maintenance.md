@@ -39,7 +39,7 @@ Runs `scripts/fetch-stablecoin-data.js` against DefiLlama and BCB, writing the o
 
 After running, inspect the JSONs:
 
-- `stablecoin-market.json`: `latestMarketCapUsd` should be in the ballpark of current market cap (e.g. ~$230bn as of mid-2026). Sanity bounds: $50bn–$2tn.
+- `stablecoin-market.json`: `latestMarketCapUsd` should be in the ballpark of current market cap (e.g. ~$230bn as of mid-2026). Sanity bounds: $50bn-$2tn.
 - `stablecoin-brazil.json`: `isFallback` should be `false`. If `true`, the BCB scrape failed - see [BCB fallback alert](#bcb-fallback-alert).
 
 ### Force a Cloudflare Pages rebuild
@@ -164,7 +164,7 @@ The `BITSARK_WEB_DEPLOY_TOKEN` lives in the `exchanges-api` repo as an Actions s
 
 - [ ] `fetch-stablecoin-data.yml` last run is green (Actions tab).
 - [ ] `public/data/stablecoin-brazil.json` has `isFallback: false` and recent `updatedAt`.
-- [ ] `public/data/stablecoin-market.json` has plausible `latestMarketCapUsd` (sanity range $50bn–$2tn).
+- [ ] `public/data/stablecoin-market.json` has plausible `latestMarketCapUsd` (sanity range $50bn-$2tn).
 
 ### Weekly (Wednesday after the ~17:00 UTC `exchanges-api` scrape)
 
@@ -249,7 +249,7 @@ Same as [BCB fallback alert](#bcb-fallback-alert) - the alert is the symptom, th
 ```bash
 npm run fetch-data
 # Inspect public/data/stablecoin-market.json
-# latestMarketCapUsd should be in $50bn–$2tn range
+# latestMarketCapUsd should be in $50bn-$2tn range
 # monthly array should have ~70+ entries covering 2019-present
 ```
 

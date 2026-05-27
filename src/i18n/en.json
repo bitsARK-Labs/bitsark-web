@@ -500,7 +500,7 @@
           "badge": "Recurring"
         },
         {
-          "date": "Mar–May 2026",
+          "date": "Mar-May 2026",
           "title": "IRPF 2025 - annual return",
           "desc": "Declare year-end balances of all crypto under Bens e Direitos. Codes 81/82/89.",
           "status": "upcoming",
@@ -597,7 +597,7 @@
         },
         {
           "label": "BCB licensing status",
-          "source": "Banco Central do Brasil · Resoluções 519–521",
+          "source": "Banco Central do Brasil · Resoluções 519-521",
           "href": "https://www.bcb.gov.br"
         },
         {
@@ -891,7 +891,7 @@
           "text": "RFB Normative Instruction 2.291/2025 published, creating DeCripto and adopting the OECD's CARF standard"
         },
         {
-          "label": "Jan–Jun 2026",
+          "label": "Jan-Jun 2026",
           "text": "Transition period: IN 1.888/2019 still in force. Users still report their own foreign exchange and DEX trades"
         },
         {
@@ -1249,7 +1249,7 @@
       "colVolume": "Adoption intensity",
       "colInflation": "10-yr loss vs. USD",
       "rank": "Rank",
-      "note": "<strong>Methodology:</strong> Adoption intensity is a composite of grassroots adoption, on-chain transaction volume and retail penetration, normalised against country GDP. 10-yr loss = local currency depreciation against USD, 2014–2024.",
+      "note": "<strong>Methodology:</strong> Adoption intensity is a composite of grassroots adoption, on-chain transaction volume and retail penetration, normalised against country GDP. 10-yr loss = local currency depreciation against USD, 2014-2024.",
       "source": "Source: Chainalysis Geography of Crypto Report (2024-25), IMF inflation series, BCB.",
       "countries": [
         {
@@ -1368,7 +1368,7 @@
         },
         {
           "title": "Arbitrage and spread",
-          "desc": "USDT/BRL spreads differ across Brazilian exchanges. Monitoring rates across platforms can shave 0.5–2% on every conversion - meaningful for size.",
+          "desc": "USDT/BRL spreads differ across Brazilian exchanges. Monitoring rates across platforms can shave 0.5-2% on every conversion - meaningful for size.",
           "stat": "0.5-2%",
           "statLabel": "Spread between top exchanges",
           "link": "Find the best rate →"
@@ -1423,7 +1423,7 @@
         },
         {
           "date": "2025",
-          "title": "Resolutions 519–521",
+          "title": "Resolutions 519-521",
           "desc": "Modern prudential framework: capital requirements, segregation of customer funds, governance and reporting standards.",
           "status": "active",
           "badge": "In force"
@@ -1480,7 +1480,7 @@
         },
         {
           "q": "Do I need to pay taxes on stablecoins?",
-          "a": "Yes. Individuals declare annually on the IRPF; capital gains above R$ 35,000/month are taxed 15%–22.5%. Brazilian businesses (PJ) follow different rules (no R$ 35k exemption, ISS-exempt on service exports, IRPJ/CSLL per regime) - details in the <a href=\"/stablecoins-brasil/receber-exterior-pj/\">PJ tax guide</a>."
+          "a": "Yes. Individuals declare annually on the IRPF; capital gains above R$ 35,000/month are taxed 15%-22.5%. Brazilian businesses (PJ) follow different rules (no R$ 35k exemption, ISS-exempt on service exports, IRPJ/CSLL per regime) - details in the <a href=\"/stablecoins-brasil/receber-exterior-pj/\">PJ tax guide</a>."
         },
         {
           "q": "What's the difference between USDT and USDC?",
@@ -1526,7 +1526,7 @@
         },
         {
           "label": "Regulatory framework",
-          "source": "Lei 14,478 (Marco Legal de Cripto) · BCB Resolutions 519–521",
+          "source": "Lei 14,478 (Marco Legal de Cripto) · BCB Resolutions 519-521",
           "href": "https://www.bcb.gov.br"
         },
         {
@@ -1546,7 +1546,7 @@
     }
   },
   "privacy": {
-    "title": "Privacy Policy – DolarMap",
+    "title": "Privacy Policy - DolarMap",
     "description": "DolarMap Privacy Policy. Learn how Tecnologia Atual Serviços LTDA handles your data in compliance with LGPD, Apple App Store, and Google Play policies.",
     "lastUpdated": "April 29, 2026",
     "lastUpdatedISO": "2026-04-29",
@@ -1555,7 +1555,7 @@
     "sections": {
       "intro": {
         "title": "1. Introduction",
-        "p1": "This Privacy Policy describes how DolarMap handles user data, in compliance with the General Personal Data Protection Law (LGPD – Law No. 13,709/2018) and the privacy policies of the distribution platforms (Google Play and Apple App Store).",
+        "p1": "This Privacy Policy describes how DolarMap handles user data, in compliance with the General Personal Data Protection Law (LGPD - Law No. 13,709/2018) and the privacy policies of the distribution platforms (Google Play and Apple App Store).",
         "p2": "By using DolarMap, you agree to the practices described in this document. If you do not agree, we recommend that you do not use the application."
       },
       "controller": {
@@ -1605,8 +1605,8 @@
           "title": "3.6 Third-Party SDKs",
           "p1": "DolarMap integrates the following third-party SDKs that may process device data as described in this policy:",
           "items": [
-            "<strong>Firebase Authentication</strong> (Google LLC) – anonymous and Google-based authentication.",
-            "<strong>Firebase Cloud Messaging</strong> (Google LLC) – push notification delivery."
+            "<strong>Firebase Authentication</strong> (Google LLC) - anonymous and Google-based authentication.",
+            "<strong>Firebase Cloud Messaging</strong> (Google LLC) - push notification delivery."
           ],
           "p2": "No other third-party analytics, advertising, or crash-reporting SDKs are integrated into the application."
         },
@@ -1684,7 +1684,7 @@
         "p2": "No system is 100% secure. In the event of a security incident affecting personal data, we will notify the affected users as required by the LGPD."
       },
       "rights": {
-        "title": "9. Your Rights (LGPD – Art. 18)",
+        "title": "9. Your Rights (LGPD - Art. 18)",
         "p1": "As a personal data subject, you have the following rights, which can be exercised via the developer's contact email:",
         "items": [
           "<strong>Confirmation and access:</strong> to know what data we have about you and obtain a copy.",
@@ -1745,7 +1745,7 @@
     }
   },
   "terms": {
-    "title": "Terms of Use – DolarMap",
+    "title": "Terms of Use - DolarMap",
     "description": "Terms of Use for DolarMap, operated by Tecnologia Atual Servicos LTDA. Read our conditions for using the USD/BRL exchange rate monitoring application.",
     "header": "Terms of Use",
     "lastUpdatedPrefix": "Last updated",
@@ -1766,7 +1766,7 @@
         "li6": "Ranking of brokers and exchanges by best historical performance."
       },
       "informationalNature": {
-        "title": "3. Informational Nature – No Financial Advice",
+        "title": "3. Informational Nature - No Financial Advice",
         "p1": "All information displayed by DolarMap is for strictly informational and educational purposes. The application does not, under any circumstances, offer:",
         "li1": "Financial advisory or consulting services of any kind.",
         "li2": "Recommendations to buy, sell, or perform any other currency or asset transaction.",
@@ -1840,7 +1840,7 @@
   },
   "support": {
     "meta": {
-      "title": "Support – DolarMap",
+      "title": "Support - DolarMap",
       "description": "Get help with DolarMap. Find answers to common questions, manage your alerts, delete your account, or contact our support team."
     },
     "hero": {
@@ -2612,7 +2612,7 @@
     "hero": {
       "eyebrow": "Real-time USD/BRL intelligence",
       "headline": "The dollar rate,<br/>at its <em>best price.</em>",
-      "lede": "Your bank shows one USD/BRL rate. <strong>13+ crypto exchanges</strong> show another - sometimes 3–5% cheaper. DolarMap reveals the difference in real time, so you stop overpaying for dollars. No signup. No ads. Built for Brazil.",
+      "lede": "Your bank shows one USD/BRL rate. <strong>13+ crypto exchanges</strong> show another - sometimes 3-5% cheaper. DolarMap reveals the difference in real time, so you stop overpaying for dollars. No signup. No ads. Built for Brazil.",
       "livePill": "Live · 13 exchanges monitored · USD/BRL",
       "ctaPrimaryLabel": "Download DolarMap on Google Play (coming soon)",
       "ctaPrimarySmall": "Coming soon to",

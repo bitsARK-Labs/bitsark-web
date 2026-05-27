@@ -141,6 +141,31 @@ const pageDescription = isDomestic
   : `${ex.name} is a foreign exchange under Brazil's Law 14.754/2023. See if you must file IRPF, how to pay a 15% flat DARF, the DeCripto rules effective July 2026, and CNPJ ${op.cnpj ?? 'not registered'}.`;
 const pageUrl         = `https://bitsark.com/exchanges/${ex.slug}/`;
 
+// ── Dataset description (rich, citable, AI-Overview-ready) ────────
+// Engineered as a single-passage answer that GPT/Gemini/Perplexity can quote verbatim.
+// Lead with the verdict, then the load-bearing facts (CNPJ, BCB, Pix, fees, jurisdiction).
+const datasetDescription = (() => {
+  const verdict = isDomestic
+    ? `${ex.name} is classified as a Brazilian (domestic) crypto exchange under Receita Federal rules`
+    : `${ex.name} is classified as a foreign (offshore) crypto exchange under Brazilian Law 14.754/2023`;
+  const cnpjPart = op.cnpj
+    ? `holds CNPJ ${op.cnpj}`
+    : `has no CNPJ registered in Brazil`;
+  const bcbPart = op.bcb_authorized
+    ? `is listed as an authorized PSAV by Banco Central do Brasil`
+    : `is not listed as an authorized PSAV by Banco Central do Brasil`;
+  const pixPart = op.accepts_pix ? `accepts Pix deposits` : `does not accept Pix deposits`;
+  const feePart = (maker !== null && taker !== null)
+    ? `Trading fees: maker ${maker}, taker ${taker}.`
+    : `Trading fees not publicly disclosed.`;
+  const reportPart = isDomestic
+    ? `Reports monthly to Receita Federal via IN 1888.`
+    : (hasDec
+        ? `Will report annually via DeCripto (IN 2.291/2025) starting July 2026.`
+        : `Does not report directly to Receita Federal; user-side monthly IN 1888 declaration required when traded volume exceeds R$ 30,000.`);
+  return `${verdict}. The exchange ${cnpjPart} and ${bcbPart}, ${pixPart}. ${feePart} ${reportPart} Data covers regulatory status, tax obligations, trading fees, and jurisdiction (${isoCountryName(op.main_jurisdiction_iso)}) — independently verified and updated ${updatedAt ?? 'recently'} by bitsARK Labs.`;
+})();
+
 const alternates = [
   { hreflang: 'en',        href: pageUrl },
   { hreflang: 'pt-BR',     href: `https://bitsark.com/pt/exchanges/${ex.slug}/` },
@@ -164,29 +189,77 @@ const schema = {
       "inLanguage": lang,
       "isPartOf": { "@id": "https://bitsark.com/#website" },
       "about": { "@id": `${pageUrl}#dataset` },
+      "primaryImageOfPage": { "@id": `${pageUrl}#primaryimage` },
       "dateModified": updatedAtISO,
+      "datePublished": "2025-12-01",
       "breadcrumb": { "@id": `${pageUrl}#breadcrumb` },
       "publisher": { "@id": "https://bitsark.com/#organization" },
+      "reviewedBy": { "@id": "https://bitsark.com/#organization" },
+      "lastReviewed": updatedAtISO,
+    },
+    {
+      "@type": "ImageObject",
+      "@id": `${pageUrl}#primaryimage`,
+      "url": ogImage,
+      "contentUrl": ogImage,
+      "width": 1200,
+      "height": 630,
+      "caption": `${ex.name} — fiscal and operational profile in Brazil`,
     },
     {
       "@type": "Dataset",
       "@id": `${pageUrl}#dataset`,
-      "name": `${ex.name} - Fiscal and Operational Data in Brazil`,
-      "description": `Fiscal and operational data for ${ex.name} in Brazil. CNPJ: ${op.cnpj ?? 'N/A'}. Tax regime: ${taxRegimeLabel(fd.tax_regime ?? '', lang)}. BCB authorized: ${op.bcb_authorized ? 'Yes' : 'No'}. Accepts Pix: ${op.accepts_pix ? 'Yes' : 'No'}. Maker fee: ${maker ?? 'N/A'}. Taker fee: ${taker ?? 'N/A'}.`,
+      "name": `${ex.name} — Crypto Exchange Fiscal & Operational Profile (Brazil)`,
+      "alternateName": [
+        `${ex.name} Brazil CNPJ and tax regime data`,
+        `${ex.name} Receita Federal reporting status`,
+      ],
+      "description": datasetDescription,
       "url": pageUrl,
+      "sameAs": ex.website,
       "license": "https://bitsark.com/terms",
+      "isAccessibleForFree": true,
+      "datePublished": "2025-12-01",
       "dateModified": updatedAtISO,
+      "inLanguage": lang,
       "creator": { "@id": "https://bitsark.com/#organization" },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "spatialCoverage": {
+        "@type": "Place",
+        "name": "Brazil",
+        "geo": {
+          "@type": "GeoShape",
+          "addressCountry": "BR",
+        },
+      },
+      "temporalCoverage": `2025-12-01/${updatedAtISO.split('T')[0]}`,
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "CNPJ", "value": op.cnpj ?? "Not registered in Brazil" },
+        { "@type": "PropertyValue", "name": "Tax regime", "value": taxRegimeLabel(fd.tax_regime ?? '', lang) },
+        { "@type": "PropertyValue", "name": "BCB PSAV authorized", "value": op.bcb_authorized ? "Yes" : "No" },
+        { "@type": "PropertyValue", "name": "Accepts Pix", "value": op.accepts_pix ? "Yes" : "No" },
+        { "@type": "PropertyValue", "name": "Maker fee", "value": maker ?? "Not disclosed" },
+        { "@type": "PropertyValue", "name": "Taker fee", "value": taker ?? "Not disclosed" },
+        { "@type": "PropertyValue", "name": "Main jurisdiction", "value": isoCountryName(op.main_jurisdiction_iso) },
+        { "@type": "PropertyValue", "name": "Monthly BRL trade exemption", "value": (fd.monthly_brl_trade_exemption ?? 0) > 0 ? `R$ ${(fd.monthly_brl_trade_exemption ?? 0).toLocaleString('en-US')}` : "None" },
+        { "@type": "PropertyValue", "name": "Reports to Receita Federal", "value": (fd.exchange_rfb_reports ?? []).length > 0 ? (fd.exchange_rfb_reports ?? []).join(', ') : "No direct reporting" },
+      ],
       "distribution": {
         "@type": "DataDownload",
         "contentUrl": `https://api.bitsark.com/v1/exchanges/${ex.slug}`,
         "encodingFormat": "application/json",
+        "name": `${ex.name} fiscal data — JSON`,
       },
       "keywords": [
         ex.name, "crypto exchange brazil", "exchange CNPJ", "BCB PSAV",
         "crypto income tax declaration", "IN 1888", "DARF bitcoin",
         "trading fees", "Pix crypto", "crypto tax regime",
+        isDomestic ? "domestic exchange" : "offshore exchange",
+        isOffshore ? "Law 14.754" : "IN 1888 reporting",
       ],
+      "citation": isOffshore
+        ? "Lei nº 14.754/2023 (Brazil)"
+        : "Instrução Normativa RFB nº 1.888/2019 (Brazil)",
     },
     {
       "@type": "BreadcrumbList",
@@ -215,7 +288,10 @@ const schema = {
       "@id": `${pageUrl}#article`,
       "headline": pageTitle,
       "description": pageDescription,
-      "image": ogImage,
+      "abstract": datasetDescription,
+      "image": {
+        "@id": `${pageUrl}#primaryimage`
+      },
       "inLanguage": lang,
       "author": {
         "@type": "Person",
@@ -226,7 +302,15 @@ const schema = {
       "datePublished": "2025-12-01",
       "dateModified": updatedAtISO,
       "publisher": { "@id": "https://bitsark.com/#organization" },
-      "mainEntityOfPage": { "@id": `${pageUrl}#webpage` }
+      "mainEntityOfPage": { "@id": `${pageUrl}#webpage` },
+      "about": { "@id": `${pageUrl}#dataset` },
+      "isAccessibleForFree": true,
+      "articleSection": isDomestic ? "Brazilian Crypto Exchanges" : "Offshore Crypto Exchanges",
+      "keywords": [
+        ex.name, "Receita Federal", "crypto tax Brazil",
+        isDomestic ? "IN 1888" : "Law 14.754",
+        op.cnpj ? `CNPJ ${op.cnpj}` : "no CNPJ",
+      ].join(', ')
     },
   ],
 };

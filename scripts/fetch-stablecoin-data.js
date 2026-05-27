@@ -107,7 +107,7 @@ async function fetchGlobalMarketCap() {
   // Se vier algo radicalmente fora desse range, algo mudou na API e queremos saber.
   if (latest.marketCapUsd < 50e9 || latest.marketCapUsd > 2e12) {
     throw new Error(
-      `DefiLlama: latestMarketCapUsd fora do range esperado ($50bi–$2tri): ${latest.marketCapUsd}`
+      `DefiLlama: latestMarketCapUsd fora do range esperado ($50bi-$2tri): ${latest.marketCapUsd}`
     );
   }
 

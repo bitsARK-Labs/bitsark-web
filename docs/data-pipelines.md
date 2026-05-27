@@ -268,7 +268,7 @@ The page acknowledges this in its methodology callout - important for SEO honest
 | BCB row label changes | Medium | Medium | Same as above | [BCB layout change](./maintenance.md#bcb-layout-change) |
 | BCB XLSX format/sheets change | Low | Medium | Same as above | [BCB layout change](./maintenance.md#bcb-layout-change) |
 | DefiLlama endpoint changes | Low | **Critical** (fatal) | Workflow exits 1; site keeps last successful JSON | [DefiLlama down](./maintenance.md#defillama-down) |
-| DefiLlama returns wildly off numbers | Very low | Critical | Sanity check ($50bn–$2tn) trips; workflow exits 1 | [DefiLlama down](./maintenance.md#defillama-down) |
+| DefiLlama returns wildly off numbers | Very low | Critical | Sanity check ($50bn-$2tn) trips; workflow exits 1 | [DefiLlama down](./maintenance.md#defillama-down) |
 | Cloudflare Pages outage | Very low | Critical | Site offline | Cloudflare status; nothing to do on our side |
 
 ---

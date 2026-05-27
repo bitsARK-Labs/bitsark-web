@@ -1077,7 +1077,7 @@
           "questions": [
             {
               "q": "Quando a DeCripto entra em vigor?",
-              "a": "A DeCripto entra em vigor a partir de 1º de julho de 2026, substituindo o modelo atual previsto na IN 1.888/2019, que continua valendo até 30 de junho de 2026. Até junho/2026, seguem as regras atuais (IN 1.888/2019). A partir de julho/2026, as informações passam a ser prestadas pela Declaração de Criptoativos – DeCripto, via e‑CAC/Coleta Nacional."
+              "a": "A DeCripto entra em vigor a partir de 1º de julho de 2026, substituindo o modelo atual previsto na IN 1.888/2019, que continua valendo até 30 de junho de 2026. Até junho/2026, seguem as regras atuais (IN 1.888/2019). A partir de julho/2026, as informações passam a ser prestadas pela Declaração de Criptoativos - DeCripto, via e‑CAC/Coleta Nacional."
             },
             {
               "q": "Até quando vale a IN 1.888/2019?",
@@ -2219,7 +2219,7 @@
     "disclaimer": "<strong>Aviso legal:</strong> Este conteúdo é informativo e educacional. Não constitui consultoria contábil, tributária ou jurídica. A tributação de cripto-PJ depende de regime tributário (Simples, Presumido, Real), CNAE da atividade, planejamento societário e da regulação vigente - que está em evolução. Consulte um contador habilitado em CFC com experiência em ativos virtuais antes de tomar decisões."
   },
   "privacy": {
-    "title": "Política de Privacidade – DolarMap",
+    "title": "Política de Privacidade - DolarMap",
     "description": "Política de Privacidade do DolarMap. Saiba como a Tecnologia Atual Serviços LTDA trata seus dados em conformidade com a LGPD e as políticas da Apple App Store e Google Play.",
     "lastUpdated": "29 de abril de 2026",
     "lastUpdatedISO": "2026-04-29",
@@ -2228,7 +2228,7 @@
     "sections": {
       "intro": {
         "title": "1. Introdução",
-        "p1": "Esta Política de Privacidade descreve como o DolarMap trata os dados dos usuários, em conformidade com a Lei Geral de Proteção de Dados Pessoais (LGPD – Lei nº 13.709/2018) e as políticas de privacidade das plataformas de distribuição (Google Play e Apple App Store).",
+        "p1": "Esta Política de Privacidade descreve como o DolarMap trata os dados dos usuários, em conformidade com a Lei Geral de Proteção de Dados Pessoais (LGPD - Lei nº 13.709/2018) e as políticas de privacidade das plataformas de distribuição (Google Play e Apple App Store).",
         "p2": "Ao utilizar o DolarMap, você concorda com as práticas descritas neste documento. Caso não concorde, recomendamos que não utilize o aplicativo."
       },
       "controller": {
@@ -2278,8 +2278,8 @@
           "title": "3.6 SDKs de Terceiros",
           "p1": "O DolarMap integra os seguintes SDKs de terceiros que podem processar dados do dispositivo conforme descrito nesta política:",
           "items": [
-            "<strong>Firebase Authentication</strong> (Google LLC) – autenticação anônima e baseada em Google.",
-            "<strong>Firebase Cloud Messaging</strong> (Google LLC) – entrega de notificações push."
+            "<strong>Firebase Authentication</strong> (Google LLC) - autenticação anônima e baseada em Google.",
+            "<strong>Firebase Cloud Messaging</strong> (Google LLC) - entrega de notificações push."
           ],
           "p2": "Nenhum outro SDK de análise de terceiros, publicidade ou relatório de erros está integrado ao aplicativo."
         },
@@ -2357,7 +2357,7 @@
         ]
       },
       "rights": {
-        "title": "9. Seus Direitos (LGPD – Art. 18)",
+        "title": "9. Seus Direitos (LGPD - Art. 18)",
         "p1": "Como titular de dados pessoais, você possui os seguintes direitos, que podem ser exercidos através do e-mail de contato do desenvolvedor:",
         "items": [
           "Confirmação e acesso aos dados.",
@@ -2418,7 +2418,7 @@
     }
   },
   "terms": {
-    "title": "Termos de Uso – DolarMap",
+    "title": "Termos de Uso - DolarMap",
     "description": "Termos de Uso para DolarMap, operado por Tecnologia Atual Serviços LTDA. Leia nossas condições para usar o aplicativo de monitoramento da taxa de câmbio USD/BRL.",
     "header": "Termos de Uso",
     "lastUpdatedPrefix": "Última atualização",
@@ -2439,7 +2439,7 @@
         "li6": "Ranking de corretoras e exchanges por melhor desempenho histórico."
       },
       "informationalNature": {
-        "title": "3. Caráter Informativo – Sem Aconselhamento Financeiro",
+        "title": "3. Caráter Informativo - Sem Aconselhamento Financeiro",
         "p1": "Todas as informações exibidas pelo DolarMap são para fins estritamente informativos e educacionais. O aplicativo não oferece, sob nenhuma circunstância:",
         "li1": "Serviços de consultoria ou aconselhamento financeiro de qualquer tipo.",
         "li2": "Recomendações para comprar, vender ou realizar qualquer outra transação de moeda ou ativo.",
@@ -2513,7 +2513,7 @@
   },
   "support": {
     "meta": {
-      "title": "Suporte – DolarMap",
+      "title": "Suporte - DolarMap",
       "description": "Obtenha ajuda com o DolarMap. Encontre respostas para perguntas comuns, gerencie seus alertas, exclua sua conta ou entre em contato com nossa equipe."
     },
     "hero": {
