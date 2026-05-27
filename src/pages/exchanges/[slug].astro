@@ -32,10 +32,13 @@ const lang         = 'en';
 const updatedAt = ex.updated_at
   ? new Date(ex.updated_at).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })
   : null;
-// ISO 8601 para dateModified nos schemas
+// ISO 8601 com timezone (UTC) para datas em schemas — exigido pelo Google Rich Results.
+// Datas-só (YYYY-MM-DD) são aceitas mas geram aviso "missing timezone";
+// padronizamos em ISO 8601 completo (YYYY-MM-DDTHH:mm:ss.sssZ).
 const updatedAtISO = ex.updated_at
   ? new Date(ex.updated_at).toISOString()
   : new Date().toISOString();
+const publishedAtISO = '2025-12-01T00:00:00.000Z';
 
 // ── Helpers ────────────────────────────────────────────────────────
 function isoCountryName(iso: string | null | undefined): string {
@@ -191,7 +194,7 @@ const schema = {
       "about": { "@id": `${pageUrl}#dataset` },
       "primaryImageOfPage": { "@id": `${pageUrl}#primaryimage` },
       "dateModified": updatedAtISO,
-      "datePublished": "2025-12-01",
+      "datePublished": publishedAtISO,
       "breadcrumb": { "@id": `${pageUrl}#breadcrumb` },
       "publisher": { "@id": "https://bitsark.com/#organization" },
       "reviewedBy": { "@id": "https://bitsark.com/#organization" },
@@ -219,7 +222,7 @@ const schema = {
       "sameAs": ex.website,
       "license": "https://bitsark.com/terms",
       "isAccessibleForFree": true,
-      "datePublished": "2025-12-01",
+      "datePublished": publishedAtISO,
       "dateModified": updatedAtISO,
       "inLanguage": lang,
       "creator": { "@id": "https://bitsark.com/#organization" },
@@ -299,7 +302,7 @@ const schema = {
         "url": "https://bitsark.com/about/"
       },
       "license": "https://bitsark.com/terms",
-      "datePublished": "2025-12-01",
+      "datePublished": publishedAtISO,
       "dateModified": updatedAtISO,
       "publisher": { "@id": "https://bitsark.com/#organization" },
       "mainEntityOfPage": { "@id": `${pageUrl}#webpage` },

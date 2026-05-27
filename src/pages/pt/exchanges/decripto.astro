@@ -6,8 +6,11 @@ import '@styles/pages/decripto.css';
 const t = useTranslations('pt-BR');
 
 const canonical = 'https://bitsark.com/pt/exchanges/decripto/';
-const datePublished = '2025-12-01';
-const dateModified = '2026-05-11';
+/* ISO 8601 com timezone (UTC) — exigido pelo Google Rich Results.
+   Datas-só (YYYY-MM-DD) geram aviso "missing timezone" no rich-results test. */
+const datePublished    = '2025-12-01T00:00:00.000Z';
+const dateModified     = '2026-05-11T00:00:00.000Z';
+const dateModifiedDate = '2026-05-11';   /* apenas para Intl.DateTimeFormat */
 
 const alternates = [
   { hreflang: 'en',        href: 'https://bitsark.com/exchanges/decripto/' },
@@ -127,7 +130,7 @@ const icons: Record<string, string> = {
         </div>
         <p class="dc-hero__meta">
           <time datetime={dateModified}>
-            {t.decripto.meta.lastReviewedLabel}: {new Date(dateModified + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}
+            {t.decripto.meta.lastReviewedLabel}: {new Date(dateModifiedDate + 'T12:00:00Z').toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })}
           </time>
           <span class="dc-hero__meta-sep" aria-hidden="true">·</span>
           <span class="dc-hero__meta-disclaimer">{t.decripto.meta.disclaimerNotLegal}</span>

@@ -6,8 +6,11 @@ import "@styles/pages/receber-exterior-pj.css";
 /*  Constantes editoriais  */
 const locale        = "en-US";
 const canonical     = "https://bitsark.com/stablecoins-brasil/receber-exterior-pj/";
-const datePublished = "2026-05-16";
-const dateModified  = "2026-05-16";
+/* ISO 8601 com timezone (UTC) — exigido pelo Google Rich Results.
+   Datas-só (YYYY-MM-DD) geram aviso "missing timezone" no rich-results test. */
+const datePublished    = "2026-05-16T00:00:00.000Z";
+const dateModified     = "2026-05-16T00:00:00.000Z";
+const dateModifiedDate = "2026-05-16";   /* apenas para Intl.DateTimeFormat */
 
 /* PTAX-venda hardcoded · atualizar editorialmente com dateModified */
 const ptaxRef     = 5.10;
@@ -28,7 +31,7 @@ const iofStableProposedPct = 3.5; /* IOF stablecoin (CP 99/2026) */
 
 const rep = t.receber_exterior_pj;
 
-const dateModifiedDisplay = new Date(dateModified + "T12:00:00Z")
+const dateModifiedDisplay = new Date(dateModifiedDate + "T12:00:00Z")
   .toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 
 const ptaxFormatted = new Intl.NumberFormat(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(ptaxRef);
