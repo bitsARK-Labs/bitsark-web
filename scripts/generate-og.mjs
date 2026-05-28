@@ -24,8 +24,6 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
-import ptTranslations from '../src/i18n/pt.json';
-
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const OUT_DIR = join(ROOT, 'public', 'og');
@@ -34,6 +32,9 @@ mkdirSync(CACHE_DIR, { recursive: true });
 
 const exchanges = JSON.parse(
   readFileSync(join(ROOT, 'src', 'data', 'exchanges.json'), 'utf8')
+);
+const ptTranslations = JSON.parse(
+  readFileSync(join(ROOT, 'src', 'i18n', 'pt.json'), 'utf8')
 );
 
 // ── Brand tokens (mirror src/styles/global.css) ─────────────────────────

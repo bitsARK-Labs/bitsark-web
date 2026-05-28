@@ -12,7 +12,7 @@
 |---|---|---|
 | **Site estático** | Cloudflare Pages | Astro build, output static, sem adapter |
 | **Domínio raiz** | `bitsark.com` (proxied) | apex via Pages |
-| **www** | `www.bitsark.com` → `bitsark.com` 301 | via [`public/_redirects`](../../public/_redirects) |
+| **www** | `www.bitsark.com` → `bitsark.com` 301 | Pages → Custom domains → adicionar `www.bitsark.com` (Cloudflare cria CNAME + SSL). Redirect: [`public/_redirects`](../../public/_redirects) |
 | **CDN de assets** | `assets.bitsark.com` | logos SVG |
 | **API pública** | `api.bitsark.com` | usado pelo site e pela função `feedback` |
 | **API do app DolarMap** | `apidolarmap.bitsark.com` | uso exclusivo do app mobile |
@@ -119,7 +119,17 @@ Action - Add directive; Directive - max-age; Duration (seconds) - 31536000; Clou
 Action - Add directive; Directive - public; Cloudflare only -> OFF
 ```
 
-### 5.2c `assets.bitsark.com` — raiz redireciona para bitsark.com
+### 5.2c `www.bitsark.com` — redireciona para apex
+Redirect Rule (Rules → Redirect Rules, não `_redirects`):
+```
+Name: Redirect from WWW to root [Template]
+Expression (Wildcard): URI Full wildcard  r"https://www.*"
+Action: Dynamic 301 redirect
+URL: wildcard_replace(http.request.full_uri, r"https://www.*", r"https://${1}")
+```
+> **Por que Redirect Rule e não `_redirects`:** quando `www` é Custom Domain no Pages, o Pages serve `200 OK` direto em qualquer path real, ignorando o `_redirects`. A Redirect Rule intercepta no edge, antes do Pages, e funciona para qualquer path. O `_redirects` ficou com a linha `www → apex` mas ela nunca é atingida — a Redirect Rule é a fonte de verdade.
+
+### 5.2d `assets.bitsark.com` — raiz redireciona para bitsark.com
 Redirect Rule (Rules → Redirect Rules, não Cache Rule):
 ```
 Name: assets.bitsark.com -> root redirect to bitsark.com
@@ -243,6 +253,8 @@ Action: Block
 | HSTS reclamando no hstspreload.org | `_headers` diz 2 anos, painel diz 12 meses — preload list lê do header que chega | Garantir `_headers` permanece em 63072000 |
 | Cache Rule "expressão inválida" ao salvar | Tentativa de usar brace `{a,b}` em wildcard | Usar `http.request.uri.path.extension in {...}` |
 | GSC reporta 404 em `assets.bitsark.com/` | Raiz do subdomínio sem conteúdo — Redirect Rule §5.2c ausente | Rules → Redirect Rules → confirmar §5.2c existe e está ativa |
+| `www.bitsark.com` não resolve (ERR_NAME_NOT_RESOLVED) | Custom domain não cadastrado no Pages | Pages → bitsark-web → Custom domains → adicionar `www.bitsark.com` |
+| `www.bitsark.com` serve `200 OK` em vez de redirecionar | Pages serve o site no custom domain, `_redirects` é ignorado para paths reais | Rules → Redirect Rules → confirmar regra §5.2c existe com `concat("https://bitsark.com", http.request.uri.path)` |
 
 ---
 
@@ -274,6 +286,10 @@ curl -I https://bitsark.com/sitemap-index.xml
 curl -I https://bitsark.com/_astro/[hash].css
 # Esperado: cache-control: public, max-age=31536000, immutable
 ```
+
+# 7. www redireciona para apex
+curl -I https://www.bitsark.com/ --max-redirs 0
+# Esperado: HTTP/1.1 301, Location: https://bitsark.com/
 
 **Visual:**
 - Chrome DevTools → Network → header `103 Early Hints` deve aparecer antes do `200` em navegações cold.
