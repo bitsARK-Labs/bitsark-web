@@ -5,9 +5,12 @@ import { taxRegimeLabel, isoFlag, fmtFee } from '@lib/exchanges';
 import exchanges from '@data/exchanges.json';
 import '@styles/pages/exchanges.css';
 
+const PAGE_URL  = 'https://bitsark.com/pt/exchanges/';
+const PAGE_LANG = 'pt-BR';
+
 const alternates = [
   { hreflang: 'en',        href: 'https://bitsark.com/exchanges/' },
-  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/' },
+  { hreflang: 'pt-BR',     href: PAGE_URL },
   { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/' },
 ];
 
@@ -61,18 +64,6 @@ const exchangesData = exchanges.map((ex: any) => {
   };
 });
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    ...t.exchanges.faq.items.map(item => ({
-      "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": { "@type": "Answer", "text": item.a }
-    }))
-  ]
-};
-
 const COLUMNS: { id: string; label: string; default: boolean }[] = [
   { id: 'col-country',      label: t.exchanges.table.cols.country,  default: true },
   { id: 'col-rfb',          label: t.exchanges.table.cols.rfb,      default: true },
@@ -81,7 +72,191 @@ const COLUMNS: { id: string; label: string; default: boolean }[] = [
   { id: 'col-obligations',  label: t.exchanges.table.cols.rules,    default: true },
 ];
 
-const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+// dateModified real, derivado do dado mais recente — não do build-time.
+const updatedAtISO = (() => {
+  const max = exchanges.reduce((m: string, e: any) => {
+    const u = e.updated_at ?? '';
+    return u > m ? u : m;
+  }, '');
+  return max ? new Date(max).toISOString() : new Date().toISOString();
+})();
+const PUBLISHED_AT_ISO = '2025-12-01T00:00:00.000Z';
+const updatedAt = new Date(updatedAtISO).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+// Agregados para sumário citável + Dataset.variableMeasured.
+const agg = exchangesData.reduce(
+  (acc, ex) => {
+    if (ex.cnpjFmt)     acc.withCnpj++;
+    if (ex.bcb)         acc.bcb++;
+    if (ex.pix)         acc.pix++;
+    if (ex.hasIn1888)   acc.in1888++;
+    if (ex.rfbReports.includes('decripto_annually')) acc.decripto++;
+    if (ex.taxRegime.includes('domestic_exchange')) acc.domestic++;
+    if (ex.taxRegime === 'offshore_law_14754')      acc.offshore++;
+    return acc;
+  },
+  { withCnpj: 0, bcb: 0, pix: 0, in1888: 0, decripto: 0, domestic: 0, offshore: 0 }
+);
+
+const datasetDescription =
+  `Conjunto de dados 2026 com ${exchangesData.length} corretoras de criptoativos que atendem residentes no Brasil, ` +
+  `verificado de forma independente pela bitsARK Labs. ${agg.domestic} são classificadas como nacionais pela Receita Federal ` +
+  `e ${agg.offshore} como offshore sob a Lei 14.754/2023. ${agg.withCnpj} possuem CNPJ ativo no Brasil, ` +
+  `${agg.bcb} são autorizadas como PSAV pelo Banco Central do Brasil e ${agg.pix} aceitam Pix. ` +
+  `${agg.in1888} reportam mensalmente à Receita Federal via IN 1888 e ${agg.decripto} reportarão anualmente pela DeCripto (IN 2.291/2025) a partir de julho de 2026. ` +
+  `Cada registro cobre: CNPJ, autorização BCB, regime tributário, IN 1888, Pix, taxas maker/taker, isenção mensal de R$ 35.000, ` +
+  `jurisdição principal e obrigações do contribuinte.`;
+
+const itemListElements = exchangesData.map((ex, i) => ({
+  "@type": "ListItem",
+  "position": i + 1,
+  "url": `https://bitsark.com/pt/exchanges/${ex.slug}/`,
+  "name": ex.name,
+}));
+
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${PAGE_URL}#webpage`,
+      "url": PAGE_URL,
+      "name": t.exchanges.meta.title,
+      "description": t.exchanges.meta.description,
+      "inLanguage": PAGE_LANG,
+      "isPartOf": { "@id": "https://bitsark.com/#website" },
+      "about": { "@id": `${PAGE_URL}#dataset` },
+      "mainEntity": { "@id": `${PAGE_URL}#dataset` },
+      "primaryImageOfPage": { "@id": `${PAGE_URL}#primaryimage` },
+      "breadcrumb": { "@id": `${PAGE_URL}#breadcrumb` },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "reviewedBy": { "@id": "https://bitsark.com/#organization" },
+      "datePublished": PUBLISHED_AT_ISO,
+      "dateModified": updatedAtISO,
+      "lastReviewed": updatedAtISO,
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".exch-summary", ".exch-tldr-a", ".faq-answer"],
+      },
+    },
+    {
+      "@type": "ImageObject",
+      "@id": `${PAGE_URL}#primaryimage`,
+      "url": "https://bitsark.com/og/exchanges.png",
+      "contentUrl": "https://bitsark.com/og/exchanges.png",
+      "width": 1200,
+      "height": 630,
+      "caption": "Corretoras de criptoativos no Brasil — perfil fiscal e operacional",
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${PAGE_URL}#breadcrumb`,
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Início",    "item": "https://bitsark.com/pt/" },
+        { "@type": "ListItem", "position": 2, "name": "Corretoras", "item": PAGE_URL },
+      ],
+    },
+    {
+      "@type": "Dataset",
+      "@id": `${PAGE_URL}#dataset`,
+      "name": "Corretoras de criptoativos no Brasil — Perfil fiscal e operacional (2026)",
+      "alternateName": [
+        "Dataset de reporte tributário das exchanges brasileiras",
+        "Classificação IN 1888 e Lei 14.754 das corretoras",
+      ],
+      "description": datasetDescription,
+      "url": PAGE_URL,
+      "license": "https://bitsark.com/terms",
+      "isAccessibleForFree": true,
+      "datePublished": PUBLISHED_AT_ISO,
+      "dateModified": updatedAtISO,
+      "inLanguage": PAGE_LANG,
+      "creator":   { "@id": "https://bitsark.com/#organization" },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "spatialCoverage": {
+        "@type": "Place",
+        "name": "Brasil",
+        "geo": { "@type": "GeoShape", "addressCountry": "BR" },
+      },
+      "temporalCoverage": `2025-12-01/${updatedAtISO.split('T')[0]}`,
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Quantidade de corretoras cobertas", "value": exchangesData.length },
+        { "@type": "PropertyValue", "name": "Corretoras com CNPJ ativo",         "value": agg.withCnpj },
+        { "@type": "PropertyValue", "name": "Corretoras autorizadas como PSAV pelo BCB", "value": agg.bcb },
+        { "@type": "PropertyValue", "name": "Corretoras que aceitam Pix",        "value": agg.pix },
+        { "@type": "PropertyValue", "name": "Corretoras que reportam IN 1888 mensalmente", "value": agg.in1888 },
+        { "@type": "PropertyValue", "name": "Corretoras que reportam DeCripto anualmente (a partir de jul/2026)", "value": agg.decripto },
+        { "@type": "PropertyValue", "name": "Corretoras nacionais (Receita Federal)", "value": agg.domestic },
+        { "@type": "PropertyValue", "name": "Corretoras offshore (Lei 14.754/2023)", "value": agg.offshore },
+      ],
+      "distribution": {
+        "@type": "DataDownload",
+        "contentUrl": "https://api.bitsark.com/v1/exchanges",
+        "encodingFormat": "application/json",
+        "name": "API bitsARK Exchanges — JSON",
+      },
+      "keywords": [
+        "corretoras cripto brasil", "exchange CNPJ", "BCB PSAV",
+        "IN 1888", "DeCripto", "Lei 14.754",
+        "declaração imposto cripto", "DARF bitcoin",
+        "Pix cripto", "Receita Federal cripto",
+        "exchange nacional", "exchange offshore",
+      ],
+      "citation": [
+        "Instrução Normativa RFB nº 1.888/2019",
+        "Instrução Normativa RFB nº 2.291/2025 — DeCripto",
+        "Lei nº 14.754/2023",
+      ],
+      "hasPart": exchangesData.map(ex => ({
+        "@type": "Dataset",
+        "name": `${ex.name} — perfil fiscal`,
+        "url": `https://bitsark.com/pt/exchanges/${ex.slug}/`,
+      })),
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${PAGE_URL}#itemlist`,
+      "name": "Todas as corretoras de cripto disponíveis para brasileiros (2026)",
+      "description": `${exchangesData.length} corretoras classificadas por reporte à Receita Federal e licenciamento BCB.`,
+      "numberOfItems": exchangesData.length,
+      "itemListOrder": "https://schema.org/ItemListUnordered",
+      "itemListElement": itemListElements,
+    },
+    {
+      "@type": "Article",
+      "@id": `${PAGE_URL}#article`,
+      "headline": t.exchanges.meta.title,
+      "description": t.exchanges.meta.description,
+      "abstract": datasetDescription,
+      "image": { "@id": `${PAGE_URL}#primaryimage` },
+      "inLanguage": PAGE_LANG,
+      "author": {
+        "@type": "Person",
+        "@id": "https://bitsark.com/about/#ricardo",
+        "name": "Ricardo Delfino",
+        "url": "https://bitsark.com/about/",
+      },
+      "license": "https://bitsark.com/terms",
+      "datePublished": PUBLISHED_AT_ISO,
+      "dateModified": updatedAtISO,
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "mainEntityOfPage": { "@id": `${PAGE_URL}#webpage` },
+      "about": { "@id": `${PAGE_URL}#dataset` },
+      "isAccessibleForFree": true,
+      "articleSection": "Reporte tributário de corretoras de criptoativos no Brasil",
+      "keywords": "corretoras cripto Brasil, Receita Federal, IN 1888, Lei 14.754, DeCripto, CNPJ, BCB PSAV",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${PAGE_URL}#faq`,
+      "mainEntity": t.exchanges.faq.items.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a },
+      })),
+    },
+  ],
+};
 ---
 
 <Base
@@ -91,11 +266,11 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
   canonical="https://bitsark.com/pt/exchanges/"
   alternates={alternates}
   ogImage="https://bitsark.com/og/exchanges.png"
-  schema={faqSchema}
+  schema={schema}
 >
 
   <!--  Header  -->
-  <section class="exch-header">
+  <section class="exch-header" aria-labelledby="exch-h1">
     <div class="exch-header-glow" aria-hidden="true"></div>
     <div class="exch-header-grid-bg" aria-hidden="true"></div>
     <div class="container exch-header-inner">
@@ -112,7 +287,7 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
           {t.exchanges.header.rankTag}
         </div>
       </div>
-      <h1 class="exch-header__title" set:html={t.exchanges.header.title} />
+      <h1 id="exch-h1" class="exch-header__title" set:html={t.exchanges.header.title} />
       <div class="exch-header__flex">
         <p class="exch-header__sub" set:html={t.exchanges.header.sub} />
         <a href="/exchanges/api" class="nav__cta">
@@ -123,6 +298,18 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
           {t.exchanges.header.ctaApi}
         </a>
       </div>
+
+      <p class="exch-summary">
+        Em <time datetime={updatedAtISO}>{updatedAt}</time>,
+        <strong>{exchangesData.length} corretoras de criptoativos</strong> atendem residentes no Brasil:
+        <strong>{agg.domestic}</strong> são nacionais pela Receita Federal e
+        <strong>{agg.offshore}</strong> são offshore pela Lei 14.754/2023.
+        <strong>{agg.withCnpj}</strong> possuem CNPJ no Brasil,
+        <strong>{agg.bcb}</strong> são autorizadas como PSAV pelo Banco Central,
+        <strong>{agg.pix}</strong> aceitam Pix e
+        <strong>{agg.in1888}</strong> reportam mensalmente à Receita via IN 1888.
+        A partir de julho de 2026, a <strong>DeCripto (IN 2.291/2025)</strong> substitui a IN 1888 e estende o reporte automático também às offshore que aderirem.
+      </p>
     </div>
   </section>
 
@@ -461,6 +648,60 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
     </div>
   </section>
 
+  <!-- Per-exchange deep links (descriptive anchors → ItemList + filhos) -->
+  <section class="section section--alt section--tight" id="compare" aria-labelledby="compare-h2">
+    <div class="container">
+      <div class="exch-block-head">
+        <p class="eyebrow eyebrow--icon">Perfil tributário por corretora</p>
+        <h2 id="compare-h2" class="exch-block-title">Compare cada corretora</h2>
+        <p class="exch-block-sub">Abra a página de qualquer corretora para ver CNPJ, reporte IN 1888, taxas e exatamente o que você deve para a Receita Federal.</p>
+      </div>
+
+      <div class="exch-deep-grid">
+        <div class="exch-deep-col">
+          <h3 class="exch-deep-col__title">Nacionais (Receita Federal · IN 1888)</h3>
+          <ul class="exch-deep-list" role="list">
+            {exchangesData
+              .filter(ex => ex.taxRegime.includes('domestic_exchange'))
+              .map(ex => (
+                <li>
+                  <a href={`/pt/exchanges/${ex.slug}/`} class="exch-deep-link">
+                    <span class="exch-deep-link__name">Impostos da {ex.name} no Brasil</span>
+                    <span class="exch-deep-link__hint">
+                      {ex.cnpjFmt ? `CNPJ ${ex.cnpjFmt}` : 'Regime nacional'}
+                      {ex.bcb ? ' · BCB' : ''}
+                      {ex.hasIn1888 ? ' · IN 1888' : ''}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="exch-deep-col">
+          <h3 class="exch-deep-col__title">Offshore (Lei 14.754/2023)</h3>
+          <ul class="exch-deep-list" role="list">
+            {exchangesData
+              .filter(ex => ex.taxRegime === 'offshore_law_14754')
+              .map(ex => (
+                <li>
+                  <a href={`/pt/exchanges/${ex.slug}/`} class="exch-deep-link">
+                    <span class="exch-deep-link__name">Impostos da {ex.name} para brasileiros</span>
+                    <span class="exch-deep-link__hint">
+                      Offshore · {ex.countryName}
+                      {ex.hasIn1888 ? ' · IN 1888' : ''}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!--  Decision flow  -->
   <section class="section section--alt" id="decide">
     <div class="container">
@@ -605,7 +846,7 @@ const updatedAt = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 
 
       <p class="exch-sources-meta">
         <span>{t.exchanges.sources.lastUpdatedLabel}:</span>
-        <strong>{updatedAt}</strong>
+        <strong><time datetime={updatedAtISO}>{updatedAt}</time></strong>
       </p>
     </div>
   </section>

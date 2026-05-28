@@ -5,10 +5,13 @@ import { taxRegimeLabel, isoFlag, fmtFee } from '@lib/exchanges';
 import exchanges from '@data/exchanges.json';
 import '@styles/pages/exchanges.css';
 
+const PAGE_URL  = 'https://bitsark.com/exchanges/';
+const PAGE_LANG = 'en';
+
 const alternates = [
-  { hreflang: 'en',        href: 'https://bitsark.com/exchanges/' },
+  { hreflang: 'en',        href: PAGE_URL },
   { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/' },
-  { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/' },
+  { hreflang: 'x-default', href: PAGE_URL },
 ];
 
 function fmtCnpj(c: string | null | undefined): string | null {
@@ -61,18 +64,6 @@ const exchangesData = exchanges.map((ex: any) => {
   };
 });
 
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    ...t.exchanges.faq.items.map(item => ({
-      "@type": "Question",
-      "name": item.q,
-      "acceptedAnswer": { "@type": "Answer", "text": item.a }
-    }))
-  ]
-};
-
 const COLUMNS: { id: string; label: string; default: boolean }[] = [
   { id: 'col-country',      label: t.exchanges.table.cols.country,  default: true },
   { id: 'col-rfb',          label: t.exchanges.table.cols.rfb,      default: true },
@@ -81,8 +72,196 @@ const COLUMNS: { id: string; label: string; default: boolean }[] = [
   { id: 'col-obligations',  label: t.exchanges.table.cols.rules,    default: true },
 ];
 
-/*  Page-last-updated stamp  */
-const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+// ── Real dateModified: derived from the freshest exchange record, not build time. ──
+// Build-time `new Date()` makes Google see a fake freshness signal on every deploy;
+// using `max(updated_at)` ties the page's modification date to the underlying data.
+const updatedAtISO = (() => {
+  const max = exchanges.reduce((m: string, e: any) => {
+    const u = e.updated_at ?? '';
+    return u > m ? u : m;
+  }, '');
+  return max ? new Date(max).toISOString() : new Date().toISOString();
+})();
+const PUBLISHED_AT_ISO = '2025-12-01T00:00:00.000Z';
+const updatedAt = new Date(updatedAtISO).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+// ── Aggregates: scannable, citable summary used in prose + Dataset.variableMeasured ──
+const agg = exchangesData.reduce(
+  (acc, ex) => {
+    if (ex.cnpjFmt)     acc.withCnpj++;
+    if (ex.bcb)         acc.bcb++;
+    if (ex.pix)         acc.pix++;
+    if (ex.hasIn1888)   acc.in1888++;
+    if (ex.rfbReports.includes('decripto_annually')) acc.decripto++;
+    if (ex.taxRegime.includes('domestic_exchange')) acc.domestic++;
+    if (ex.taxRegime === 'offshore_law_14754')      acc.offshore++;
+    return acc;
+  },
+  { withCnpj: 0, bcb: 0, pix: 0, in1888: 0, decripto: 0, domestic: 0, offshore: 0 }
+);
+
+// ── Dataset description: load-bearing single passage that GPT/Gemini/Perplexity can quote verbatim. ──
+const datasetDescription =
+  `Comprehensive 2026 dataset of ${exchangesData.length} crypto exchanges that serve Brazilian residents, ` +
+  `independently verified by bitsARK Labs. ${agg.domestic} are classified as domestic exchanges under Receita Federal rules ` +
+  `and ${agg.offshore} as offshore under Law 14.754/2023. ${agg.withCnpj} hold an active Brazilian CNPJ, ` +
+  `${agg.bcb} are authorized as PSAV by Banco Central do Brasil, and ${agg.pix} accept Pix deposits. ` +
+  `${agg.in1888} report monthly to Receita Federal via IN 1888 and ${agg.decripto} will report annually via DeCripto (IN 2.291/2025) starting July 2026. ` +
+  `Each exchange entry covers: CNPJ, BCB licensing, tax regime, IN 1888 reporting, Pix support, maker/taker fees, monthly R$ 35,000 capital-gains exemption eligibility, ` +
+  `main jurisdiction, and user-side declaration obligations.`;
+
+// ── ItemList: sinaliza ao Google que esta é a hub canônica das 24 [slug] children. ──
+const itemListElements = exchangesData.map((ex, i) => ({
+  "@type": "ListItem",
+  "position": i + 1,
+  "url": `https://bitsark.com/exchanges/${ex.slug}/`,
+  "name": ex.name,
+}));
+
+// ── @graph: WebPage + Dataset + ItemList + BreadcrumbList + FAQPage + Article + ImageObject ──
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${PAGE_URL}#webpage`,
+      "url": PAGE_URL,
+      "name": t.exchanges.meta.title,
+      "description": t.exchanges.meta.description,
+      "inLanguage": PAGE_LANG,
+      "isPartOf": { "@id": "https://bitsark.com/#website" },
+      "about": { "@id": `${PAGE_URL}#dataset` },
+      "mainEntity": { "@id": `${PAGE_URL}#dataset` },
+      "primaryImageOfPage": { "@id": `${PAGE_URL}#primaryimage` },
+      "breadcrumb": { "@id": `${PAGE_URL}#breadcrumb` },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "reviewedBy": { "@id": "https://bitsark.com/#organization" },
+      "datePublished": PUBLISHED_AT_ISO,
+      "dateModified": updatedAtISO,
+      "lastReviewed": updatedAtISO,
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".exch-summary", ".exch-tldr-a", ".faq-answer"],
+      },
+    },
+    {
+      "@type": "ImageObject",
+      "@id": `${PAGE_URL}#primaryimage`,
+      "url": "https://bitsark.com/og/exchanges.png",
+      "contentUrl": "https://bitsark.com/og/exchanges.png",
+      "width": 1200,
+      "height": 630,
+      "caption": "Crypto Exchanges in Brazil — fiscal and operational comparison",
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${PAGE_URL}#breadcrumb`,
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home",      "item": "https://bitsark.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Exchanges", "item": PAGE_URL },
+      ],
+    },
+    {
+      "@type": "Dataset",
+      "@id": `${PAGE_URL}#dataset`,
+      "name": "Crypto Exchanges in Brazil — Fiscal & Operational Profile (2026)",
+      "alternateName": [
+        "Brazilian crypto exchanges tax reporting dataset",
+        "Receita Federal IN 1888 and Law 14.754 exchange classification",
+      ],
+      "description": datasetDescription,
+      "url": PAGE_URL,
+      "license": "https://bitsark.com/terms",
+      "isAccessibleForFree": true,
+      "datePublished": PUBLISHED_AT_ISO,
+      "dateModified": updatedAtISO,
+      "inLanguage": PAGE_LANG,
+      "creator":   { "@id": "https://bitsark.com/#organization" },
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "spatialCoverage": {
+        "@type": "Place",
+        "name": "Brazil",
+        "geo": { "@type": "GeoShape", "addressCountry": "BR" },
+      },
+      "temporalCoverage": `2025-12-01/${updatedAtISO.split('T')[0]}`,
+      "variableMeasured": [
+        { "@type": "PropertyValue", "name": "Number of exchanges covered",   "value": exchangesData.length },
+        { "@type": "PropertyValue", "name": "Exchanges with active CNPJ",    "value": agg.withCnpj },
+        { "@type": "PropertyValue", "name": "BCB PSAV authorized exchanges", "value": agg.bcb },
+        { "@type": "PropertyValue", "name": "Exchanges accepting Pix",       "value": agg.pix },
+        { "@type": "PropertyValue", "name": "Exchanges reporting IN 1888 monthly", "value": agg.in1888 },
+        { "@type": "PropertyValue", "name": "Exchanges reporting DeCripto annually (from Jul 2026)", "value": agg.decripto },
+        { "@type": "PropertyValue", "name": "Domestic exchanges (Receita Federal)", "value": agg.domestic },
+        { "@type": "PropertyValue", "name": "Offshore exchanges (Law 14.754/2023)", "value": agg.offshore },
+      ],
+      "distribution": {
+        "@type": "DataDownload",
+        "contentUrl": "https://api.bitsark.com/v1/exchanges",
+        "encodingFormat": "application/json",
+        "name": "bitsARK Exchanges API — JSON",
+      },
+      "keywords": [
+        "crypto exchanges brazil", "exchange CNPJ", "BCB PSAV",
+        "IN 1888", "DeCripto", "Law 14.754",
+        "crypto income tax declaration brazil", "DARF bitcoin",
+        "Pix crypto", "Receita Federal crypto",
+        "domestic exchange", "offshore exchange",
+      ],
+      "citation": [
+        "Instrução Normativa RFB nº 1.888/2019 (Brazil)",
+        "Instrução Normativa RFB nº 2.291/2025 — DeCripto (Brazil)",
+        "Lei nº 14.754/2023 (Brazil)",
+      ],
+      "hasPart": exchangesData.map(ex => ({
+        "@type": "Dataset",
+        "name": `${ex.name} — fiscal profile`,
+        "url": `https://bitsark.com/exchanges/${ex.slug}/`,
+      })),
+    },
+    {
+      "@type": "ItemList",
+      "@id": `${PAGE_URL}#itemlist`,
+      "name": "All crypto exchanges available to Brazilians (2026)",
+      "description": `${exchangesData.length} exchanges ranked by Receita Federal reporting status and BCB licensing.`,
+      "numberOfItems": exchangesData.length,
+      "itemListOrder": "https://schema.org/ItemListUnordered",
+      "itemListElement": itemListElements,
+    },
+    {
+      "@type": "Article",
+      "@id": `${PAGE_URL}#article`,
+      "headline": t.exchanges.meta.title,
+      "description": t.exchanges.meta.description,
+      "abstract": datasetDescription,
+      "image": { "@id": `${PAGE_URL}#primaryimage` },
+      "inLanguage": PAGE_LANG,
+      "author": {
+        "@type": "Person",
+        "@id": "https://bitsark.com/about/#ricardo",
+        "name": "Ricardo Delfino",
+        "url": "https://bitsark.com/about/",
+      },
+      "license": "https://bitsark.com/terms",
+      "datePublished": PUBLISHED_AT_ISO,
+      "dateModified": updatedAtISO,
+      "publisher": { "@id": "https://bitsark.com/#organization" },
+      "mainEntityOfPage": { "@id": `${PAGE_URL}#webpage` },
+      "about": { "@id": `${PAGE_URL}#dataset` },
+      "isAccessibleForFree": true,
+      "articleSection": "Brazilian Crypto Exchange Tax Reporting",
+      "keywords": "crypto exchanges Brazil, Receita Federal, IN 1888, Law 14.754, DeCripto, CNPJ, BCB PSAV",
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${PAGE_URL}#faq`,
+      "mainEntity": t.exchanges.faq.items.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": { "@type": "Answer", "text": item.a },
+      })),
+    },
+  ],
+};
 ---
 
 <Base
@@ -92,11 +271,11 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
   canonical="https://bitsark.com/exchanges/"
   alternates={alternates}
   ogImage="https://bitsark.com/og/exchanges.png"
-  schema={faqSchema}
+  schema={schema}
 >
 
   <!--  Header  -->
-  <section class="exch-header">
+  <section class="exch-header" aria-labelledby="exch-h1">
     <div class="exch-header-glow" aria-hidden="true"></div>
     <div class="exch-header-grid-bg" aria-hidden="true"></div>
     <div class="container exch-header-inner">
@@ -115,7 +294,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
         </div>
       </div>
 
-      <h1 class="exch-header__title" set:html={t.exchanges.header.title} />
+      <h1 id="exch-h1" class="exch-header__title" set:html={t.exchanges.header.title} />
       <div class="exch-header__flex">
         <p class="exch-header__sub" set:html={t.exchanges.header.sub} />
         <a href="/exchanges/api" class="nav__cta">
@@ -126,6 +305,23 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
           {t.exchanges.header.ctaApi}
         </a>
       </div>
+
+      <!--
+        Citable summary passage. Single self-contained paragraph that LLM crawlers
+        (GPTBot, PerplexityBot, ClaudeBot) and AI Overviews can quote verbatim.
+        Marked .exch-summary to match the speakable cssSelector in WebPage schema.
+      -->
+      <p class="exch-summary" data-nosnippet={false}>
+        As of <time datetime={updatedAtISO}>{updatedAt}</time>,
+        <strong>{exchangesData.length} crypto exchanges</strong> serve Brazilian residents:
+        <strong>{agg.domestic}</strong> are classified as domestic by Receita Federal,
+        <strong>{agg.offshore}</strong> as offshore under Law 14.754/2023.
+        <strong>{agg.withCnpj}</strong> hold a Brazilian CNPJ,
+        <strong>{agg.bcb}</strong> are authorized as PSAV by Banco Central do Brasil,
+        <strong>{agg.pix}</strong> accept Pix, and
+        <strong>{agg.in1888}</strong> report monthly to Receita Federal via IN 1888.
+        Starting July 2026, <strong>DeCripto (IN 2.291/2025)</strong> will replace IN 1888 and extend automatic reporting to offshore exchanges that opt in.
+      </p>
     </div>
   </section>
 
@@ -464,6 +660,64 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
     </div>
   </section>
 
+  <!--
+    Per-exchange deep links. Descriptive anchor text feeds ItemList schema and
+    fortifies the 24 [slug] children. Splits domestic vs offshore so each list
+    answers a different query intent ("does X report to RFB?" vs "is X offshore?").
+  -->
+  <section class="section section--alt section--tight" id="compare" aria-labelledby="compare-h2">
+    <div class="container">
+      <div class="exch-block-head">
+        <p class="eyebrow eyebrow--icon">Per-exchange tax profile</p>
+        <h2 id="compare-h2" class="exch-block-title">Compare individual exchanges</h2>
+        <p class="exch-block-sub">Open the page of any broker to see CNPJ, IN 1888 reporting, fees, and exactly what you owe Receita Federal.</p>
+      </div>
+
+      <div class="exch-deep-grid">
+        <div class="exch-deep-col">
+          <h3 class="exch-deep-col__title">Domestic (Receita Federal · IN 1888)</h3>
+          <ul class="exch-deep-list" role="list">
+            {exchangesData
+              .filter(ex => ex.taxRegime.includes('domestic_exchange'))
+              .map(ex => (
+                <li>
+                  <a href={`/exchanges/${ex.slug}/`} class="exch-deep-link">
+                    <span class="exch-deep-link__name">{ex.name} taxes in Brazil</span>
+                    <span class="exch-deep-link__hint">
+                      {ex.cnpjFmt ? `CNPJ ${ex.cnpjFmt}` : 'Domestic regime'}
+                      {ex.bcb ? ' · BCB' : ''}
+                      {ex.hasIn1888 ? ' · IN 1888' : ''}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="exch-deep-col">
+          <h3 class="exch-deep-col__title">Offshore (Law 14.754/2023)</h3>
+          <ul class="exch-deep-list" role="list">
+            {exchangesData
+              .filter(ex => ex.taxRegime === 'offshore_law_14754')
+              .map(ex => (
+                <li>
+                  <a href={`/exchanges/${ex.slug}/`} class="exch-deep-link">
+                    <span class="exch-deep-link__name">{ex.name} taxes for Brazilians</span>
+                    <span class="exch-deep-link__hint">
+                      Offshore · {ex.countryName}
+                      {ex.hasIn1888 ? ' · IN 1888' : ''}
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!--  Decision flow  -->
   <section class="section section--alt" id="decide">
     <div class="container">
@@ -607,7 +861,7 @@ const updatedAt = new Date().toLocaleDateString('en-US', { month: 'long', year: 
 
       <p class="exch-sources-meta">
         <span>{t.exchanges.sources.lastUpdatedLabel}:</span>
-        <strong>{updatedAt}</strong>
+        <strong><time datetime={updatedAtISO}>{updatedAt}</time></strong>
       </p>
     </div>
   </section>

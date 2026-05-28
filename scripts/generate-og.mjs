@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
+import ptTranslations from '../src/i18n/pt.json';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -78,6 +79,11 @@ function svgToDataUrl(svgString, width) {
   if (width) opts.fitTo = { mode: 'width', value: width };
   const png = new Resvg(Buffer.from(svgString), opts).render().asPng();
   return `data:image/png;base64,${Buffer.from(png).toString('base64')}`;
+}
+
+// Helper to strip HTML tags from strings
+function stripHtml(html) {
+  return html.replace(/<[^>]*>?/gm, '');
 }
 
 // ── Download remote exchange logo (SVG), rasterize, cache on disk ───────
@@ -651,57 +657,6 @@ function VisualLegend({ label, dotColor = BRAND.primary }) {
 // TEMPLATES
 // ═══════════════════════════════════════════════════════════════════════
 
-// ── 1. Default site OG ──────────────────────────────────────────────────
-function DefaultTemplate() {
-  return OGShell({
-    mesh: MESH_PRIMARY,
-    children: [
-      // Top metabar
-      h('div', { style: { display: 'flex' } },
-        TopMetaBar({
-          segments: ['BITSARK LABS', 'OPEN DATA INFRASTRUCTURE', 'BR'],
-          accent: BRAND.primary,
-        }),
-      ),
-      // Hero split
-      h('div', {
-        style: {
-          display: 'flex', flexGrow: 1, alignItems: 'center', gap: 36,
-          marginTop: 24,
-        },
-      },
-        // Left
-        h('div', {
-          style: { display: 'flex', flexDirection: 'column', gap: 28, width: 600 },
-        },
-          Wordmark({ size: 'xl' }),
-          h('div', {
-            style: {
-              display: 'flex',
-              fontSize: 34, fontWeight: 500, lineHeight: 1.2,
-              letterSpacing: '-0.015em', color: BRAND.text,
-            },
-          }, 'Open data infrastructure for the Brazilian crypto market.'),
-          h('div', { style: { display: 'flex', gap: 8, marginTop: 4, flexWrap: 'wrap' } },
-            Chip({ label: 'DolarMap',      color: BRAND.primary }),
-            Chip({ label: 'Exchanges API', color: BRAND.primary }),
-            Chip({ label: 'Stablecoins',   color: BRAND.success }),
-            Chip({ label: 'DeCripto',      color: BRAND.accent }),
-          ),
-        ),
-        // Right — product stack
-        h('div', {
-          style: { display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexGrow: 1 },
-        },
-          h('img', { src: PRODUCT_STACK_SVG, width: 440, height: 380, style: { display: 'flex' } }),
-        ),
-      ),
-      // Footer
-      FooterRow({ url: 'bitsark.com', accent: BRAND.primary, right: 'EST. 2025' }),
-    ],
-  });
-}
-
 // ── 2. Exchange OG ──────────────────────────────────────────────────────
 function ExchangeTemplate(ex, logoDataUrl) {
   const isOffshore = ex.fiscal_details_br?.tax_regime === 'offshore_law_14754';
@@ -849,6 +804,10 @@ function PageTemplate({ eyebrow, title, subtitle, url, accent, productIdentity, 
       h('img', { src: CODE_BLOCK_SVG, width: 440, height: 280, style: { display: 'flex' } }),
       VisualLegend({ label: 'REST · JSON · public', dotColor: BRAND.primary }),
     ),
+    productstack: h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 14 } },
+      h('img', { src: PRODUCT_STACK_SVG, width: 440, height: 380, style: { display: 'flex' } }),
+      VisualLegend({ label: 'bitsARK Labs Ecosystem', dotColor: BRAND.primary }),
+    ),
     calendar: h('div', {
       style: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%' },
     },
@@ -926,6 +885,22 @@ function PageTemplate({ eyebrow, title, subtitle, url, accent, productIdentity, 
   });
 }
 
+// ── 4. Default site OG (Global Fallback) ────────────────────────────────
+function DefaultTemplate() {
+  return PageTemplate({
+    eyebrow: 'OPEN INFRASTRUCTURE',
+    title: 'Open data infrastructure for the Brazilian crypto market.',
+    subtitle: 'Market intelligence, regulatory guides, and real-time FX tracking for the digital economy.',
+    url: 'bitsark.com',
+    accent: BRAND.primary,
+    productIdentity: null, // falls back to bitsARK Labs wordmark
+    variant: 'productstack',
+    metabarSegments: ['BITSARK LABS', 'OPEN DATA', 'EST. 2025'],
+    mesh: MESH_PRIMARY,
+    titleSize: 52
+  });
+}
+
 // ── Render satori → resvg → PNG ─────────────────────────────────────────
 async function renderToPng(node, outPath) {
   const svg = await satori(node, { width: 1200, height: 630, fonts });
@@ -967,7 +942,20 @@ async function main() {
   }
 
   // 4. Key marketing pages
+  mkdirSync(OUT_DIR, { recursive: true });
   const pages = [
+    {
+      slug: 'index',
+      productIdentity: null,
+      eyebrow: 'OPEN INFRASTRUCTURE',
+      title: 'Open data infrastructure for the Brazilian crypto market.',
+      subtitle: 'Market intelligence, regulatory guides, and real-time FX intelligence for the digital economy.',
+      accent: BRAND.primary,
+      mesh: MESH_PRIMARY,
+      variant: 'productstack',
+      titleSize: 52,
+      metabarSegments: ['BITSARK LABS', 'OPEN DATA', 'EST. 2025'],
+    },
     {
       slug: 'dolarmap',
       productIdentity: { product: 'DolarMap', productColor: BRAND.primary },
@@ -1032,10 +1020,101 @@ async function main() {
 
   for (const p of pages) {
     await renderToPng(
-      PageTemplate({ ...p, url: `bitsark.com/${p.slug === 'decripto' ? 'exchanges/decripto' : p.slug}` }),
+      PageTemplate({ 
+        ...p, 
+        url: p.slug === 'index' ? 'bitsark.com' : `bitsark.com/${p.slug === 'decripto' ? 'exchanges/decripto' : p.slug}` 
+      }),
       join(OUT_DIR, `${p.slug}.png`)
     );
     console.log(`[og]   ✓ ${p.slug}.png`);
+  }
+
+  // 5. Key marketing pages (Portuguese)
+  mkdirSync(join(OUT_DIR, 'pt'), { recursive: true });
+  const pagesPt = [
+    {
+      slug: 'index',
+      productIdentity: null,
+      eyebrow: stripHtml(ptTranslations.hero.eyebrow),
+      title: stripHtml(ptTranslations.hero.title + ' ' + ptTranslations.hero.titleAccent),
+      subtitle: stripHtml(ptTranslations.hero.subtitle),
+      accent: BRAND.primary,
+      mesh: MESH_PRIMARY,
+      variant: 'productstack',
+      titleSize: 52,
+      metabarSegments: ['BITSARK LABS', 'DADOS ABERTOS', 'EST. 2025'],
+    },
+    {
+      slug: 'dolarmap',
+      productIdentity: { product: 'DolarMap', productColor: BRAND.primary },
+      eyebrow: stripHtml(ptTranslations.dolarmap.hero.eyebrow),
+      title: stripHtml(ptTranslations.dolarmap.hero.headline),
+      subtitle: stripHtml(ptTranslations.dolarmap.hero.lede),
+      accent: BRAND.primary,
+      mesh: MESH_PRIMARY,
+      variant: 'sparkline',
+      titleSize: 54,
+      metabarSegments: ['DOLARMAP', 'FX AO VIVO', VERSION_TAG.toUpperCase()],
+    },
+    {
+      slug: 'exchanges',
+      productIdentity: { product: 'Corretoras', productSub: 'no Brasil', productColor: BRAND.primary },
+      eyebrow: stripHtml(ptTranslations.exchanges.header.eyebrow),
+      title: stripHtml(ptTranslations.exchanges.header.title),
+      subtitle: stripHtml(ptTranslations.exchanges.header.sub),
+      accent: BRAND.primary,
+      mesh: MESH_PRIMARY,
+      variant: 'dotcloud',
+      titleSize: 50,
+      metabarSegments: ['CORRETORAS', 'NO BRASIL', 'DIRETÓRIO'],
+    },
+    {
+      slug: 'stablecoins-brasil',
+      productIdentity: { product: 'Stablecoins', productSub: 'no Brasil', productColor: BRAND.success },
+      eyebrow: stripHtml(ptTranslations.stablecoins_page.hero.breadcrumbCurrent),
+      title: stripHtml(ptTranslations.stablecoins_page.hero.title),
+      subtitle: stripHtml(ptTranslations.stablecoins_page.hero.subtitle),
+      accent: BRAND.success,
+      mesh: MESH_SUCCESS,
+      variant: 'bartrio',
+      titleSize: 48,
+      metabarSegments: ['STABLECOINS', 'NO BRASIL', 'DADOS DE MERCADO'],
+    },
+    {
+      slug: 'decripto',
+      productIdentity: { product: 'Corretoras', productSub: 'no Brasil', productColor: BRAND.primary },
+      eyebrow: stripHtml(ptTranslations.decripto.hero.badge),
+      title: stripHtml(ptTranslations.decripto.hero.title),
+      subtitle: stripHtml(ptTranslations.decripto.hero.sub),
+      accent: BRAND.accent,
+      mesh: MESH_ACCENT,
+      variant: 'calendar',
+      titleSize: 50,
+      metabarSegments: ['DECRIPTO', 'IN 2.291/2025', 'GUIA REGULATÓRIO'],
+    },
+    {
+      slug: 'exchanges-api',
+      productIdentity: { product: 'Exchanges', productSub: 'API', productColor: BRAND.primary },
+      eyebrow: stripHtml(ptTranslations.exchanges_api.hero.eyebrow),
+      title: stripHtml(ptTranslations.exchanges_api.hero.title),
+      subtitle: stripHtml(ptTranslations.exchanges_api.hero.sub1),
+      accent: BRAND.primary,
+      mesh: MESH_PRIMARY,
+      variant: 'codeblock',
+      titleSize: 50,
+      metabarSegments: ['API DE CORRETORAS', 'REST', 'GRÁTIS', VERSION_TAG.toUpperCase()],
+    },
+  ];
+
+  for (const p of pagesPt) {
+    await renderToPng(
+      PageTemplate({ 
+        ...p, 
+        url: p.slug === 'index' ? ptTranslations.canonical : `${ptTranslations.canonical}${p.slug === 'decripto' ? 'exchanges/decripto' : p.slug}` 
+      }),
+      join(OUT_DIR, 'pt', `${p.slug}.png`)
+    );
+    console.log(`[og]   ✓ pt/${p.slug}.png`);
   }
 
   console.log(`[og] done in ${((Date.now() - t0) / 1000).toFixed(1)}s`);

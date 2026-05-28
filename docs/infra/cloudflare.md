@@ -16,7 +16,8 @@
 | **CDN de assets** | `assets.bitsark.com` | logos SVG |
 | **API pública** | `api.bitsark.com` | usado pelo site e pela função `feedback` |
 | **API do app DolarMap** | `apidolarmap.bitsark.com` | uso exclusivo do app mobile |
-| **Status** | `status.bitsark.com` | BetterStack uptime |
+| **Status** | `status.bitsark.com` (proxied) | BetterStack uptime (origin), Worker SEO (edge) |
+| **Worker** | `status-page-seo` | Injeta SEO headers (og:, description) e localização PT/EN sem alterar resposta BetterStack |
 | **Pages Function** | [`functions/feedback.js`](../../functions/feedback.js) | KV rate-limit + Resend email |
 
 Tudo na **mesma zona Cloudflare** (`bitsark.com`). Cache Rules e WAF Rules são da zona inteira — por isso filtramos por `http.host` em cada regra (ver §4).
@@ -35,6 +36,14 @@ Há **duas fontes** que entregam headers/cache. Saber qual manda em quê é crí
 | **Edge (Cloudflare)** | Dashboard → Security → WAF | Bloqueios, managed ruleset, custom rules |
 
 **Divergência conhecida (não é bug):** `_headers` declara HSTS `max-age=63072000` (2 anos), o painel da Cloudflare está com `12 meses` (máximo permitido pela UI). Para respostas que o Pages serve, browser recebe **2 anos**. Para erros gerados no edge sem chegar ao Pages, browser recebe **12 meses**. Ambos com `includeSubDomains` e `preload`. Browser pega o **último** header recebido, então na prática o que vale é o do Pages para tráfego normal. Não alterar `_headers` para baixar para 12 meses — preload list aceita ≥1 ano e 2 anos dá maior margem.
+
+---
+
+## 2b. Worker `status-page-seo` — injeção de SEO para status.bitsark.com
+
+O BetterStack entrega HTML funcional em `status.bitsark.com`, mas **sem SEO headers** (og:, description, locale). Worker `status-page-seo` intercepta respostas.
+
+**Scopo:** Apenas `status.bitsark.com/pt` e `status.bitsark.com/en`. Não altera lógica ou cache da página BetterStack.
 
 ---
 
@@ -170,12 +179,14 @@ Browser TTL: respect origin
 
 | Setting | Valor | Por quê |
 |---|---|---|
-| SSL/TLS Mode | **Full (Strict)** | Padrão correto para Pages — TLS end-to-end com validação. |
+| SSL/TLS Mode | **Full (Strict) por padrão** | Padrão correto para Pages — TLS end-to-end com validação. |
+| SSL/TLS Mode | **Full (sem Strict)** | `status.bitsark.com` apenas — BetterStack origin cert não faz match com hostname. Config Rule: `(http.host eq "status.bitsark.com")`. Sem afetar outros subdomínios. |
 | Minimum TLS Version | **1.2** | TLS 1.3-mínimo bloqueia silenciosamente Android antigo e algumas integrações de pagamento. TLS 1.2 com ciphers modernas continua seguro; browsers negociam 1.3 mesmo assim. |
 | Automatic HTTPS Rewrites | ON | |
 | Opportunistic Encryption | ON | |
 | **HSTS (Edge)** | **ON — 12 meses, includeSubDomains, preload** | Cobre respostas geradas pelo edge antes do Pages |
 | **HSTS (`_headers`)** | **2 anos, includeSubDomains, preload** | Cobre respostas do Pages (maioria do tráfego) |
+| **SSL/TLS Config Rule** | `Use SSL Full (not strict) for status.bitsark.com - BetterStack origin cert doesn't match hostname` | Aplica Full (sem Strict) apenas a `status.bitsark.com`; nenhum outro subdomínio afetado |
 
 ---
 
