@@ -1,0 +1,55 @@
+name: Post-deploy IndexNow (wait 5m)
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: true
+
+jobs:
+  wait-and-run-indexnow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Wait for Cloudflare Pages to publish
+        run: sleep 180
+
+      - name: Poll for key file availability
+        env:
+          SITE_URL: https://bitsark.com
+          INDEXNOW_KEY: a9c4f8b71eb84f839567f9bc6c6c9e90
+        run: |
+          KEY_URL="$SITE_URL/$INDEXNOW_KEY.txt"
+          echo "Checking $KEY_URL"
+          ok=false
+          for i in $(seq 1 6); do
+            status=$(curl -s -o /dev/null -w "%{http_code}" "$KEY_URL" || echo "000")
+            echo "Attempt $i: HTTP $status"
+            if [ "$status" = "200" ]; then
+              body=$(curl -s "$KEY_URL" || echo "")
+              if [ "$(echo "$body" | tr -d '\r\n')" = "$INDEXNOW_KEY" ]; then
+                echo "Key file present and content matches"
+                ok=true
+                break
+              else
+                echo "Key file content mismatch"
+              fi
+            fi
+            sleep 10
+          done
+          if [ "$ok" != "true" ]; then
+            echo "Key file not available or content mismatch after retries. Aborting."
+            exit 1
+          fi
+
+      - name: Run IndexNow submit script
+        run: node scripts/submit-indexnow.mjs

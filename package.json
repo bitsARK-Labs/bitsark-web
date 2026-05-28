@@ -11,7 +11,8 @@
     "fetch-data": "node scripts/fetch-stablecoin-data.js",
     "og": "node scripts/generate-og.mjs",
     "lh:check": "lhci autorun --config=./lighthouserc.json",
-    "check-links": "node scripts/check-links.mjs"
+    "check-links": "node scripts/check-links.mjs",
+    "indexnow": "node scripts/submit-indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.2",
