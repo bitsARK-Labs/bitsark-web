@@ -32,7 +32,7 @@ const lang         = 'en';
 const updatedAt = ex.updated_at
   ? new Date(ex.updated_at).toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' })
   : null;
-// ISO 8601 com timezone (UTC) para datas em schemas — exigido pelo Google Rich Results.
+// ISO 8601 com timezone (UTC) para datas em schemas - exigido pelo Google Rich Results.
 // Datas-só (YYYY-MM-DD) são aceitas mas geram aviso "missing timezone";
 // padronizamos em ISO 8601 completo (YYYY-MM-DDTHH:mm:ss.sssZ).
 const updatedAtISO = ex.updated_at
@@ -166,7 +166,7 @@ const datasetDescription = (() => {
     : (hasDec
         ? `Will report annually via DeCripto (IN 2.291/2025) starting July 2026.`
         : `Does not report directly to Receita Federal; user-side monthly IN 1888 declaration required when traded volume exceeds R$ 30,000.`);
-  return `${verdict}. The exchange ${cnpjPart} and ${bcbPart}, ${pixPart}. ${feePart} ${reportPart} Data covers regulatory status, tax obligations, trading fees, and jurisdiction (${isoCountryName(op.main_jurisdiction_iso)}) — independently verified and updated ${updatedAt ?? 'recently'} by bitsARK Labs.`;
+  return `${verdict}. The exchange ${cnpjPart} and ${bcbPart}, ${pixPart}. ${feePart} ${reportPart} Data covers regulatory status, tax obligations, trading fees, and jurisdiction (${isoCountryName(op.main_jurisdiction_iso)}) - independently verified and updated ${updatedAt ?? 'recently'} by bitsARK Labs.`;
 })();
 
 const alternates = [
@@ -207,12 +207,12 @@ const schema = {
       "contentUrl": ogImage,
       "width": 1200,
       "height": 630,
-      "caption": `${ex.name} — fiscal and operational profile in Brazil`,
+      "caption": `${ex.name} - fiscal and operational profile in Brazil`,
     },
     {
       "@type": "Dataset",
       "@id": `${pageUrl}#dataset`,
-      "name": `${ex.name} — Crypto Exchange Fiscal & Operational Profile (Brazil)`,
+      "name": `${ex.name} - Crypto Exchange Fiscal & Operational Profile (Brazil)`,
       "alternateName": [
         `${ex.name} Brazil CNPJ and tax regime data`,
         `${ex.name} Receita Federal reporting status`,
@@ -251,7 +251,7 @@ const schema = {
         "@type": "DataDownload",
         "contentUrl": `https://api.bitsark.com/v1/exchanges/${ex.slug}`,
         "encodingFormat": "application/json",
-        "name": `${ex.name} fiscal data — JSON`,
+        "name": `${ex.name} fiscal data - JSON`,
       },
       "keywords": [
         ex.name, "crypto exchange brazil", "exchange CNPJ", "BCB PSAV",
@@ -335,7 +335,7 @@ const schema = {
       <ol class="breadcrumb__list">
         <li><a href="/" class="breadcrumb__link">{t.breadcrumbHome}</a></li>
         <li aria-hidden="true" class="breadcrumb__sep">›</li>
-        <li><a href="/exchanges" class="breadcrumb__link">{t.breadcrumbExchanges}</a></li>
+        <li><a href="/exchanges/" class="breadcrumb__link">{t.breadcrumbExchanges}</a></li>
         <li aria-hidden="true" class="breadcrumb__sep">›</li>
         <li aria-current="page" class="breadcrumb__current">{ex.name}</li>
       </ol>
@@ -349,7 +349,7 @@ const schema = {
           <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
             <path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          {t.reviewedBy} <a href="/about" class="breadcrumb__reviewed-link">bitsARK Labs</a>
+          {t.reviewedBy} <a href="/about/" class="breadcrumb__reviewed-link">bitsARK Labs</a>
         </span>
       </div>
     </div>
@@ -379,7 +379,7 @@ const schema = {
             </div>
           )}
           <div>
-            <h1 id="exchange-heading" class="ex-hero__name">{ex.name}</h1>
+            <h1 id="exchange-heading" class="ex-hero__name">{ex.name}<span class="ex-hero__name-sub"> · Crypto Exchange Tax Profile (Brazil)</span></h1>
             <div class="ex-hero__badges" role="list" aria-label={t.a11y.exchangeBadges}>
               {isDomestic
                 ? <span class="badge badge--success" role="listitem">{t.badges.domestic}</span>
@@ -489,12 +489,15 @@ const schema = {
 
   <!-- ── Dados operacionais + Taxas ─────────────────────────── -->
   <!--
-    HEADING CORRIGIDO:
-    Esta section não tem um <h2> visível próprio - os cards são
-    subcomponentes dela, então seus títulos são H3, não H2.
-    O ID "operacional" + "taxas" servem de âncoras de navegação.
+    HIERARQUIA DE HEADINGS:
+    Os dois cards (Dados operacionais / Taxas) são subcomponentes desta section,
+    então seus títulos são H3. A section precisa de um H2 próprio para não pular
+    de H1 (nome da exchange) direto para H3 - o SiteChecker reportava
+    "headings hierarchy broken". O H2 é sr-only (não muda o visual) e serve de
+    rótulo acessível da section via aria-labelledby. Ver docs/seo-rules.md §4.
   -->
-  <section class="section" id="operational" aria-label={t.a11y.operationalAndFees}>
+  <section class="section" id="operational" aria-labelledby="operational-heading">
+    <h2 id="operational-heading" class="sr-only">{t.a11y.operationalAndFees}</h2>
     <div class="container two-col-grid">
 
       <!-- Card: Dados operacionais -->
@@ -864,7 +867,7 @@ const schema = {
             <path d="M6 5v2.5M6 9h.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
           {t.obligations.footerNote}
-          <a href="/exchanges/decripto" class="section-footer-note__link">{t.obligations.footerLink}</a>
+          <a href="/exchanges/decripto/" class="section-footer-note__link">{t.obligations.footerLink}</a>
         </p>
       )}
 
@@ -929,7 +932,7 @@ const schema = {
         <details class="faq-item">
           <summary>{fillName(t.faqQuestions.decripto)}</summary>
           <div class="faq-answer">
-            <p>{txtDeCriptoFAQ} <a href="/exchanges/decripto">{t.learnDecriptoCta}</a></p>
+            <p>{txtDeCriptoFAQ} <a href="/exchanges/decripto/">{t.learnDecriptoCta}</a></p>
           </div>
         </details>
 
@@ -989,7 +992,7 @@ const schema = {
             >
               {t.api.ctaJson}
             </a>
-            <a href="/exchanges/api" class="btn btn-secondary">{t.api.ctaDocs}</a>
+            <a href="/exchanges/api/" class="btn btn-secondary">{t.api.ctaDocs}</a>
           </div>
         </div>
 
@@ -1071,7 +1074,6 @@ const schema = {
   </div>
   <div id="feedback-backdrop" class="feedback-backdrop" hidden></div>
 
-</Base>
 
 <style>
   /* ── Visually hidden (acessibilidade) ── */
@@ -1217,6 +1219,13 @@ const schema = {
     line-height: 1.1;
     margin-bottom: 0.6rem;
     color: var(--color-text);
+  }
+  .ex-hero__name-sub {
+    font-size: 0.42em;
+    font-weight: 400;
+    letter-spacing: 0;
+    color: var(--color-text-muted);
+    white-space: nowrap;
   }
   .ex-hero__badges { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .ex-hero__actions {
@@ -2313,3 +2322,5 @@ const schema = {
 }}>
   window._t = { sending, sent, submit, success, error };
 </script>
+
+</Base>

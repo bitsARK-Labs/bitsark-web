@@ -111,7 +111,7 @@
   max-width: 720px;
 }
 
-/* Summary H2 is visually hidden — kept for SR + schema hierarchy. */
+/* Summary H2 is visually hidden - kept for SR + schema hierarchy. */
 .about-section-title {
   position: absolute;
   width: 1px;

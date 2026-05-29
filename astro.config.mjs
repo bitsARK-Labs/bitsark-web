@@ -97,6 +97,20 @@ function lastmodForUrl(url) {
 
 export default defineConfig({
   site: 'https://bitsark.com',
+  /**
+   * trailingSlash: 'always' - alinha o roteamento ao formato de saída do build
+   * (directory format: /exchanges/index.html → URL canônica /exchanges/) e às
+   * <link rel="canonical"> e ao sitemap, que já usam barra final.
+   *
+   * Sem isso (default 'ignore'), links internos sem barra (href="/exchanges")
+   * batiam no redirect 308 automático do Cloudflare Pages (/exchanges →
+   * /exchanges/), gerando "internal redirects from trailing slash mismatch"
+   * no SiteChecker e desperdiçando crawl budget + link equity.
+   *
+   * REGRA para novos links internos: SEMPRE termine com barra (href="/foo/").
+   * O helper l() em Base.astro/MobileMenu.astro normaliza isso automaticamente.
+   */
+  trailingSlash: 'always',
   image: {
     // Sharp is the default; pinning it here documents the intent and
     // unblocks future tuning (e.g. raising AVIF effort).

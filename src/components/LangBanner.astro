@@ -5,12 +5,12 @@
  * Banner discreto exibido no topo das páginas em inglês, sugerindo a versão
  * em português para usuários cujo navegador indica preferência por pt*.
  *
- * Regras de exibição (todas devem ser verdadeiras — checadas no client):
+ * Regras de exibição (todas devem ser verdadeiras - checadas no client):
  *   1. Página atual é EN (gate server-side no Base.astro).
  *   2. `navigator.languages` ou `navigator.language` começa com "pt".
  *   3. Usuário nunca dispensou o banner (`lang-banner-dismissed` ausente).
  *   4. Usuário nunca fez escolha explícita de idioma antes
- *      (`lang-choice-made` ausente — gravado pelo script de Base.astro
+ *      (`lang-choice-made` ausente - gravado pelo script de Base.astro
  *      quando o usuário clica em qualquer `[data-lang-choice]`).
  *
  * Renderiza sempre `hidden` no HTML estático → zero CLS, zero FOUC,
@@ -24,7 +24,7 @@ export interface Props {
 
 const { ptHref } = Astro.props;
 
-// Textos sempre em PT — o banner se dirige a um falante de português
+// Textos sempre em PT - o banner se dirige a um falante de português
 // que caiu na versão EN do site. Não há razão para internacionalizar
 // essas strings.
 const tagLabel  = 'PT-BR';
@@ -129,7 +129,7 @@ const ariaClose  = 'Fechar sugestão de idioma';
     display: none !important;
   }
 
-  /* Top gradient hairline — the "premium" cue.
+  /* Top gradient hairline - the "premium" cue.
      Three-stop gradient with soft fade on the edges gives the
      impression of accent light bleeding into the chrome. */
   .lang-banner__rail {
@@ -210,7 +210,7 @@ const ariaClose  = 'Fechar sugestão de idioma';
     flex-shrink: 0;
   }
 
-  /* Primary CTA — solid teal, precise arrow, the only saturated
+  /* Primary CTA - solid teal, precise arrow, the only saturated
      element in the row. Earns its place by being the only ask. */
   .lang-banner__cta {
     display: inline-flex;
@@ -257,7 +257,7 @@ const ariaClose  = 'Fechar sugestão de idioma';
     transform: translateY(0.5px);
   }
 
-  /* Ghost "keep" — recedes intentionally. Underline-on-hover
+  /* Ghost "keep" - recedes intentionally. Underline-on-hover
      uses border-bottom so it doesn't shift the baseline. */
   .lang-banner__keep {
     font-family: var(--font-body);
@@ -280,7 +280,7 @@ const ariaClose  = 'Fechar sugestão de idioma';
     outline: none;
   }
 
-  /* Close — neutral square button, tactile hover. */
+  /* Close - neutral square button, tactile hover. */
   .lang-banner__close {
     margin-left: 0.25rem;
     background: transparent;
@@ -367,7 +367,7 @@ const ariaClose  = 'Fechar sugestão de idioma';
       if (readLS('lang-banner-dismissed') === '1') return;
 
       // (b) Usuário já fez escolha explícita de idioma em alguma visita?
-      //     Se sim, sua escolha prevalece — não importunamos novamente.
+      //     Se sim, sua escolha prevalece - não importunamos novamente.
       if (readLS('lang-choice-made') === '1') return;
 
       // (c) Navegador prefere português?
@@ -385,7 +385,7 @@ const ariaClose  = 'Fechar sugestão de idioma';
         el.classList.add('is-visible');
       });
 
-      // (e) Handlers — qualquer interação grava dismissal
+      // (e) Handlers - qualquer interação grava dismissal
       function dismiss() {
         writeLS('lang-banner-dismissed', '1');
         el.classList.remove('is-visible');

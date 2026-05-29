@@ -1,4 +1,4 @@
-# Cloudflare — Configuração Padrão-Ouro (bitsark.com)
+# Cloudflare - Configuração Padrão-Ouro (bitsark.com)
 
 > **Última revisão:** 2026-05-19
 > **Plano que originou este doc:** `~/.claude/plans/quero-um-planejamento-de-dreamy-ullman.md`
@@ -20,7 +20,7 @@
 | **Worker** | `status-page-seo` | Injeta SEO headers (og:, description) e localização PT/EN sem alterar resposta BetterStack |
 | **Pages Function** | [`functions/feedback.js`](../../functions/feedback.js) | KV rate-limit + Resend email |
 
-Tudo na **mesma zona Cloudflare** (`bitsark.com`). Cache Rules e WAF Rules são da zona inteira — por isso filtramos por `http.host` em cada regra (ver §4).
+Tudo na **mesma zona Cloudflare** (`bitsark.com`). Cache Rules e WAF Rules são da zona inteira - por isso filtramos por `http.host` em cada regra (ver §4).
 
 ---
 
@@ -32,14 +32,14 @@ Há **duas fontes** que entregam headers/cache. Saber qual manda em quê é crí
 |---|---|---|
 | **Origin (Pages)** | [`public/_headers`](../../public/_headers) | `Cache-Control` por path, CSP, HSTS (2 anos), Permissions-Policy, X-Frame-Options |
 | **Edge (Cloudflare)** | Dashboard → Caching → Cache Rules | Override de TTL no edge, bypass cache, escopo por hostname |
-| **Edge (Cloudflare)** | Dashboard → SSL/TLS → HSTS | HSTS em respostas que o edge gera *antes* de chegar ao Pages (4xx/5xx do edge) — **12 meses** (máximo do painel) |
+| **Edge (Cloudflare)** | Dashboard → SSL/TLS → HSTS | HSTS em respostas que o edge gera *antes* de chegar ao Pages (4xx/5xx do edge) - **12 meses** (máximo do painel) |
 | **Edge (Cloudflare)** | Dashboard → Security → WAF | Bloqueios, managed ruleset, custom rules |
 
-**Divergência conhecida (não é bug):** `_headers` declara HSTS `max-age=63072000` (2 anos), o painel da Cloudflare está com `12 meses` (máximo permitido pela UI). Para respostas que o Pages serve, browser recebe **2 anos**. Para erros gerados no edge sem chegar ao Pages, browser recebe **12 meses**. Ambos com `includeSubDomains` e `preload`. Browser pega o **último** header recebido, então na prática o que vale é o do Pages para tráfego normal. Não alterar `_headers` para baixar para 12 meses — preload list aceita ≥1 ano e 2 anos dá maior margem.
+**Divergência conhecida (não é bug):** `_headers` declara HSTS `max-age=63072000` (2 anos), o painel da Cloudflare está com `12 meses` (máximo permitido pela UI). Para respostas que o Pages serve, browser recebe **2 anos**. Para erros gerados no edge sem chegar ao Pages, browser recebe **12 meses**. Ambos com `includeSubDomains` e `preload`. Browser pega o **último** header recebido, então na prática o que vale é o do Pages para tráfego normal. Não alterar `_headers` para baixar para 12 meses - preload list aceita ≥1 ano e 2 anos dá maior margem.
 
 ---
 
-## 2b. Worker `status-page-seo` — injeção de SEO para status.bitsark.com
+## 2b. Worker `status-page-seo` - injeção de SEO para status.bitsark.com
 
 O BetterStack entrega HTML funcional em `status.bitsark.com`, mas **sem SEO headers** (og:, description, locale). Worker `status-page-seo` intercepta respostas.
 
@@ -47,7 +47,7 @@ O BetterStack entrega HTML funcional em `status.bitsark.com`, mas **sem SEO head
 
 ---
 
-## 3. Speed / Optimization — decisões
+## 3. Speed / Optimization - decisões
 
 | Setting | Estado | Por quê |
 |---|---|---|
@@ -65,7 +65,7 @@ O BetterStack entrega HTML funcional em `status.bitsark.com`, mas **sem SEO head
 
 ---
 
-## 4. Caching — Configuration
+## 4. Caching - Configuration
 
 | Setting | Valor |
 |---|---|
@@ -73,7 +73,7 @@ O BetterStack entrega HTML funcional em `status.bitsark.com`, mas **sem SEO head
 | Caching Level | Standard |
 | Always Online | **OFF** |
 
-**Por que Always Online OFF:** o site exibe dados financeiros voláteis em `/dolarmap` e `/stablecoins-brasil`. Always Online serviria cópia arquivada (Wayback) durante outage — servir cotações antigas como se fossem atuais é pior do que mostrar erro.
+**Por que Always Online OFF:** o site exibe dados financeiros voláteis em `/dolarmap` e `/stablecoins-brasil`. Always Online serviria cópia arquivada (Wayback) durante outage - servir cotações antigas como se fossem atuais é pior do que mostrar erro.
 
 ---
 
@@ -81,7 +81,7 @@ O BetterStack entrega HTML funcional em `status.bitsark.com`, mas **sem SEO head
 
 Todas as regras estão **escopadas por `http.host`**. Sem o filtro, regras "do site" afetariam subdomínios de API.
 
-### 5.1 Site `/_astro/*` — assets hashed
+### 5.1 Site `/_astro/*` - assets hashed
 ```
 Expression: (http.host eq "bitsark.com" and starts_with(http.request.uri.path, "/_astro/"))
 Eligible for cache: yes
@@ -89,18 +89,18 @@ Edge TTL: Ignore cache-control header, TTL = 1 year
 Browser TTL: Override origin, TTL = 1 year
 ```
 
-### 5.2 Site — mídia estática (imagens, vídeos, fontes)
+### 5.2 Site - mídia estática (imagens, vídeos, fontes)
 ```
 Expression: (http.host eq "bitsark.com" and http.request.uri.path.extension in {"webp" "avif" "png" "jpg" "jpeg" "gif" "svg" "ico" "mp4" "webm" "woff2"})
 Eligible for cache: yes
 Edge TTL: Ignore cache-control header, TTL = 1 year
 Browser TTL: Respect origin TTL
 ```
-> **Histórico:** versão anterior usava `wildcard r"*.{png,jpg,...}"`. Cloudflare wildcards **não suportam brace expansion**. A regra só funcionava por acidente nas duas primeiras cláusulas `or`. Sempre usar `http.request.uri.path.extension in {...}` — é o campo dedicado, mais rápido e correto.
+> **Histórico:** versão anterior usava `wildcard r"*.{png,jpg,...}"`. Cloudflare wildcards **não suportam brace expansion**. A regra só funcionava por acidente nas duas primeiras cláusulas `or`. Sempre usar `http.request.uri.path.extension in {...}` - é o campo dedicado, mais rápido e correto.
 
-> **Aviso DNS de `.webp`:** se aparecer "Your DNS configuration may not be proxying traffic for .webp" — é falso positivo enquanto bitsark.com está proxied (laranja). Não bloquear deploy por isso.
+> **Aviso DNS de `.webp`:** se aparecer "Your DNS configuration may not be proxying traffic for .webp" - é falso positivo enquanto bitsark.com está proxied (laranja). Não bloquear deploy por isso.
 
-### 5.2b `assets.bitsark.com` — logos SVG imutáveis
+### 5.2b `assets.bitsark.com` - logos SVG imutáveis
 Regra 1 - Cache Rules:
 ```
 Expression: (http.host eq "assets.bitsark.com" and starts_with(http.request.uri.path, "/logos/"))
@@ -108,7 +108,7 @@ Eligible for cache: yes
 Edge TTL: Ignore cache-control header, TTL = 1 year
 Browser TTL: Override origin, TTL = 1 year
 ```
-> **Por que regra separada e não na §5.2:** `assets.bitsark.com` é um hostname diferente — misturar dois hostnames numa regra dificulta debug. Regra dedicada torna o escopo explícito.
+> **Por que regra separada e não na §5.2:** `assets.bitsark.com` é um hostname diferente - misturar dois hostnames numa regra dificulta debug. Regra dedicada torna o escopo explícito.
 
 Regra 2 - Cache Response Rules:
 ```
@@ -119,7 +119,7 @@ Action - Add directive; Directive - max-age; Duration (seconds) - 31536000; Clou
 Action - Add directive; Directive - public; Cloudflare only -> OFF
 ```
 
-### 5.2c `www.bitsark.com` — redireciona para apex
+### 5.2c `www.bitsark.com` - redireciona para apex
 Redirect Rule (Rules → Redirect Rules, não `_redirects`):
 ```
 Name: Redirect from WWW to root [Template]
@@ -127,18 +127,18 @@ Expression (Wildcard): URI Full wildcard  r"https://www.*"
 Action: Dynamic 301 redirect
 URL: wildcard_replace(http.request.full_uri, r"https://www.*", r"https://${1}")
 ```
-> **Por que Redirect Rule e não `_redirects`:** quando `www` é Custom Domain no Pages, o Pages serve `200 OK` direto em qualquer path real, ignorando o `_redirects`. A Redirect Rule intercepta no edge, antes do Pages, e funciona para qualquer path. O `_redirects` ficou com a linha `www → apex` mas ela nunca é atingida — a Redirect Rule é a fonte de verdade.
+> **Por que Redirect Rule e não `_redirects`:** quando `www` é Custom Domain no Pages, o Pages serve `200 OK` direto em qualquer path real, ignorando o `_redirects`. A Redirect Rule intercepta no edge, antes do Pages, e funciona para qualquer path. O `_redirects` ficou com a linha `www → apex` mas ela nunca é atingida - a Redirect Rule é a fonte de verdade.
 
-### 5.2d `assets.bitsark.com` — raiz redireciona para bitsark.com
+### 5.2d `assets.bitsark.com` - raiz redireciona para bitsark.com
 Redirect Rule (Rules → Redirect Rules, não Cache Rule):
 ```
 Name: assets.bitsark.com -> root redirect to bitsark.com
 Expression: (http.host eq "assets.bitsark.com" and http.request.uri.path eq "/")
 Action: 301 redirect → https://bitsark.com/
 ```
-> **Por que existe:** o GSC reportou 404 na raiz do subdomínio (sem conteúdo configurado). O redirect elimina o erro de cobertura sem afetar `/logos/*.svg`. Regra de redirect, não de cache — não interferir com §5.2b.
+> **Por que existe:** o GSC reportou 404 na raiz do subdomínio (sem conteúdo configurado). O redirect elimina o erro de cobertura sem afetar `/logos/*.svg`. Regra de redirect, não de cache - não interferir com §5.2b.
 
-### 5.3 Site — sitemap/robots (TTL curto)
+### 5.3 Site - sitemap/robots (TTL curto)
 ```
 Expression: (http.host eq "bitsark.com" and (http.request.uri.path eq "/robots.txt" or starts_with(http.request.uri.path, "/sitemap")))
 Eligible for cache: yes
@@ -146,7 +146,7 @@ Edge TTL: Ignore cache-control header, TTL = 2 hours
 Browser TTL: Respect origin TTL
 ```
 
-### 5.4 API DolarMap — bypass para endpoints privados
+### 5.4 API DolarMap - bypass para endpoints privados
 ```
 Expression: (http.host eq "apidolarmap.bitsark.com" and (
     starts_with(http.request.uri.path, "/api/alerts") or
@@ -158,7 +158,7 @@ Eligible for cache: no (Bypass cache)
 Browser TTL: Bypass cache
 ```
 
-### 5.5 API DolarMap — endpoints públicos cacheáveis
+### 5.5 API DolarMap - endpoints públicos cacheáveis
 ```
 Expression: (http.host eq "apidolarmap.bitsark.com" and (
     starts_with(http.request.uri.path, "/api/prices/") or
@@ -189,12 +189,12 @@ Browser TTL: respect origin
 
 | Setting | Valor | Por quê |
 |---|---|---|
-| SSL/TLS Mode | **Full (Strict) por padrão** | Padrão correto para Pages — TLS end-to-end com validação. |
-| SSL/TLS Mode | **Full (sem Strict)** | `status.bitsark.com` apenas — BetterStack origin cert não faz match com hostname. Config Rule: `(http.host eq "status.bitsark.com")`. Sem afetar outros subdomínios. |
+| SSL/TLS Mode | **Full (Strict) por padrão** | Padrão correto para Pages - TLS end-to-end com validação. |
+| SSL/TLS Mode | **Full (sem Strict)** | `status.bitsark.com` apenas - BetterStack origin cert não faz match com hostname. Config Rule: `(http.host eq "status.bitsark.com")`. Sem afetar outros subdomínios. |
 | Minimum TLS Version | **1.2** | TLS 1.3-mínimo bloqueia silenciosamente Android antigo e algumas integrações de pagamento. TLS 1.2 com ciphers modernas continua seguro; browsers negociam 1.3 mesmo assim. |
 | Automatic HTTPS Rewrites | ON | |
 | Opportunistic Encryption | ON | |
-| **HSTS (Edge)** | **ON — 12 meses, includeSubDomains, preload** | Cobre respostas geradas pelo edge antes do Pages |
+| **HSTS (Edge)** | **ON - 12 meses, includeSubDomains, preload** | Cobre respostas geradas pelo edge antes do Pages |
 | **HSTS (`_headers`)** | **2 anos, includeSubDomains, preload** | Cobre respostas do Pages (maioria do tráfego) |
 | **SSL/TLS Config Rule** | `Use SSL Full (not strict) for status.bitsark.com - BetterStack origin cert doesn't match hostname` | Aplica Full (sem Strict) apenas a `status.bitsark.com`; nenhum outro subdomínio afetado |
 
@@ -223,7 +223,7 @@ ChatGPT, Perplexity, Google AI Overviews precisam conseguir crawler o site para 
 
 ### WAF Custom Rules
 
-**Block scanners** — reduz ruído em logs e poupa banda:
+**Block scanners** - reduz ruído em logs e poupa banda:
 ```
 Expression: (http.host eq "bitsark.com" and (
     starts_with(http.request.uri.path, "/wp-") or
@@ -242,17 +242,17 @@ Action: Block
 | Sintoma | Causa provável | Onde investigar |
 |---|---|---|
 | CSS/JS antigo após deploy | Cache Rule §5.1 com TTL 1 ano + hash do `/_astro/` não mudou | Verificar build gerou novos hashes; purge by URL no painel Cloudflare se necessário |
-| Imagens não atualizam | Cache Rule §5.2 com TTL 1 ano | Mesma coisa — renomeie o asset ou purge URL |
+| Imagens não atualizam | Cache Rule §5.2 com TTL 1 ano | Mesma coisa - renomeie o asset ou purge URL |
 | Página com `<Fragment set:html>` com whitespace estranho | Alguém ativou Auto Minify HTML | Speed → Optimization → confirmar OFF |
 | Visitante reporta "site não carrega" em Android antigo | Min TLS 1.3 reativado | SSL/TLS → confirmar 1.2 |
 | Perdemos posição em AI Overviews / Perplexity | Bot Fight Mode ou Block AI Bots ON | Security → confirmar ambos OFF |
-| Função `feedback` retornando 429 | Rate-limit KV (1 req/min/IP) — não é Cloudflare config | [`functions/feedback.js`](../../functions/feedback.js) |
+| Função `feedback` retornando 429 | Rate-limit KV (1 req/min/IP) - não é Cloudflare config | [`functions/feedback.js`](../../functions/feedback.js) |
 | Sitemap servindo versão velha após deploy | Cache Rule §5.3 com TTL 2h | Esperar 2h ou purge |
 | API DolarMap retornando dados em cache quando deveria ser fresh | Endpoint caiu na regra §5.5 sem querer | Verificar path bate só com os listados em §5.4/§5.5 |
 | SVGs de `assets.bitsark.com` sem cache (PSI reclama) | Cache Rule §5.2b ausente ou Transform Rule recriada no lugar errado | Confirmar §5.2b existe; deletar qualquer Transform Rule "Modify Response Header" para `/logos/` |
-| HSTS reclamando no hstspreload.org | `_headers` diz 2 anos, painel diz 12 meses — preload list lê do header que chega | Garantir `_headers` permanece em 63072000 |
+| HSTS reclamando no hstspreload.org | `_headers` diz 2 anos, painel diz 12 meses - preload list lê do header que chega | Garantir `_headers` permanece em 63072000 |
 | Cache Rule "expressão inválida" ao salvar | Tentativa de usar brace `{a,b}` em wildcard | Usar `http.request.uri.path.extension in {...}` |
-| GSC reporta 404 em `assets.bitsark.com/` | Raiz do subdomínio sem conteúdo — Redirect Rule §5.2c ausente | Rules → Redirect Rules → confirmar §5.2c existe e está ativa |
+| GSC reporta 404 em `assets.bitsark.com/` | Raiz do subdomínio sem conteúdo - Redirect Rule §5.2c ausente | Rules → Redirect Rules → confirmar §5.2c existe e está ativa |
 | `www.bitsark.com` não resolve (ERR_NAME_NOT_RESOLVED) | Custom domain não cadastrado no Pages | Pages → bitsark-web → Custom domains → adicionar `www.bitsark.com` |
 | `www.bitsark.com` serve `200 OK` em vez de redirecionar | Pages serve o site no custom domain, `_redirects` é ignorado para paths reais | Rules → Redirect Rules → confirmar regra §5.2c existe com `concat("https://bitsark.com", http.request.uri.path)` |
 
@@ -299,15 +299,15 @@ curl -I https://www.bitsark.com/ --max-redirs 0
 
 ## 11. O que NÃO ativar (decisões deliberadas)
 
-- **Polish / Mirage** — pagar pelo que o build do Astro já entrega melhor (AVIF/WebP via Sharp, cacheado normalmente no CDN).
-- **APO** — é para WordPress.
-- **Auto Minify HTML** — risco com `<Fragment set:html>` e blocos `<script is:inline>`.
-- **Min TLS 1.3** — perde Android antigo no Brasil sem ganho real.
-- **Always Online** — site financeiro não deve servir cópia arquivada de cotações.
-- **Bot Fight Mode / Block AI Bots** — perde citações em AI search.
-- **Cloudflare Fonts** — já self-hostamos com preload.
-- **Rocket Loader** — quebra hidratação Astro.
-- **Hotlink Protection** — bloqueia uso legítimo de `assets.bitsark.com`.
+- **Polish / Mirage** - pagar pelo que o build do Astro já entrega melhor (AVIF/WebP via Sharp, cacheado normalmente no CDN).
+- **APO** - é para WordPress.
+- **Auto Minify HTML** - risco com `<Fragment set:html>` e blocos `<script is:inline>`.
+- **Min TLS 1.3** - perde Android antigo no Brasil sem ganho real.
+- **Always Online** - site financeiro não deve servir cópia arquivada de cotações.
+- **Bot Fight Mode / Block AI Bots** - perde citações em AI search.
+- **Cloudflare Fonts** - já self-hostamos com preload.
+- **Rocket Loader** - quebra hidratação Astro.
+- **Hotlink Protection** - bloqueia uso legítimo de `assets.bitsark.com`.
 
 ---
 

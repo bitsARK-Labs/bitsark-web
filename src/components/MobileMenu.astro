@@ -39,7 +39,9 @@ const l = (link: string): string => {
     const ptPath = cleanPath === '/' ? '/pt/' : `/pt${cleanPath}/`;
     return `${ptPath}${fragment}`;
   }
-  return link;
+  // Normaliza barra final (trailingSlash: 'always') - espelha Base.astro.
+  const withSlash = cleanPath === '/' ? '/' : `${cleanPath}/`;
+  return `${withSlash}${fragment}`;
 };
 
 const langHrefs: Record<string, string> = {
@@ -59,7 +61,7 @@ const isExchanges   = path.startsWith('/exchanges')          || path.startsWith(
 const isStablecoins = path.startsWith('/stablecoins-brasil') || path.startsWith('/pt/stablecoins-brasil');
 
 
-// ── "Nesta página" — âncoras contextuais ───────────────────
+// ── "Nesta página" - âncoras contextuais ───────────────────
 type Anchor = { label: string; href: string };
 const contextualAnchors: Anchor[] = isDolarMap ? [
   { label: t('nav.dolarmap.buy'),       href: l('/dolarmap#buy')        },
@@ -136,7 +138,15 @@ const playstoreUrl = 'https://play.google.com/store/apps/details?id=dolarmap.app
       </button>
     </header>
 
-    <h2 id="bm-title" class="bm__sr">{t('nav.menu.srTitle')}</h2>
+    <!--
+      Rótulo acessível do diálogo (referenciado por aria-labelledby no .bm).
+      NÃO é um heading: role="dialog" aceita qualquer elemento como rótulo, e
+      como este nó vem no DOM ANTES do <h1> da página, usar <h2> aqui fazia o
+      SiteChecker reportar "headings hierarchy broken" em TODAS as páginas
+      (primeiro heading do documento = h2, não h1). <p> remove o nó do outline
+      de headings sem alterar o nome acessível do diálogo. Ver docs/seo-rules.md §4.
+    -->
+    <p id="bm-title" class="bm__sr">{t('nav.menu.srTitle')}</p>
 
     <!-- ── SCROLLABLE BODY ────────────────────────────── -->
     <div class="bm__scroll">
@@ -368,7 +378,7 @@ const playstoreUrl = 'https://play.google.com/store/apps/details?id=dolarmap.app
 
 <style>
   /* ─────────────────────────────────────────────────────────
-     bitsARK Mobile Menu — full-screen, refined editorial
+     bitsARK Mobile Menu - full-screen, refined editorial
      ───────────────────────────────────────────────────────── */
 
   .bm {

@@ -110,13 +110,18 @@ If `api.bitsark.com` is down and you need to surface an exchange immediately:
 
 ### Add a new page / new route
 
+> **Read [seo-rules.md](./seo-rules.md) first.** It has the hard rules that a SiteChecker
+> crawl will otherwise flag: every internal link must end with `/` (trailing slash), and a
+> `noindex` page must never emit (or receive) `hreflang`. Both are easy to get wrong on a new page.
+
 1. Create the `.astro` file under `src/pages/` following the structure of an existing similar page.
 2. If the page is bilingual, create the mirror under `src/pages/pt/` and add translations to `src/i18n/en.json` and `src/i18n/pt.json`.
 3. Import `Base.astro` as the layout - that's where `<title>`, OG tags, canonical URL, and schema.org are wired.
-4. Set `hreflang` alternates if both EN and PT-BR exist.
-5. Add a per-page stylesheet under `src/styles/pages/` if needed; import it from the page.
-6. Add the route to the sitemap (handled automatically by `@astrojs/sitemap`).
-7. Verify Lighthouse SEO = 100 before shipping.
+4. Set `hreflang` alternates only if both EN and PT-BR exist **and** the page is indexable (not `noindex`) - see [seo-rules.md §2](./seo-rules.md).
+5. Use trailing-slash internal links everywhere - prefer the `l()` helper. See [seo-rules.md §1](./seo-rules.md).
+6. Add a per-page stylesheet under `src/styles/pages/` if needed; import it from the page.
+7. Add the route to the sitemap (handled automatically by `@astrojs/sitemap`). If the page is `noindex`, add it to the `filter` in `astro.config.mjs` so it stays out of the sitemap.
+8. Verify Lighthouse SEO = 100, and run the two sweeps in [seo-rules.md](./seo-rules.md), before shipping.
 
 ### Update an existing exchange's fees or licensing manually
 

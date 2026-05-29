@@ -47,6 +47,21 @@ const usdtShare  = 70;
 const usdcShare  = 25;
 const otherShare = 5;
 
+/*  Coin logos (inline SVG) - reused in the breakdown bar + compare header.
+    `--c` drives the coin disc colour so we can render a white/mono variant
+    on the already-coloured breakdown segments via CSS. */
+const usdtLogoSvg = `
+  <svg viewBox="0 0 32 32" role="img" aria-hidden="true" focusable="false">
+    <circle cx="16" cy="16" r="16" fill="var(--c, #26a17b)"/>
+    <path fill="#fff" d="M17.92 17.36v-.01c-.11.01-.68.04-1.94.04-1.01 0-1.72-.03-1.97-.04v.01c-3.88-.17-6.78-.85-6.78-1.66 0-.81 2.9-1.49 6.78-1.66v2.65c.25.02.98.06 1.99.06 1.21 0 1.81-.05 1.92-.06v-2.64c3.87.17 6.76.85 6.76 1.65 0 .81-2.89 1.49-6.76 1.66zm0-3.59v-2.37h5.43V7.78H8.66v3.62h5.43v2.37c-4.41.2-7.73 1.08-7.73 2.12 0 1.05 3.32 1.92 7.73 2.13v7.6h3.83v-7.6c4.4-.2 7.71-1.08 7.71-2.13 0-1.04-3.31-1.91-7.71-2.12z"/>
+  </svg>`;
+const usdcLogoSvg = `
+  <svg viewBox="0 0 32 32" role="img" aria-hidden="true" focusable="false">
+    <circle cx="16" cy="16" r="16" fill="var(--c, #2775ca)"/>
+    <path fill="#fff" d="M20.5 18.53c0-2.39-1.43-3.21-4.3-3.55-2.05-.27-2.46-.82-2.46-1.78s.68-1.57 2.05-1.57c1.23 0 1.91.41 2.25 1.43a.51.51 0 0 0 .48.34h1.09a.47.47 0 0 0 .48-.48v-.07a3.43 3.43 0 0 0-3.07-2.8V8.36a.48.48 0 0 0-.48-.48h-1.02a.48.48 0 0 0-.48.48v1.43c-2.05.27-3.34 1.64-3.34 3.35 0 2.25 1.36 3.14 4.23 3.48 1.91.34 2.53.75 2.53 1.84s-.96 1.84-2.26 1.84c-1.77 0-2.39-.75-2.6-1.78a.49.49 0 0 0-.48-.41h-1.16a.47.47 0 0 0-.48.48v.07a3.6 3.6 0 0 0 3.34 3v1.5a.48.48 0 0 0 .48.48h1.02a.48.48 0 0 0 .48-.48v-1.5c2.06-.34 3.41-1.78 3.41-3.62z"/>
+    <path fill="#fff" d="M13.06 24.6a8.92 8.92 0 0 1 0-16.74.5.5 0 0 0 .34-.48v-.96a.45.45 0 0 0-.34-.48h-.07a10.69 10.69 0 0 0 0 20.06.48.48 0 0 0 .61-.27.45.45 0 0 0 .07-.27v-.96a.6.6 0 0 0-.61-.43zm6.95-19.18a.48.48 0 0 0-.61.27.45.45 0 0 0-.07.27v.96a.55.55 0 0 0 .34.48 8.92 8.92 0 0 1 0 16.74.5.5 0 0 0-.34.48v.96a.45.45 0 0 0 .34.48h.07a10.71 10.71 0 0 0 .27-20.06z"/>
+  </svg>`;
+
 /*  Hero KPI deltas / small visual cues  */
 const heroKpis = [
   { value: marketCap,                                label: t.stablecoins_page.hero.kpiGlobalCap,     meta: t.stablecoins_page.hero.kpiGlobalCapMeta,     accent: false, delta: yoy, deltaTone: "positive" },
@@ -448,13 +463,17 @@ const alternates = [
       <div class="sb-breakdown">
         <div class="sb-breakdown-bar" aria-hidden="true">
           <div class="sb-breakdown-seg sb-breakdown-seg--usdt" style={`--w:${usdtShare}%`}>
-            <span>{usdtShare}%</span>
+            <span class="sb-breakdown-seg-coin" set:html={usdtLogoSvg} />
+            <span class="sb-breakdown-seg-label">USDT</span>
+            <span class="sb-breakdown-seg-pct">{usdtShare}%</span>
           </div>
           <div class="sb-breakdown-seg sb-breakdown-seg--usdc" style={`--w:${usdcShare}%`}>
-            <span>{usdcShare}%</span>
+            <span class="sb-breakdown-seg-coin" set:html={usdcLogoSvg} />
+            <span class="sb-breakdown-seg-label">USDC</span>
+            <span class="sb-breakdown-seg-pct">{usdcShare}%</span>
           </div>
           <div class="sb-breakdown-seg sb-breakdown-seg--other" style={`--w:${otherShare}%`}>
-            <span>{otherShare}%</span>
+            <span class="sb-breakdown-seg-pct">{otherShare}%</span>
           </div>
         </div>
 
@@ -491,8 +510,14 @@ const alternates = [
         <div class="sb-compare-grid" role="table" aria-label="USDT vs USDC comparison">
           <div class="sb-compare-row sb-compare-row--head" role="row">
             <span></span>
-            <span class="sb-compare-h sb-compare-h--usdt">USDT</span>
-            <span class="sb-compare-h sb-compare-h--usdc">USDC</span>
+            <span class="sb-compare-h sb-compare-h--usdt">
+              <span class="sb-compare-h-coin" set:html={usdtLogoSvg} />
+              USDT
+            </span>
+            <span class="sb-compare-h sb-compare-h--usdc">
+              <span class="sb-compare-h-coin" set:html={usdcLogoSvg} />
+              USDC
+            </span>
           </div>
           {t.stablecoins_page.breakdown.compareRows.map((row, i) => (
             <div class="sb-compare-row" style={`--sb-stagger:${i}`} role="row">
@@ -543,7 +568,7 @@ const alternates = [
               </div>
               <h3>{card.title}</h3>
               <p>{card.desc}</p>
-              {card.link && <a href="/dolarmap" class="sb-use-link">{card.link}</a>}
+              {card.link && <a href="/dolarmap/" class="sb-use-link">{card.link}</a>}
             </div>
           );
         })}
@@ -566,7 +591,7 @@ const alternates = [
           <div class="sb-step-body">
             <h3>{t.stablecoins_page.start.step1.title}</h3>
             <p>{t.stablecoins_page.start.step1.desc}</p>
-            <a href="/exchanges" class="sb-link">{t.stablecoins_page.start.step1.link}</a>
+            <a href="/exchanges/" class="sb-link">{t.stablecoins_page.start.step1.link}</a>
           </div>
         </div>
 
@@ -583,7 +608,7 @@ const alternates = [
           <div class="sb-step-body">
             <h3>{t.stablecoins_page.start.step3.title}</h3>
             <p>{t.stablecoins_page.start.step3.desc}</p>
-            <a href="/dolarmap" class="sb-link">{t.stablecoins_page.start.step3.link}</a>
+            <a href="/dolarmap/" class="sb-link">{t.stablecoins_page.start.step3.link}</a>
           </div>
         </div>
       </div>
@@ -706,8 +731,8 @@ const alternates = [
           {t.stablecoins_page.cta.sub}
         </p>
         <div class="sb-cta-btns">
-          <a href="/dolarmap" class="sb-btn sb-btn--primary">{t.stablecoins_page.cta.primary}</a>
-          <a href="/exchanges" class="sb-btn sb-btn--ghost">{t.stablecoins_page.cta.secondary}</a>
+          <a href="/dolarmap/" class="sb-btn sb-btn--primary">{t.stablecoins_page.cta.primary}</a>
+          <a href="/exchanges/" class="sb-btn sb-btn--ghost">{t.stablecoins_page.cta.secondary}</a>
         </div>
       </div>
     </div>

@@ -307,7 +307,7 @@ h4 { font-size: var(--text-base); font-weight: 600; }
   Mobile: backdrop-filter blur(22px) recalcula a cada scroll na sticky nav
   e é uma das operações de paint mais caras em Android mid-range (Moto G,
   Samsung A-series). Custo medido: ~1.2s de Style & Layout no Lighthouse
-  mobile. Substituímos por background opaco — visualmente indistinguível
+  mobile. Substituímos por background opaco - visualmente indistinguível
   acima do hero escuro.
 */
 @media (max-width: 768px) {
@@ -636,7 +636,7 @@ h4 { font-size: var(--text-base); font-weight: 600; }
 
 /*
   will-change ESCOPADO para :hover apenas. Antes era permanente, mantendo
-  cada card em uma camada de composição GPU dedicada — custo de memória
+  cada card em uma camada de composição GPU dedicada - custo de memória
   alto e desperdício, já que a maioria nunca recebe hover. Agora a camada
   é criada sob demanda no momento do hover.
 */

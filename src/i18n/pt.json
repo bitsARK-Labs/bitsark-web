@@ -282,9 +282,9 @@
     "summary": {
       "title": "Sobre",
       "body": [
-        "A bitsARK Labs publica os dados e as ferramentas que faltavam ao mercado cripto-fiat do Brasil — metadados de corretoras, classificação regulatória, inteligência cambial em tempo real e visibilidade do mercado de stablecoins.",
+        "A bitsARK Labs publica os dados e as ferramentas que faltavam ao mercado cripto-fiat do Brasil - metadados de corretoras, classificação regulatória, inteligência cambial em tempo real e visibilidade do mercado de stablecoins.",
         "O trabalho está na interseção de pagamentos, finanças reguladas e ativos digitais, com foco no Brasil e na América Latina.",
-        "Atuo em produto, inteligência de mercado e execução — identificando lacunas locais, definindo o que será construído e transformando a complexidade do mercado em ferramentas no ar que tornam o mercado cripto-fiat brasileiro mais fácil de navegar."
+        "Atuo em produto, inteligência de mercado e execução - identificando lacunas locais, definindo o que será construído e transformando a complexidade do mercado em ferramentas no ar que tornam o mercado cripto-fiat brasileiro mais fácil de navegar."
       ]
     },
     "projects": {
@@ -652,7 +652,7 @@
       "results": "Exibindo {count} corretora{s}",
       "empty": "Nenhuma corretora encontrada para os filtros selecionados.",
       "resetFilters": "Limpar filtros",
-      "footer": "Dados informativos sujeitos a alterações frequentes. A bitsARK não garante precisão. <a href=\"/terms\" class=\"btn-text-link\">Termos de Uso</a>. Viu algo errado? <button type=\"button\" id=\"open-feedback-btn-footer\" class=\"btn-text-link\">Envie uma correção</button>."
+      "footer": "Dados informativos sujeitos a alterações frequentes. A bitsARK não garante precisão. <a href=\"/terms/\" class=\"btn-text-link\">Termos de Uso</a>. Viu algo errado? <button type=\"button\" id=\"open-feedback-btn-footer\" class=\"btn-text-link\">Envie uma correção</button>."
     },
     "sources": {
       "eyebrow": "Metodologia e fontes",
@@ -682,7 +682,7 @@
         {
           "label": "Marco DeCripto",
           "source": "IN RFB 2.291/2025 - texto oficial",
-          "href": "/pt/exchanges/decripto"
+          "href": "/pt/exchanges/decripto/"
         }
       ],
       "lastUpdatedLabel": "Dados atualizados em"
@@ -2413,7 +2413,7 @@
           "title": "Dados Não Coletados",
           "p1": "O DolarMap não coleta dados usados para rastreá-lo em aplicativos ou sites de outras empresas, e não usa dados para fins de publicidade ou perfil."
         },
-        "deletion": "Para solicitar a exclusão de sua conta, acesse nossa <a href=\"/pt/dolarmap/support#account-deletion\">página de Suporte</a>."
+        "deletion": "Para solicitar a exclusão de sua conta, acesse nossa <a href=\"/pt/dolarmap/support/#account-deletion\">página de Suporte</a>."
       }
     }
   },
@@ -2447,7 +2447,7 @@
         "li4": "Análise personalizada da situação financeira do usuário.",
         "p2": "As cotações exibidas refletem dados coletados automaticamente de fontes públicas e podem não corresponder exatamente ao preço efetivamente praticado no momento de uma transação real. Fatores como spreads operacionais das corretoras, limites de volume, taxas adicionais e latência de dados podem fazer com que o preço real difira do exibido no aplicativo.",
         "p3": "O usuário é o único responsável por suas decisões financeiras. Antes de realizar qualquer operação de câmbio, recomendamos consultar os termos e condições da corretora escolhida e, quando relevante, um profissional financeiro qualificado.",
-        "p4": "Ao usar o DolarMap, você também reconhece os termos gerais de nossa plataforma de infraestrutura principal, <a href=\"/pt/terms\">bitsARK Labs</a>."
+        "p4": "Ao usar o DolarMap, você também reconhece os termos gerais de nossa plataforma de infraestrutura principal, <a href=\"/pt/terms/\">bitsARK Labs</a>."
       },
       "dataSources": {
         "title": "4. Fontes de Dados",
@@ -2561,7 +2561,7 @@
       },
       "q3": {
         "q": "Quais dados o DolarMap coleta sobre mim?",
-        "a": "Coletamos o mínimo necessário: um identificador de dispositivo anônimo, um token FCM para notificações e seus dados de alerta configurados. Não coletamos nomes, localizações ou dados financeiros. Leia nossa <a href=\"/pt/dolarmap/privacy\">Política de Privacidade</a> completa para detalhes."
+        "a": "Coletamos o mínimo necessário: um identificador de dispositivo anônimo, um token FCM para notificações e seus dados de alerta configurados. Não coletamos nomes, localizações ou dados financeiros. Leia nossa <a href=\"/pt/dolarmap/privacy/\">Política de Privacidade</a> completa para detalhes."
       }
     },
     "deletion": {
@@ -2938,11 +2938,11 @@
       },
       "q6": {
         "q": "Quais dados o app coleta sobre mim?",
-        "a": "Apenas o necessário para funcionar: um <strong>ID de dispositivo anônimo</strong> (para salvar seus alertas) e um <strong>token de push</strong> (para entregá-los). Se usar Login com Google, apenas um ID de usuário anônimo é guardado - nunca seu e-mail. Veja a <a href=\"/pt/dolarmap/privacy\" class=\"dm-link\">Política de Privacidade</a>."
+        "a": "Apenas o necessário para funcionar: um <strong>ID de dispositivo anônimo</strong> (para salvar seus alertas) e um <strong>token de push</strong> (para entregá-los). Se usar Login com Google, apenas um ID de usuário anônimo é guardado - nunca seu e-mail. Veja a <a href=\"/pt/dolarmap/privacy/\" class=\"dm-link\">Política de Privacidade</a>."
       },
       "q7": {
         "q": "Como entro em contato com o suporte?",
-        "a": "E-mail <a href=\"mailto:support@bitsark.com\" class=\"dm-link\">support@bitsark.com</a> - respostas em até 24h em dias úteis. Ou visite nossa <a href=\"/pt/dolarmap/support\" class=\"dm-link\">página de suporte</a>."
+        "a": "E-mail <a href=\"mailto:support@bitsark.com\" class=\"dm-link\">support@bitsark.com</a> - respostas em até 24h em dias úteis. Ou visite nossa <a href=\"/pt/dolarmap/support/\" class=\"dm-link\">página de suporte</a>."
       }
     },
     "final": {

@@ -6,7 +6,7 @@ import '@styles/pages/decripto.css';
 const t = useTranslations('pt-BR');
 
 const canonical = 'https://bitsark.com/pt/exchanges/decripto/';
-/* ISO 8601 com timezone (UTC) — exigido pelo Google Rich Results.
+/* ISO 8601 com timezone (UTC) - exigido pelo Google Rich Results.
    Datas-só (YYYY-MM-DD) geram aviso "missing timezone" no rich-results test. */
 const datePublished    = '2025-12-01T00:00:00.000Z';
 const dateModified     = '2026-05-11T00:00:00.000Z';
@@ -271,6 +271,7 @@ const icons: Record<string, string> = {
       <div class="dc-table-frame fade-up">
         <div class="dc-table-wrapper">
           <table class="dc-data-table">
+            <caption class="sr-only">{t.decripto.table.title}</caption>
             <thead>
               <tr>
                 {t.decripto.table.headers.map((h, i) => (
@@ -408,7 +409,7 @@ const icons: Record<string, string> = {
         <p class="dc-cta__eyebrow"> Pronto para começar?</p>
         <h2 id="cta-heading" class="dc-section-title dc-cta__title">{t.decripto.cta.title}</h2>
         <p class="dc-cta__sub">{t.decripto.cta.sub}</p>
-        <a href="/pt/exchanges" class="dc-cta-btn">
+        <a href="/pt/exchanges/" class="dc-cta-btn">
           {t.decripto.cta.btn}
         </a>
       </div>
@@ -423,7 +424,6 @@ const icons: Record<string, string> = {
       <p class="dc-disclaimer" set:html={t.decripto.disclaimer} />
     </div>
   </div>
-</Base>
 
 <!-- IntersectionObserver para .fade-up -->
 <script>
@@ -495,3 +495,5 @@ const icons: Record<string, string> = {
     });
   })();
 </script>
+
+</Base>

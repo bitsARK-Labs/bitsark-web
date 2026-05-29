@@ -73,6 +73,10 @@ const t = useTranslations(normalizedLang);
 
 
 // ── Helper para localizar links internos ──────────────────
+// Garante DUAS coisas:
+//   1. Tradução PT (/foo → /pt/foo/) quando o idioma é pt-BR.
+//   2. Barra final em TODO link interno (trailingSlash: 'always') - evita o
+//      redirect 308 do host e o erro "trailing slash mismatch" no SiteChecker.
 const l = (link: string): string => {
   if (link.startsWith('http') || link.startsWith('#')) return link;
 
@@ -94,9 +98,11 @@ const l = (link: string): string => {
   ) {
     const ptPath = cleanPath === '/' ? '/pt/' : `/pt${cleanPath}/`;
     return `${ptPath}${fragment}`;
-  }         // ← este } estava faltando
+  }
 
-  return link;
+  // Normaliza barra final para links internos (preserva fragmento e raiz).
+  const withSlash = cleanPath === '/' ? '/' : `${cleanPath}/`;
+  return `${withSlash}${fragment}`;
 };
 
 
@@ -218,12 +224,19 @@ const mobileLinks = isDolarMap ? [
     <link rel="preload" as="font" type="font/woff2" href="/fonts/GeistMonoVF.woff2" crossorigin fetchpriority="high" />
 
     <!--
-      hreflang: renderizado SOMENTE quando a prop `alternates` é fornecida.
-      Regra: nunca apontar hreflang para uma página que ainda não existe -
-      isso gera penalidade no Google Search Console.
-      Forneça `alternates` na página apenas quando ambas as variantes estiverem em produção.
+      hreflang: renderizado SOMENTE quando a prop `alternates` é fornecida
+      E a página é indexável.
+      Regras (Google):
+        1. Nunca apontar hreflang para uma página inexistente.
+        2. NUNCA emitir hreflang em página `noindex` - hreflang e noindex são
+           sinais contraditórios (hreflang = "indexe estas variantes"; noindex =
+           "não indexe"). O Search Console reporta os dois lados do cluster como
+           erro ("noindex URL has incoming hreflang" / "outgoing hreflang to
+           noindex URL"). O seletor de idioma da UI continua funcionando via
+           `langHrefs` - apenas as tags <link rel="alternate"> são suprimidas.
+      Forneça `alternates` apenas quando ambas as variantes estiverem em produção.
     -->
-    {alternates.map(alt => (
+    {!noindex && alternates.map(alt => (
       <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
     ))}
 
@@ -838,7 +851,7 @@ const mobileLinks = isDolarMap ? [
       const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
       const hubPaths = ['/dolarmap', '/exchanges', '/stablecoins-brasil', '/pt/dolarmap', '/pt/exchanges', '/pt/stablecoins-brasil'];
 
-      // Phase 1: read-only — compute which links need which class (no DOM writes)
+      // Phase 1: read-only - compute which links need which class (no DOM writes)
       const linkUpdates = [];
       document.querySelectorAll('.nav__link').forEach((link) => {
         const href = link.getAttribute('href')?.replace(/\/$/, '') || '';
@@ -852,7 +865,7 @@ const mobileLinks = isDolarMap ? [
       const navEl = document.querySelector('.nav') as HTMLElement | null;
       const shouldBeScrolled = window.scrollY > 8;
 
-      // Phase 2: write-only — commit all classList changes in one rAF
+      // Phase 2: write-only - commit all classList changes in one rAF
       requestAnimationFrame(() => {
         for (const { el, add } of linkUpdates) {
           el.classList.remove('active');
@@ -883,7 +896,7 @@ const mobileLinks = isDolarMap ? [
 
         // Captura escolha EXPLÍCITA do usuário em qualquer lang picker (desktop + mobile).
         // Diferencia "última página vista" (preferred-lang) de "decisão consciente"
-        // (lang-choice-made) — esta última é usada pelo banner de sugestão de PT
+        // (lang-choice-made) - esta última é usada pelo banner de sugestão de PT
         // para não importunar quem já decidiu.
         // Guard evita registrar o listener mais de uma vez entre navegações suaves.
         if (!document.__bsLangChoiceBound) {

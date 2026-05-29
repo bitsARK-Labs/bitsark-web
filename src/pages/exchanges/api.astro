@@ -345,6 +345,7 @@ const alternates = [
         <p>{t('exchanges_api.rate_limits.headers_included')}</p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.rate_limits.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.rate_limits.header_col')}</th><th>{t('exchanges_api.rate_limits.desc_col')}</th></tr>
             </thead>
@@ -457,6 +458,7 @@ const alternates = [
 
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.schema_reference.title')}</caption>
             <thead>
               <tr>
                 <th>{t('exchanges_api.schema_reference.table_headers.field')}</th>
@@ -507,6 +509,7 @@ const alternates = [
         </p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.query_filters.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.query_filters.table_headers.parameter')}</th><th>{t('exchanges_api.query_filters.table_headers.type')}</th><th>{t('exchanges_api.query_filters.table_headers.description')}</th><th>{t('exchanges_api.query_filters.table_headers.example')}</th></tr>
             </thead>
@@ -553,6 +556,7 @@ const alternates = [
         </p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.tax_regime_values.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.tax_regime_values.table_headers.value')}</th><th>{t('exchanges_api.tax_regime_values.table_headers.meaning')}</th><th>{t('exchanges_api.tax_regime_values.table_headers.monthly_exemption')}</th></tr>
             </thead>
@@ -586,6 +590,7 @@ const alternates = [
         </p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.exchange_rfb_reports.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.exchange_rfb_reports.table_headers.value')}</th><th>{t('exchanges_api.exchange_rfb_reports.table_headers.meaning')}</th></tr>
             </thead>
@@ -616,6 +621,7 @@ const alternates = [
         </p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.user_rfb_action_monthly.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.user_rfb_action_monthly.table_headers.value')}</th><th>{t('exchanges_api.user_rfb_action_monthly.table_headers.user_obligation')}</th></tr>
             </thead>
@@ -653,6 +659,7 @@ const alternates = [
         </p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.main_jurisdiction_iso.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.main_jurisdiction_iso.table_headers.iso')}</th><th>{t('exchanges_api.main_jurisdiction_iso.table_headers.jurisdiction')}</th><th>{t('exchanges_api.main_jurisdiction_iso.table_headers.examples')}</th></tr>
             </thead>
@@ -678,6 +685,7 @@ const alternates = [
         <p>{t('exchanges_api.fees_spread.rendering_guide')}</p>
         <div class="table-wrap">
           <table class="data-table">
+            <caption class="sr-only">{t('exchanges_api.fees_spread.title')}</caption>
             <thead>
               <tr><th>{t('exchanges_api.fees_spread.table_headers.raw_value')}</th><th>{t('exchanges_api.fees_spread.table_headers.display_as')}</th></tr>
             </thead>
@@ -762,8 +770,6 @@ const alternates = [
     </div>
   </div>
   <div id="feedback-backdrop" class="feedback-backdrop" hidden></div>
-
-</Base>
 
 <style>
   /* ── Layout ── */
@@ -1422,3 +1428,5 @@ const alternates = [
 
   document.addEventListener('astro:page-load', init);
 </script>
+
+</Base>

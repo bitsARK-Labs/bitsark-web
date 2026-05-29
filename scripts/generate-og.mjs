@@ -6,7 +6,7 @@
  *   - public/og/exchanges/<slug>.png   (one per exchange)
  *   - public/og/<page>.png             (key marketing pages)
  *
- * Design system: "Linear/Resend bold tech" — gradient mesh backdrop,
+ * Design system: "Linear/Resend bold tech" - gradient mesh backdrop,
  * blueprint grid overlay, monospace metadata bars, abstract data
  * signatures (sparklines / bar trios / dot clouds / code blocks /
  * calendar marks). All decorative SVG is rasterized to PNG via Resvg
@@ -65,7 +65,7 @@ const FONT_PATHS = {
   monoBold:     resolve(ROOT, 'node_modules/geist/dist/fonts/geist-mono/GeistMono-Bold.ttf'),
 };
 
-// Resvg font config — needed for SVG <text> rendering in decorative assets
+// Resvg font config - needed for SVG <text> rendering in decorative assets
 const RESVG_FONT = {
   fontFiles: Object.values(FONT_PATHS).filter((p) => existsSync(p)),
   loadSystemFonts: false,
@@ -96,7 +96,7 @@ async function fetchExchangeLogo(slug, url) {
   try {
     const res = await fetch(url);
     if (!res.ok) {
-      console.warn(`[og] logo fetch ${slug} → HTTP ${res.status} — skipping`);
+      console.warn(`[og] logo fetch ${slug} → HTTP ${res.status} - skipping`);
       return null;
     }
     const svgBuf = Buffer.from(await res.arrayBuffer());
@@ -107,7 +107,7 @@ async function fetchExchangeLogo(slug, url) {
     writeFileSync(cachePath, png);
     return `data:image/png;base64,${Buffer.from(png).toString('base64')}`;
   } catch (err) {
-    console.warn(`[og] logo fetch ${slug} failed: ${err.message} — skipping`);
+    console.warn(`[og] logo fetch ${slug} failed: ${err.message} - skipping`);
     return null;
   }
 }
@@ -129,7 +129,7 @@ function h(type, props = {}, ...children) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// VISUAL ASSETS — SVG strings rasterized → PNG data URL via Resvg
+// VISUAL ASSETS - SVG strings rasterized → PNG data URL via Resvg
 // ═══════════════════════════════════════════════════════════════════════
 
 // ── Blueprint grid overlay (48px lines @ 2.5% opacity) ──────────────────
@@ -145,7 +145,7 @@ const GRID_BACKDROP = (() => {
   return svgToDataUrl(svg, 1200);
 })();
 
-// ── Gradient mesh helper — returns CSS background string (satori native) ──
+// ── Gradient mesh helper - returns CSS background string (satori native) ──
 // Stacks 4 radial gradients to create depth without rasterization
 function makeMeshBg(accentHex, secondaryHex = BRAND.primary) {
   return [
@@ -160,7 +160,7 @@ const MESH_PRIMARY = makeMeshBg(BRAND.primary, BRAND.primary);
 const MESH_ACCENT  = makeMeshBg(BRAND.accent,  BRAND.primary);
 const MESH_SUCCESS = makeMeshBg(BRAND.success, BRAND.primary);
 
-// ── Sparkline (DolarMap) — abstract USD/BRL ticker ──────────────────────
+// ── Sparkline (DolarMap) - abstract USD/BRL ticker ──────────────────────
 const SPARKLINE_SVG = (() => {
   // 12 ascending points with realistic noise, viewBox 440×160
   const pts = [
@@ -192,7 +192,7 @@ const SPARKLINE_SVG = (() => {
   return svgToDataUrl(svg, 880);
 })();
 
-// ── Bar trio (Stablecoins) — USDT / USDC / Other market share ───────────
+// ── Bar trio (Stablecoins) - USDT / USDC / Other market share ───────────
 const BAR_TRIO_SVG = (() => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" width="440" height="280">
     <defs>
@@ -211,7 +211,7 @@ const BAR_TRIO_SVG = (() => {
   return svgToDataUrl(svg, 880);
 })();
 
-// ── Exchanges list fragment (Exchanges hub) — mini table preview ────────
+// ── Exchanges list fragment (Exchanges hub) - mini table preview ────────
 const EXCHANGES_LIST_SVG = (() => {
   // 6 rows simulating the exchanges directory table
   const rows = [
@@ -250,7 +250,7 @@ const EXCHANGES_LIST_SVG = (() => {
   return svgToDataUrl(svg, 880);
 })();
 
-// ── Code block (Exchanges API) — abstract JSON response ─────────────────
+// ── Code block (Exchanges API) - abstract JSON response ─────────────────
 const CODE_BLOCK_SVG = (() => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 280" width="440" height="280">
     <rect x="1" y="1" width="438" height="278" rx="14" fill="${BRAND.surface}" stroke="${BRAND.primary}" stroke-opacity="0.32" stroke-width="1"/>
@@ -272,7 +272,7 @@ const CODE_BLOCK_SVG = (() => {
     <text x="22" y="222" font-family="Geist Mono" font-size="12" fill="${BRAND.textFaint}" fill-opacity="0.55" text-anchor="end">7</text>
     <text x="22" y="246" font-family="Geist Mono" font-size="12" fill="${BRAND.textFaint}" fill-opacity="0.55" text-anchor="end">8</text>
 
-    <!-- "code" — abstract rect blocks suggesting syntax highlighting -->
+    <!-- "code" - abstract rect blocks suggesting syntax highlighting -->
     <!-- {  -->
     <rect x="36" y="69"  width="10"  height="12" rx="2" fill="${BRAND.textMuted}"/>
 
@@ -317,7 +317,7 @@ const CODE_BLOCK_SVG = (() => {
   return svgToDataUrl(svg, 880);
 })();
 
-// ── Calendar mark (DeCripto) — bracket-framed deadline glyph ────────────
+// ── Calendar mark (DeCripto) - bracket-framed deadline glyph ────────────
 const CALENDAR_MARK_SVG = (() => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320">
     <!-- corner brackets (heavy) -->
@@ -346,7 +346,7 @@ const CALENDAR_MARK_SVG = (() => {
   return svgToDataUrl(svg, 640);
 })();
 
-// ── Product stack (Default OG) — 3 abstract product cards ───────────────
+// ── Product stack (Default OG) - 3 abstract product cards ───────────────
 const PRODUCT_STACK_SVG = (() => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 380" width="440" height="380">
     <!-- Card 3 (back): Stablecoins (green) -->
@@ -391,7 +391,7 @@ const PRODUCT_STACK_SVG = (() => {
 })();
 
 // ── bitsARK Labs logo SVG (CSS vars resolved to BRAND tokens, static IDs) ──
-// Source: src/components/Logo.astro — colors resolved at build time, sheen/animation stripped.
+// Source: src/components/Logo.astro - colors resolved at build time, sheen/animation stripped.
 const BITSARK_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="202" fill="none" viewBox="0 0 800 202">
   <g clip-path="url(#bitsark-og-frame)">
     <path fill="${BRAND.text}" d="M197.564 109.822V90.227h62.703V80.35H213.24V64.675h-15.676V45.237h15.676V31.443h66.465v17.556h-62.703v11.914h47.027V76.59h15.676v17.557h-15.676v15.676zM129.742 51.037V31.443h15.676V.09h19.438v31.352h18.571v19.594h-18.571v39.19h18.571v19.595h-22.333V94.146h-15.676V51.037zM96.253 109.822v-78.38h19.438v78.38zm0-90.136V.09h19.438v19.595zM0 94.146V.09h19.438v31.352h47.028v15.675H82.14v47.028H66.466v15.676h-50.79V94.146zm19.438-3.92h43.265V51.038H19.438z"/>
@@ -432,10 +432,10 @@ const DOLARMAP_LOGO_URL_LG = svgToDataUrl(DOLARMAP_SVG, 640);
 const DOLARMAP_LOGO_URL_MD = svgToDataUrl(DOLARMAP_SVG, 480);
 
 // ═══════════════════════════════════════════════════════════════════════
-// COMPONENTS — satori-flexbox primitives via h()
+// COMPONENTS - satori-flexbox primitives via h()
 // ═══════════════════════════════════════════════════════════════════════
 
-// ── OG shell — outer 1200×630 container with mesh bg + grid overlay ─────
+// ── OG shell - outer 1200×630 container with mesh bg + grid overlay ─────
 function OGShell({ mesh, children }) {
   return h('div', {
     style: {
@@ -462,7 +462,7 @@ function OGShell({ mesh, children }) {
   );
 }
 
-// ── bitsARK Labs wordmark — logo SVG rasterized ─────────────────────────
+// ── bitsARK Labs wordmark - logo SVG rasterized ─────────────────────────
 // Logo viewBox is 800×202. Heights below are derived from desired visual sizes.
 function Wordmark({ size = 'md' } = {}) {
   // height in px → width = height * (800/202)
@@ -484,7 +484,7 @@ function EndorserWordmark({ size = 24 } = {}) {
   );
 }
 
-// ── Editorial "— by —" separator ────────────────────────────────────────
+// ── Editorial "- by —" separator ────────────────────────────────────────
 function BySeparator({ color = BRAND.textFaint } = {}) {
   return h('div', {
     style: {
@@ -543,7 +543,7 @@ function ProductIdentity({ product, productSub, productColor = BRAND.primary, sc
   );
 }
 
-// ── Top metadata bar — accent bracket + uppercase mono segments ─────────
+// ── Top metadata bar - accent bracket + uppercase mono segments ─────────
 function TopMetaBar({ segments = [], accent = BRAND.primary }) {
   return h('div', {
     style: { display: 'flex', alignItems: 'center', gap: 14, position: 'relative' },
@@ -569,7 +569,7 @@ function TopMetaBar({ segments = [], accent = BRAND.primary }) {
   );
 }
 
-// ── Pill chip — mono uppercase ──────────────────────────────────────────
+// ── Pill chip - mono uppercase ──────────────────────────────────────────
 function Chip({ label, color = BRAND.primary, faint = false }) {
   return h('div', {
     style: {
@@ -585,7 +585,7 @@ function Chip({ label, color = BRAND.primary, faint = false }) {
   }, label);
 }
 
-// ── Data table row — flex columns with divider borders ──────────────────
+// ── Data table row - flex columns with divider borders ──────────────────
 function DataTable({ cols }) {
   return h('div', {
     style: {
@@ -622,7 +622,7 @@ function DataTable({ cols }) {
   );
 }
 
-// ── Footer row — URL left, brand+version right ──────────────────────────
+// ── Footer row - URL left, brand+version right ──────────────────────────
 function FooterRow({ url, accent = BRAND.primary, right = 'BITSARK LABS' }) {
   return h('div', {
     style: {
@@ -656,7 +656,7 @@ function FooterRow({ url, accent = BRAND.primary, right = 'BITSARK LABS' }) {
   );
 }
 
-// ── Visual legend — mono caption under a data viz ───────────────────────
+// ── Visual legend - mono caption under a data viz ───────────────────────
 function VisualLegend({ label, dotColor = BRAND.primary }) {
   return h('div', {
     style: {
@@ -740,7 +740,7 @@ function ExchangeTemplate(ex, logoDataUrl) {
       h('div', {
         style: { display: 'flex', flexGrow: 1, alignItems: 'center', gap: 40, marginTop: 22 },
       },
-        // Left — name + regime + data table
+        // Left - name + regime + data table
         h('div', {
           style: { display: 'flex', flexDirection: 'column', gap: 20, width: 660 },
         },
@@ -779,7 +779,7 @@ function ExchangeTemplate(ex, logoDataUrl) {
             ],
           }),
         ),
-        // Right — logo card + status chips
+        // Right - logo card + status chips
         h('div', {
           style: {
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
@@ -802,7 +802,7 @@ function ExchangeTemplate(ex, logoDataUrl) {
   });
 }
 
-// ── 3. Page template — variant-driven right visual ──────────────────────
+// ── 3. Page template - variant-driven right visual ──────────────────────
 function PageTemplate({ eyebrow, title, subtitle, url, accent, productIdentity, variant, metabarSegments, mesh, titleSize = 56 }) {
   const visuals = {
     sparkline: h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 14 } },
@@ -989,7 +989,7 @@ async function main() {
       slug: 'exchanges',
       productIdentity: { product: 'Exchanges', productSub: 'in Brazil', productColor: BRAND.primary },
       eyebrow: 'EXCHANGES DIRECTORY',
-      title: 'Every Brazilian crypto exchange — fees, regulation, Pix.',
+      title: 'Every Brazilian crypto exchange - fees, regulation, Pix.',
       subtitle: 'BCB licensing · DeCripto · DARF guidance.',
       accent: BRAND.primary,
       mesh: MESH_PRIMARY,

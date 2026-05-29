@@ -274,9 +274,9 @@
     },
     "summary": {
       "title": "About",
-      "body":  ["bitsARK Labs publishes the data and tooling Brazil's crypto-fiat market was missing — exchange metadata, regulatory classification, real-time FX intelligence, and stablecoin market visibility.",
+      "body":  ["bitsARK Labs publishes the data and tooling Brazil's crypto-fiat market was missing - exchange metadata, regulatory classification, real-time FX intelligence, and stablecoin market visibility.",
 "The work sits at the intersection of payments, regulated finance, and digital assets, with a focus on Brazil and broader LATAM.",
-"I work across product, market insight, and execution — identifying local gaps, shaping what gets built, and turning market complexity into live tools used to make the Brazilian crypto-fiat market easier to navigate."
+"I work across product, market insight, and execution - identifying local gaps, shaping what gets built, and turning market complexity into live tools used to make the Brazilian crypto-fiat market easier to navigate."
               ]
     },
     "projects": {
@@ -573,7 +573,7 @@
       "results": "Displaying {count} exchange{s}",
       "empty": "No exchanges found for the selected filters.",
       "resetFilters": "Clear all filters",
-      "footer": "Informational data subject to frequent changes. bitsARK does not guarantee accuracy. <a href=\"/terms\" class=\"btn-text-link\">Terms of Use</a>. See something wrong? <button type=\"button\" id=\"open-feedback-btn-footer\" class=\"btn-text-link\">Send a correction</button>."
+      "footer": "Informational data subject to frequent changes. bitsARK does not guarantee accuracy. <a href=\"/terms/\" class=\"btn-text-link\">Terms of Use</a>. See something wrong? <button type=\"button\" id=\"open-feedback-btn-footer\" class=\"btn-text-link\">Send a correction</button>."
     },
     "filters": {
       "ariaLabel": "Exchange jurisdiction and regime filters",
@@ -613,7 +613,7 @@
         {
           "label": "DeCripto framework",
           "source": "IN RFB 2.291/2025 - official text",
-          "href": "/exchanges/decripto"
+          "href": "/exchanges/decripto/"
         }
       ],
       "lastUpdatedLabel": "Data last refreshed"
@@ -1740,7 +1740,7 @@
           "title": "Data Not Collected",
           "p1": "DolarMap does not collect data used to track you across apps or websites owned by other companies, and does not use data for advertising or profiling purposes."
         },
-        "deletion": "To request deletion of your account and all associated data, visit our <a href=\"/dolarmap/support#account-deletion\">Support page</a> or use the <em>\"Delete my account\"</em> option in the app's Settings."
+        "deletion": "To request deletion of your account and all associated data, visit our <a href=\"/dolarmap/support/#account-deletion\">Support page</a> or use the <em>\"Delete my account\"</em> option in the app's Settings."
       }
     }
   },
@@ -1774,7 +1774,7 @@
         "li4": "Personalized analysis of the user's financial situation.",
         "p2": "The displayed quotes reflect data collected automatically from public sources and may not exactly match the price effectively practiced at the time of a real transaction. Factors such as brokers' operational spreads, volume limits, additional fees, and data latency may cause the actual price to differ from that displayed in the application.",
         "p3": "The user is solely responsible for their financial decisions. Before carrying out any currency exchange operation, we recommend consulting the terms and conditions of the chosen broker and, where relevant, a qualified financial professional.",
-        "p4": "By using DolarMap, you also acknowledge the general terms of our parent infrastructure platform, <a href=\"/terms\">bitsARK Labs</a>."
+        "p4": "By using DolarMap, you also acknowledge the general terms of our parent infrastructure platform, <a href=\"/terms/\">bitsARK Labs</a>."
       },
       "dataSources": {
         "title": "4. Data Sources",
@@ -1888,7 +1888,7 @@
       },
       "q3": {
         "q": "What data does DolarMap collect about me?",
-        "a": "We collect the minimum necessary: an anonymous device identifier, an FCM token for notifications, and your configured alert data. We do not collect names, locations, or financial data. Read our full <a href=\"/dolarmap/privacy\">Privacy Policy</a> for details."
+        "a": "We collect the minimum necessary: an anonymous device identifier, an FCM token for notifications, and your configured alert data. We do not collect names, locations, or financial data. Read our full <a href=\"/dolarmap/privacy/\">Privacy Policy</a> for details."
       }
     },
     "deletion": {
@@ -2870,11 +2870,11 @@
       },
       "q6": {
         "q": "What data does the app collect about me?",
-        "a": "Only what's needed to work: an <strong>anonymous device ID</strong> (to save your alerts) and a <strong>push token</strong> (to deliver them). If you use Google sign-in, only an anonymous user ID is stored - never your email. See the <a href=\"/dolarmap/privacy\" class=\"dm-link\">Privacy Policy</a>."
+        "a": "Only what's needed to work: an <strong>anonymous device ID</strong> (to save your alerts) and a <strong>push token</strong> (to deliver them). If you use Google sign-in, only an anonymous user ID is stored - never your email. See the <a href=\"/dolarmap/privacy/\" class=\"dm-link\">Privacy Policy</a>."
       },
       "q7": {
         "q": "How do I contact support?",
-        "a": "Email <a href=\"mailto:support@bitsark.com\" class=\"dm-link\">support@bitsark.com</a> - replies within 24h on business days. Or visit our <a href=\"/dolarmap/support\" class=\"dm-link\">support page</a>."
+        "a": "Email <a href=\"mailto:support@bitsark.com\" class=\"dm-link\">support@bitsark.com</a> - replies within 24h on business days. Or visit our <a href=\"/dolarmap/support/\" class=\"dm-link\">support page</a>."
       }
     },
     "final": {

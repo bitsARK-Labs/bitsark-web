@@ -123,55 +123,6 @@
   .exch-summary strong { color: var(--color-text); font-weight: 600; }
   .exch-summary time { color: var(--color-text); font-variant-numeric: tabular-nums; }
 
-  /* ── Per-exchange deep links (#compare) ── */
-  .exch-deep-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-    gap: var(--space-6);
-  }
-  .exch-deep-col__title {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    color: var(--color-text);
-    margin-bottom: var(--space-4);
-    padding-bottom: var(--space-3);
-    border-bottom: 1px solid var(--color-border);
-  }
-  .exch-deep-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2px;
-  }
-  .exch-deep-link {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-sm);
-    text-decoration: none;
-    color: var(--color-text);
-    transition: background var(--transition), transform var(--transition);
-  }
-  .exch-deep-link:hover {
-    background: var(--color-primary-highlight, rgba(79, 152, 163, 0.08));
-    transform: translateX(2px);
-  }
-  .exch-deep-link__name {
-    font-size: var(--text-sm);
-    font-weight: 500;
-  }
-  .exch-deep-link__hint {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--color-text-faint);
-    letter-spacing: 0.01em;
-  }
-
   /* ── TL;DR ── */
   .exch-tldr-grid {
     display: grid;
@@ -819,7 +770,7 @@
     border-bottom: 1px solid var(--color-border);
   }
 
-  /* Floating sticky thead — cloned by JS, position:fixed outside overflow container */
+  /* Floating sticky thead - cloned by JS, position:fixed outside overflow container */
   #exch-thead-float {
     position: fixed;
     overflow: hidden;
@@ -1312,7 +1263,7 @@
     }
   }
 
-  /* Hint de rotação — visível só quando retrato em mobile */
+  /* Hint de rotação - visível só quando retrato em mobile */
   .rotate-hint {
     display: none;
     align-items: center;

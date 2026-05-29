@@ -53,12 +53,35 @@ export function getLangFromUrl(url: URL): Lang {
 }
 
 /**
- * Localiza um link interno.
+ * Localiza um link interno e garante barra final (trailingSlash: 'always').
+ *
+ * Por que a barra final importa: o build emite directory format
+ * (/foo/index.html → URL canônica /foo/) e as <link rel="canonical"> e o
+ * sitemap usam barra. Links internos SEM barra batem no redirect 308 do host
+ * (Cloudflare Pages), gerando "internal redirects from trailing slash mismatch".
+ *
+ * Preserva fragmentos (#sec) e query (?x=1) - a barra entra ANTES deles.
+ * Links externos (http) e âncoras puras (#) passam intactos.
  */
 export function useLocalizedPath(lang: Lang) {
   return function l(path: string): string {
+    if (path.startsWith('http') || path.startsWith('#')) return path;
+
     const prefix = lang.startsWith('pt') ? '/pt' : '';
-    return `${prefix}${path.startsWith('/') ? path : `/${path}`}`;
+    const raw = path.startsWith('/') ? path : `/${path}`;
+
+    // Separa path de fragmento/query para inserir a barra no lugar certo.
+    const sepIndex = raw.search(/[#?]/);
+    const base = sepIndex >= 0 ? raw.slice(0, sepIndex) : raw;
+    const tail = sepIndex >= 0 ? raw.slice(sepIndex) : '';
+
+    const cleanBase = base.replace(/\/+$/, '') || '/';
+
+    // Root: EN → "/", PT → "/pt/". Demais: "<prefix><base>/".
+    if (cleanBase === '/') {
+      return `${prefix}/${tail}`;
+    }
+    return `${prefix}${cleanBase}/${tail}`;
   };
 }
 

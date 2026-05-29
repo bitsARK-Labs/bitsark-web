@@ -151,7 +151,7 @@ const schema = {
       "contentUrl": "https://bitsark.com/og/exchanges.png",
       "width": 1200,
       "height": 630,
-      "caption": "Crypto Exchanges in Brazil — fiscal and operational comparison",
+      "caption": "Crypto Exchanges in Brazil - fiscal and operational comparison",
     },
     {
       "@type": "BreadcrumbList",
@@ -164,7 +164,7 @@ const schema = {
     {
       "@type": "Dataset",
       "@id": `${PAGE_URL}#dataset`,
-      "name": "Crypto Exchanges in Brazil — Fiscal & Operational Profile (2026)",
+      "name": "Crypto Exchanges in Brazil - Fiscal & Operational Profile (2026)",
       "alternateName": [
         "Brazilian crypto exchanges tax reporting dataset",
         "Receita Federal IN 1888 and Law 14.754 exchange classification",
@@ -198,7 +198,7 @@ const schema = {
         "@type": "DataDownload",
         "contentUrl": "https://api.bitsark.com/v1/exchanges",
         "encodingFormat": "application/json",
-        "name": "bitsARK Exchanges API — JSON",
+        "name": "bitsARK Exchanges API - JSON",
       },
       "keywords": [
         "crypto exchanges brazil", "exchange CNPJ", "BCB PSAV",
@@ -209,13 +209,13 @@ const schema = {
       ],
       "citation": [
         "Instrução Normativa RFB nº 1.888/2019 (Brazil)",
-        "Instrução Normativa RFB nº 2.291/2025 — DeCripto (Brazil)",
+        "Instrução Normativa RFB nº 2.291/2025 - DeCripto (Brazil)",
         "Lei nº 14.754/2023 (Brazil)",
       ],
       "hasPart": exchangesData.map(ex => ({
         "@type": "Dataset",
-        "name": `${ex.name} — fiscal profile`,
-        "description": `Tax regime, BCB authorization, IN 1888 reporting status, Pix support, maker/taker fees, and Receita Federal obligations for ${ex.name} — verified by bitsARK Labs.`,
+        "name": `${ex.name} - fiscal profile`,
+        "description": `Tax regime, BCB authorization, IN 1888 reporting status, Pix support, maker/taker fees, and Receita Federal obligations for ${ex.name} - verified by bitsARK Labs.`,
         "url": `https://bitsark.com/exchanges/${ex.slug}/`,
         "creator": { "@id": "https://bitsark.com/#organization" },
         "license": "https://bitsark.com/terms",
@@ -283,7 +283,7 @@ const schema = {
     <div class="exch-header-grid-bg" aria-hidden="true"></div>
     <div class="container exch-header-inner">
       <!-- Alerta DeCripto 2026 -->
-      <a href="/exchanges/decripto" class="decripto-banner fade-up">
+      <a href="/exchanges/decripto/" class="decripto-banner fade-up">
         <span class="decripto-banner__badge">{t.exchanges.banner.badge}</span>
         <span class="decripto-banner__text" set:html={t.exchanges.banner.text} />
         <span class="decripto-banner__arrow" aria-hidden="true">→</span>
@@ -300,7 +300,7 @@ const schema = {
       <h1 id="exch-h1" class="exch-header__title" set:html={t.exchanges.header.title} />
       <div class="exch-header__flex">
         <p class="exch-header__sub" set:html={t.exchanges.header.sub} />
-        <a href="/exchanges/api" class="nav__cta">
+        <a href="/exchanges/api/" class="nav__cta">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="16 18 22 12 16 6"></polyline>
             <polyline points="8 6 2 12 8 18"></polyline>
@@ -426,6 +426,7 @@ const schema = {
       </div>
       <div class="table-wrap" role="region" aria-label={t.exchanges.table.ariaLabel} tabindex="0">
         <table class="data-table" id="exchanges-table">
+          <caption class="sr-only">{t.exchanges.table.ariaLabel}</caption>
           <thead>
             <tr>
               <th scope="col" id="col-exchange" class="sticky-col sortable" data-sort="name" aria-sort="none"
@@ -494,7 +495,7 @@ const schema = {
                 <td class="exch-td-name sticky-col" headers="col-exchange">
                   <div class="exch-info-group">
                     <div class="exch-name-row">
-                      <a href={`/exchanges/${ex.slug}`} class="exch-name-link">
+                      <a href={`/exchanges/${ex.slug}/`} class="exch-name-link" aria-label={`${ex.name} taxes in Brazil`}>
                         {ex.logo_url && (
                           <img src={ex.logo_url} alt={ex.name} class="exch-logo" width="20" height="20" loading="lazy" />
                         )}
@@ -659,64 +660,6 @@ const schema = {
           <line x1="12" y1="8" x2="12.01" y2="8"></line>
         </svg>
         <span set:html={t.exchanges.table.footer} />
-      </div>
-    </div>
-  </section>
-
-  <!--
-    Per-exchange deep links. Descriptive anchor text feeds ItemList schema and
-    fortifies the 24 [slug] children. Splits domestic vs offshore so each list
-    answers a different query intent ("does X report to RFB?" vs "is X offshore?").
-  -->
-  <section class="section section--alt section--tight" id="compare" aria-labelledby="compare-h2">
-    <div class="container">
-      <div class="exch-block-head">
-        <p class="eyebrow eyebrow--icon">Per-exchange tax profile</p>
-        <h2 id="compare-h2" class="exch-block-title">Compare individual exchanges</h2>
-        <p class="exch-block-sub">Open the page of any broker to see CNPJ, IN 1888 reporting, fees, and exactly what you owe Receita Federal.</p>
-      </div>
-
-      <div class="exch-deep-grid">
-        <div class="exch-deep-col">
-          <h3 class="exch-deep-col__title">Domestic (Receita Federal · IN 1888)</h3>
-          <ul class="exch-deep-list" role="list">
-            {exchangesData
-              .filter(ex => ex.taxRegime.includes('domestic_exchange'))
-              .map(ex => (
-                <li>
-                  <a href={`/exchanges/${ex.slug}/`} class="exch-deep-link">
-                    <span class="exch-deep-link__name">{ex.name} taxes in Brazil</span>
-                    <span class="exch-deep-link__hint">
-                      {ex.cnpjFmt ? `CNPJ ${ex.cnpjFmt}` : 'Domestic regime'}
-                      {ex.bcb ? ' · BCB' : ''}
-                      {ex.hasIn1888 ? ' · IN 1888' : ''}
-                    </span>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-
-        <div class="exch-deep-col">
-          <h3 class="exch-deep-col__title">Offshore (Law 14.754/2023)</h3>
-          <ul class="exch-deep-list" role="list">
-            {exchangesData
-              .filter(ex => ex.taxRegime === 'offshore_law_14754')
-              .map(ex => (
-                <li>
-                  <a href={`/exchanges/${ex.slug}/`} class="exch-deep-link">
-                    <span class="exch-deep-link__name">{ex.name} taxes for Brazilians</span>
-                    <span class="exch-deep-link__hint">
-                      Offshore · {ex.countryName}
-                      {ex.hasIn1888 ? ' · IN 1888' : ''}
-                    </span>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
       </div>
     </div>
   </section>
@@ -913,9 +856,6 @@ const schema = {
     </div>
   </div>
   <div id="feedback-backdrop" class="feedback-backdrop" hidden></div>
-
-</Base>
-
 
 <script>
   // Limpa o thead flutuante antes do swap para evitar duplicatas entre navegações
@@ -1332,3 +1272,5 @@ const schema = {
 
   document.addEventListener('astro:page-load', initExchangesPage);
 </script>
+
+</Base>

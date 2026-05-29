@@ -175,15 +175,14 @@ const alternates = [
     <footer class="support-footer fade-up">
       <div class="sb-container">
         <p class="legal-links">
-          <a href={lang === 'pt-BR' ? '/pt/dolarmap/privacy' : '/dolarmap/privacy'}>{t.support.footer.privacy}</a>
+          <a href={lang === 'pt-BR' ? '/pt/dolarmap/privacy/' : '/dolarmap/privacy/'}>{t.support.footer.privacy}</a>
           <span aria-hidden="true">·</span>
-          <a href={lang === 'pt-BR' ? '/pt/dolarmap/terms' : '/dolarmap/terms'}>{t.support.footer.terms}</a>
+          <a href={lang === 'pt-BR' ? '/pt/dolarmap/terms/' : '/dolarmap/terms/'}>{t.support.footer.terms}</a>
         </p>
         <p class="legal-meta">{t.support.footer.meta}</p>
       </div>
     </footer>
   </main>
-</Base>
 
 <style>
   /* ── Layout & Containers ── */
@@ -336,3 +335,5 @@ const alternates = [
 
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 </script>
+
+</Base>

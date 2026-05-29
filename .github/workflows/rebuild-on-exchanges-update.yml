@@ -3,7 +3,7 @@ name: Rebuild on Exchanges Update
 # Quando exchanges-api/data/exchanges.json muda, o repo bitsARK-Labs/exchanges-api
 # envia repository_dispatch (event_type: exchanges-data-updated). Este workflow:
 #   1. Baixa o array de exchanges da API pública (api.bitsark.com/v1/exchanges)
-#      — mesma fonte que consumidores externos veem, com purge de cache já feito
+#      - mesma fonte que consumidores externos veem, com purge de cache já feito
 #      pelo workflow notify-web do repo exchanges-api antes do dispatch.
 #   2. Extrai .data (array) do envelope { success, notice, count, total, data }.
 #   3. Sobrescreve src/data/exchanges.json se houve mudança.

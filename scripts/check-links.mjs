@@ -1,7 +1,7 @@
 /**
  * Verifica se todos os paths usados em l('...') existem como páginas em src/pages/.
- * Ignora anchors (#section) — valida apenas o path base.
- * Ignora rotas dinâmicas ([slug]) — essas são válidas por definição.
+ * Ignora anchors (#section) - valida apenas o path base.
+ * Ignora rotas dinâmicas ([slug]) - essas são válidas por definição.
  *
  * Uso: node scripts/check-links.mjs
  */
@@ -41,7 +41,7 @@ const allPages = collectPages(PAGES_DIR);
 const enPages = new Set([...allPages].filter(p => !p.startsWith('/pt/')));
 const ptPages = new Set([...allPages].filter(p => p.startsWith('/pt/')).map(p => p.slice(3) || '/'));
 
-// Rotas dinâmicas (ex: /exchanges/[slug]) — considerar o segmento pai como válido
+// Rotas dinâmicas (ex: /exchanges/[slug]) - considerar o segmento pai como válido
 const dynamicParents = new Set(
   [...allPages]
     .filter(p => p.includes('['))

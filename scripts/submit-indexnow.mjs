@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// submit-indexnow.mjs — key check, gz support, retries, exponential backoff
+// submit-indexnow.mjs - key check, gz support, retries, exponential backoff
 
 import zlib from 'zlib';
 

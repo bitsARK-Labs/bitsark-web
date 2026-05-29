@@ -2,28 +2,28 @@
 
 ## Context
 
-`bitsark.com` defaults to English — that URL lives in canonical registrations (Google Play Store, LinkedIn, portfolio links) and targets foreign recruiters. However, the primary audience is Brazilian and arrives already knowing Portuguese. Without a nudge, most Brazilians browse the EN version without knowing `/pt/` exists.
+`bitsark.com` defaults to English - that URL lives in canonical registrations (Google Play Store, LinkedIn, portfolio links) and targets foreign recruiters. However, the primary audience is Brazilian and arrives already knowing Portuguese. Without a nudge, most Brazilians browse the EN version without knowing `/pt/` exists.
 
 The banner closes that gap: it surfaces the PT version **once**, to users whose browser signals Portuguese preference, and then gets out of the way permanently.
 
 ---
 
-## Behaviour — when the banner appears
+## Behaviour - when the banner appears
 
 All four conditions must be true simultaneously:
 
 | # | Condition | Checked where |
 |---|-----------|---------------|
-| 1 | Page is English (not `/pt/*`) | Server-side SSG gate in `Base.astro` — component is not rendered at all on PT pages |
+| 1 | Page is English (not `/pt/*`) | Server-side SSG gate in `Base.astro` - component is not rendered at all on PT pages |
 | 2 | `navigator.language` or any entry in `navigator.languages` starts with `"pt"` | Client JS in `LangBanner.astro` script |
-| 3 | `localStorage['lang-banner-dismissed']` is not `'1'` | Client JS — written on any dismissal action |
-| 4 | `localStorage['lang-choice-made']` is not `'1'` | Client JS — written whenever user explicitly clicks a language picker |
+| 3 | `localStorage['lang-banner-dismissed']` is not `'1'` | Client JS - written on any dismissal action |
+| 4 | `localStorage['lang-choice-made']` is not `'1'` | Client JS - written whenever user explicitly clicks a language picker |
 
 If any condition is false → banner stays `hidden`, no layout change.
 
 ---
 
-## Behaviour — when the banner disappears
+## Behaviour - when the banner disappears
 
 There are three dismissal paths. All three write `lang-banner-dismissed = '1'` to `localStorage` and trigger the fade-out + DOM removal:
 
@@ -49,7 +49,7 @@ lang-choice-made        '1' | absent
 
 `lang-banner-dismissed` covers *this specific banner*: it was shown, acknowledged, done.
 
-`lang-choice-made` covers *any explicit language decision*: it is written whenever the user clicks **any** `[data-lang-choice]` element — the nav desktop picker (EN/PT), the mobile menu picker, or the banner CTA. This key persists across sessions and prevents us from re-asking someone who actively chose a language in a previous visit, even if they navigate to the EN site directly (e.g. via an old bookmark or external link).
+`lang-choice-made` covers *any explicit language decision*: it is written whenever the user clicks **any** `[data-lang-choice]` element - the nav desktop picker (EN/PT), the mobile menu picker, or the banner CTA. This key persists across sessions and prevents us from re-asking someone who actively chose a language in a previous visit, even if they navigate to the EN site directly (e.g. via an old bookmark or external link).
 
 **Together they answer different questions:**
 - `lang-banner-dismissed = '1'` → "The user has seen this specific prompt and responded."
@@ -99,7 +99,7 @@ initLangBanner();
 document.addEventListener('astro:page-load', initLangBanner);
 ```
 
-Idempotency is enforced via `el.dataset.langInit = '1'` — the function exits early if already initialised on the current element.
+Idempotency is enforced via `el.dataset.langInit = '1'` - the function exits early if already initialised on the current element.
 
 ### `[data-lang-choice]` listener
 
@@ -114,9 +114,9 @@ document.addEventListener('click', function(ev) {
 ```
 
 `data-lang-choice` is stamped on:
-- Desktop nav lang links (`Base.astro` — two instances for DolarMap/non-DolarMap layouts)
+- Desktop nav lang links (`Base.astro` - two instances for DolarMap/non-DolarMap layouts)
 - Mobile menu lang links (`MobileMenu.astro`)
-- The banner CTA `<a>` (`LangBanner.astro` — so clicking "Ver em português" counts as an explicit choice too)
+- The banner CTA `<a>` (`LangBanner.astro` - so clicking "Ver em português" counts as an explicit choice too)
 
 ---
 
@@ -127,7 +127,7 @@ document.addEventListener('click', function(ev) {
 | `src/components/LangBanner.astro` | **New.** Component with markup, scoped styles, and client script. |
 | `src/layouts/Base.astro` | Import `LangBanner`; conditional mount before `<nav>`; `data-lang-choice` on desktop lang links (×2); `lang-choice-made` capture listener in persistence script. |
 | `src/components/MobileMenu.astro` | `data-lang-choice` on mobile lang links. |
-| `src/i18n/pt.json` | Added `langBanner` key block for future reuse (component doesn't depend on it — texts are hardcoded in PT since the banner always addresses a PT speaker). |
+| `src/i18n/pt.json` | Added `langBanner` key block for future reuse (component doesn't depend on it - texts are hardcoded in PT since the banner always addresses a PT speaker). |
 
 ---
 
@@ -137,7 +137,7 @@ document.addEventListener('click', function(ev) {
 
 The banner exclusively addresses a Portuguese-speaking visitor who landed on an English page. There's no scenario where an English speaker reads the banner text. Adding Portuguese strings to `en.json` would corrupt the "EN dict is the source-of-truth" invariant used for TypeScript type inference in `src/i18n/index.ts`. The `langBanner` block in `pt.json` serves as documentation and future reuse reference.
 
-### `navigator.language` only — no server-side geolocation
+### `navigator.language` only - no server-side geolocation
 
 We chose client-side `navigator.language`/`navigator.languages` detection instead of Cloudflare's `CF-IPCountry` header (which would require a Cloudflare Function to inject into static pages). Reasons:
 
@@ -145,7 +145,7 @@ We chose client-side `navigator.language`/`navigator.languages` detection instea
 - **Covers Brazilians abroad.** A Brazilian in Portugal or the US has a PT browser locale and gets the nudge; an IP-based approach would miss them.
 - **Simpler to test and reason about.** Override in DevTools → Sensors → Locales.
 
-Trade-off accepted: misses Brazilians who use en-US as their system language. Considered acceptable — they've actively chosen English.
+Trade-off accepted: misses Brazilians who use en-US as their system language. Considered acceptable - they've actively chosen English.
 
 ### No automatic redirect
 
@@ -153,13 +153,13 @@ The banner *suggests*, it never redirects. Automatic redirect based on language/
 
 ### Banner position: before `<nav>` in document flow
 
-The sticky nav is `position: sticky; top: 0`. Placing the banner *above* it in the DOM keeps the banner in normal document flow — it scrolls out of view as the user engages with the page, while the nav remains fixed. This produces the "one chance to see it, then it's gone" behaviour without covering content persistently.
+The sticky nav is `position: sticky; top: 0`. Placing the banner *above* it in the DOM keeps the banner in normal document flow - it scrolls out of view as the user engages with the page, while the nav remains fixed. This produces the "one chance to see it, then it's gone" behaviour without covering content persistently.
 
-Alternative considered: inside the nav (always visible). Rejected — too persistent for something that should feel like a one-time system message.
+Alternative considered: inside the nav (always visible). Rejected - too persistent for something that should feel like a one-time system message.
 
 ### `hidden` attribute for zero CLS/FOUC
 
-The component ships `hidden` in the static HTML. JavaScript reveals it by unsetting `hidden` and adding `is-visible` (with a `requestAnimationFrame` tick between them to allow the CSS transition to fire). If JS is disabled, the banner never appears — clean progressive enhancement.
+The component ships `hidden` in the static HTML. JavaScript reveals it by unsetting `hidden` and adding `is-visible` (with a `requestAnimationFrame` tick between them to allow the CSS transition to fire). If JS is disabled, the banner never appears - clean progressive enhancement.
 
 ### Dismissal removes the element from the DOM
 
@@ -202,4 +202,4 @@ A verification script was written and run during implementation:
 
 ## Known limitation (pre-existing)
 
-The `preferred-lang` persistence script in `Base.astro` only fires on hard page loads. During soft Astro View Transitions navigations (EN → PT), `preferred-lang` in localStorage is not updated until the next hard reload. This is unrelated to the banner (which has its own `astro:page-load` rebinding) and predates this feature. It only affects the 404 page language swap, which reads `preferred-lang` as a hint — not a breaking issue.
+The `preferred-lang` persistence script in `Base.astro` only fires on hard page loads. During soft Astro View Transitions navigations (EN → PT), `preferred-lang` in localStorage is not updated until the next hard reload. This is unrelated to the banner (which has its own `astro:page-load` rebinding) and predates this feature. It only affects the 404 page language swap, which reads `preferred-lang` as a hint - not a breaking issue.
