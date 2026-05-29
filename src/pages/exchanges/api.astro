@@ -94,9 +94,9 @@ const hlMakerNull = await _hl(
 );
 
 const alternates = [
-  { hreflang: 'en',        href: 'https://bitsark.com/exchanges/api' },
-  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/api' },
-  { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/api' },
+  { hreflang: 'en',        href: 'https://bitsark.com/exchanges/api/' },
+  { hreflang: 'pt-BR',     href: 'https://bitsark.com/pt/exchanges/api/' },
+  { hreflang: 'x-default', href: 'https://bitsark.com/exchanges/api/' },
 ];
 ---
 
@@ -293,6 +293,45 @@ const alternates = [
         <p style="margin-top:1rem">
           {t('exchanges_api.base_url.content_type_note')}
         </p>
+
+        <div class="open-spec-card">
+          <div class="open-spec-card__left">
+            <p class="open-spec-card__title">{t('exchanges_api.base_url.open_spec_title')}</p>
+            <p class="open-spec-card__desc">{t('exchanges_api.base_url.open_spec_desc')}</p>
+          </div>
+          <div class="open-spec-card__links">
+            <a
+              href="https://raw.githubusercontent.com/bitsARK-Labs/exchanges-api/main/schema/openapi.yaml"
+              class="open-spec-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Download OpenAPI 3.1 YAML spec"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              {t('exchanges_api.base_url.open_spec_openapi')}
+            </a>
+            <a
+              href="https://raw.githubusercontent.com/bitsARK-Labs/exchanges-api/main/schema/postman.collection.json"
+              class="open-spec-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Download Postman Collection JSON"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              {t('exchanges_api.base_url.open_spec_postman')}
+            </a>
+            <a
+              href="https://github.com/bitsARK-Labs/exchanges-api"
+              class="open-spec-link open-spec-link--github"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.942.359.31.678.921.678 1.856 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
+              {t('exchanges_api.base_url.open_spec_github')}
+            </a>
+          </div>
+        </div>
       </section>
 
       <hr class="api-divider" />
@@ -1056,6 +1095,74 @@ const alternates = [
 
   .api-sidebar__uptime:hover { opacity: 1; }
 
+  /* ── Open Spec card ── */
+  .open-spec-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .open-spec-card__title {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-faint);
+    margin: 0 0 0.25rem;
+  }
+
+  .open-spec-card__desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-faint);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .open-spec-card__links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  .open-spec-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.65rem;
+    transition: color var(--transition), border-color var(--transition), background var(--transition);
+    white-space: nowrap;
+  }
+
+  .open-spec-link:hover {
+    color: var(--color-text);
+    border-color: var(--color-primary-border);
+    background: var(--color-primary-highlight);
+  }
+
+  .open-spec-link--github {
+    color: var(--color-text);
+    background: var(--color-surface-2);
+    border-color: var(--color-border);
+  }
+
+  .open-spec-link--github:hover {
+    border-color: var(--color-primary-border);
+  }
+
   /* ── Responsive ── */
   @media (max-width: 768px) {
     .api-layout {
@@ -1084,6 +1191,12 @@ const alternates = [
     .quickstart-grid,
     .llm-usage {
       grid-template-columns: 1fr;
+    }
+
+    .open-spec-card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
     }
   }
 

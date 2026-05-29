@@ -215,7 +215,10 @@ const schema = {
       "hasPart": exchangesData.map(ex => ({
         "@type": "Dataset",
         "name": `${ex.name} — fiscal profile`,
+        "description": `Tax regime, BCB authorization, IN 1888 reporting status, Pix support, maker/taker fees, and Receita Federal obligations for ${ex.name} — verified by bitsARK Labs.`,
         "url": `https://bitsark.com/exchanges/${ex.slug}/`,
+        "creator": { "@id": "https://bitsark.com/#organization" },
+        "license": "https://bitsark.com/terms",
       })),
     },
     {
@@ -493,7 +496,7 @@ const schema = {
                     <div class="exch-name-row">
                       <a href={`/exchanges/${ex.slug}`} class="exch-name-link">
                         {ex.logo_url && (
-                          <img src={ex.logo_url} alt="" class="exch-logo" width="20" height="20" loading="lazy" aria-hidden="true" />
+                          <img src={ex.logo_url} alt={ex.name} class="exch-logo" width="20" height="20" loading="lazy" />
                         )}
                         <span class="exch-name-text">{ex.name}</span>
                       </a>

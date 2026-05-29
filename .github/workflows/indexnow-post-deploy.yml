@@ -1,4 +1,4 @@
-name: Post-deploy IndexNow (wait 5m)
+name: Post-deploy IndexNow (wait 3 min)
 
 on:
   push:

@@ -2549,12 +2549,12 @@
         {
           "label": "Virtual Assets Legal Framework",
           "source": "Law nº 14,478/2022",
-          "href": "http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/L14478.htm"
+          "href": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/L14478.htm"
         },
         {
           "label": "Offshore Law",
           "source": "Law nº 14,754/2023",
-          "href": "http://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14754.htm"
+          "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14754.htm"
         },
         {
           "label": "DeCripto",
@@ -2574,7 +2574,7 @@
         {
           "label": "ISS on service export",
           "source": "Complementary Law nº 116/2003 - art. 2º, II",
-          "href": "http://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm"
+          "href": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm"
         },
         {
           "label": "PTAX-sell of the day",
@@ -2947,7 +2947,12 @@
       "title": "Base URL",
       "desc1": "All endpoints are relative to this base URL. Every request must include the /v1/ version prefix.",
       "desc2": "All endpoints return Content-Type: application/json. HTTP methods other than GET return 405 Method Not Allowed.",
-      "content_type_note": "All endpoints return Content-Type: application/json. HTTP methods other than GET return 405 Method Not Allowed."
+      "content_type_note": "All endpoints return Content-Type: application/json. HTTP methods other than GET return 405 Method Not Allowed.",
+      "open_spec_title": "Open Specification",
+      "open_spec_desc": "Machine-readable schema for code generation, validation, and IDE tooling.",
+      "open_spec_openapi": "OpenAPI 3.1 YAML",
+      "open_spec_postman": "Postman Collection",
+      "open_spec_github": "Source on GitHub"
     },
     "rate_limits": {
       "title": "Rate limits",

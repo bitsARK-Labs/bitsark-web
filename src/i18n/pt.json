@@ -2163,12 +2163,12 @@
         {
           "label": "Marco Legal dos Ativos Virtuais",
           "source": "Lei nº 14.478/2022",
-          "href": "http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/L14478.htm"
+          "href": "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2022/lei/L14478.htm"
         },
         {
           "label": "Lei das Offshores",
           "source": "Lei nº 14.754/2023",
-          "href": "http://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14754.htm"
+          "href": "https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2023/lei/L14754.htm"
         },
         {
           "label": "DeCripto",
@@ -2188,7 +2188,7 @@
         {
           "label": "ISS na exportação de serviço",
           "source": "Lei Complementar nº 116/2003 - art. 2º, II",
-          "href": "http://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm"
+          "href": "https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp116.htm"
         },
         {
           "label": "PTAX-venda do dia",
@@ -3015,7 +3015,12 @@
       "title": "URL Base",
       "desc1": "Todos os endpoints são relativos a esta URL base. Cada requisição deve incluir o prefixo de versão /v1/.",
       "desc2": "Todos os endpoints retornam Content-Type: application/json. Métodos diferentes de GET retornam 405 Method Not Allowed.",
-      "content_type_note": "Todos os endpoints retornam Content-Type: application/json. Métodos HTTP diferentes de GET retornam 405 Method Not Allowed."
+      "content_type_note": "Todos os endpoints retornam Content-Type: application/json. Métodos HTTP diferentes de GET retornam 405 Method Not Allowed.",
+      "open_spec_title": "Especificação Aberta",
+      "open_spec_desc": "Schema legível por máquina para geração de código, validação e tooling de IDE.",
+      "open_spec_openapi": "OpenAPI 3.1 YAML",
+      "open_spec_postman": "Coleção Postman",
+      "open_spec_github": "Fonte no GitHub"
     },
     "rate_limits": {
       "title": "Limites de taxa",
