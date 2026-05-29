@@ -390,6 +390,25 @@ const PRODUCT_STACK_SVG = (() => {
   return svgToDataUrl(svg, 880);
 })();
 
+// ── bitsARK Labs logo SVG (CSS vars resolved to BRAND tokens, static IDs) ──
+// Source: src/components/Logo.astro — colors resolved at build time, sheen/animation stripped.
+const BITSARK_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="202" fill="none" viewBox="0 0 800 202">
+  <g clip-path="url(#bitsark-og-frame)">
+    <path fill="${BRAND.text}" d="M197.564 109.822V90.227h62.703V80.35H213.24V64.675h-15.676V45.237h15.676V31.443h66.465v17.556h-62.703v11.914h47.027V76.59h15.676v17.557h-15.676v15.676zM129.742 51.037V31.443h15.676V.09h19.438v31.352h18.571v19.594h-18.571v39.19h18.571v19.595h-22.333V94.146h-15.676V51.037zM96.253 109.822v-78.38h19.438v78.38zm0-90.136V.09h19.438v19.595zM0 94.146V.09h19.438v31.352h47.028v15.675H82.14v47.028H66.466v15.676h-50.79V94.146zm19.438-3.92h43.265V51.038H19.438z"/>
+    <path fill="${BRAND.primary}" d="M315.559 109.091h-28.338L324.028 0h35.103l36.808 109.091h-28.338l-25.622-81.605h-.852zm-3.782-42.933h59.233v20.028h-59.233zM401.684 109.091V0h45.064Q459 0 467.895 4.421q8.95 4.368 13.796 12.571 4.848 8.15 4.848 19.336 0 11.346-4.954 19.283-4.954 7.883-14.063 12.038-9.108 4.102-21.573 4.102h-28.498V50.977h23.598q5.965 0 9.961-1.545 4.047-1.597 6.125-4.794 2.078-3.249 2.078-8.31 0-5.06-2.078-8.363-2.078-3.355-6.125-5.007-4.049-1.704-9.961-1.704h-12.998v87.837zm61.417-49.858 27.166 49.858h-28.764L434.87 59.233zM495.001 109.091V0h26.367v46.13h1.438L558.868 0h31.055l-38.672 48.686 39.364 60.405h-31.534l-27.166-42.88-10.547 13.317v29.563z"/>
+    <path fill="${BRAND.textMuted}" d="M604.147 109.59V49.932h10.691v50.609h26.626v9.049zM643.728 109.59l20.901-59.658h13.533l21.261 59.658h-11.692l-10.57-31.07a391 391 0 0 1-3.283-10.77 1244 1244 0 0 1-3.764-13.694h2.403q-2.043 7.768-3.684 13.773a319 319 0 0 1-3.123 10.69l-10.37 31.071zm12.212-14.654v-8.649h31.231v8.649zM704.45 109.59V49.932h22.902q6.407 0 10.691 2.002 4.325 2.001 6.486 5.525 2.162 3.483 2.162 7.968 0 3.603-1.361 6.206a11.8 11.8 0 0 1-3.724 4.204q-2.322 1.642-5.285 2.362v.48q3.243.201 6.126 2.003 2.923 1.762 4.725 4.924 1.842 3.164 1.842 7.608 0 4.725-2.283 8.448-2.241 3.684-6.806 5.806-4.525 2.122-11.371 2.122zm10.65-8.849h11.892q5.805 0 8.488-2.282 2.723-2.282 2.723-5.966 0-2.682-1.321-4.764-1.322-2.123-3.764-3.324-2.442-1.24-5.806-1.24H715.1zm0-25.424h11.091q2.842 0 5.085-1.041t3.524-2.923q1.281-1.922 1.281-4.565 0-3.523-2.483-5.765-2.481-2.283-7.247-2.283H715.1zM776.823 110.511q-7.006 0-12.172-2.202-5.165-2.242-8.048-6.447-2.842-4.244-3.043-10.25h10.491q.24 3.244 1.881 5.446 1.682 2.161 4.485 3.283 2.843 1.081 6.366 1.081 3.564 0 6.246-1.041 2.723-1.08 4.244-3.043 1.562-1.962 1.562-4.524 0-2.283-1.322-3.804-1.281-1.521-3.723-2.603-2.403-1.08-5.806-1.922l-6.686-1.681q-7.807-1.922-12.012-5.846-4.204-3.924-4.204-10.25 0-5.285 2.803-9.249 2.842-3.964 7.767-6.166 4.965-2.202 11.251-2.202 6.447 0 11.251 2.242 4.804 2.202 7.527 6.166 2.724 3.964 2.843 9.17h-10.29q-.4-4.045-3.483-6.287-3.043-2.242-7.968-2.242-3.323 0-5.806 1.04-2.442 1.042-3.803 2.843-1.322 1.762-1.322 4.084 0 2.403 1.442 3.964 1.442 1.562 3.803 2.563a31.5 31.5 0 0 0 5.085 1.641l5.686 1.442a40 40 0 0 1 6.767 2.202q3.203 1.362 5.645 3.403a14.54 14.54 0 0 1 3.804 4.845q1.401 2.803 1.401 6.567 0 5.325-2.722 9.329-2.683 4.004-7.768 6.246-5.045 2.202-12.172 2.202"/>
+    <path fill="${BRAND.primary}" fill-opacity="0.35" d="M799.845 147.626q0 16.575-9.75 25.935-9.555 9.165-24.765 9.165H444.145q-8.385 0-13.845 2.34-5.655 2.145-8.385 6.435t-2.73 10.53H400.66q0-6.24-2.73-10.53t-8.19-6.435q-5.655-2.34-13.845-2.34H34.71q-15.405 0-24.96-9.165Q0 164.201 0 147.626v-11.115h18.525q-.585 14.235 3.51 20.475 4.095 6.045 13.845 6.045h341.575q14.235 0 22.23 6.63 7.995 6.435 9.945 15.6h.39q1.755-9.165 9.945-15.6 8.19-6.63 22.62-6.63h321.38q9.75 0 13.845-6.045 4.29-6.24 3.9-20.475h18.135z"/>
+  </g>
+  <defs>
+    <clipPath id="bitsark-og-frame">
+      <path fill="#fff" d="M0 0h800v202H0z"/>
+    </clipPath>
+  </defs>
+</svg>`;
+// Pre-rasterize at two widths for Wordmark (lg) and EndorserWordmark usage
+const BITSARK_LOGO_URL_LG = svgToDataUrl(BITSARK_LOGO_SVG, 480);
+const BITSARK_LOGO_URL_SM = svgToDataUrl(BITSARK_LOGO_SVG, 280);
+
 // ── DolarMap wordmark SVG (gradient flattened) ──────────────────────────
 const DOLARMAP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 179">
   <defs>
@@ -443,28 +462,25 @@ function OGShell({ mesh, children }) {
   );
 }
 
-// ── bitsARK Labs wordmark ───────────────────────────────────────────────
+// ── bitsARK Labs wordmark — logo SVG rasterized ─────────────────────────
+// Logo viewBox is 800×202. Heights below are derived from desired visual sizes.
 function Wordmark({ size = 'md' } = {}) {
-  const sizes = {
-    sm: { main: 28, labs: 18, gap: 6 },
-    md: { main: 38, labs: 24, gap: 8 },
-    lg: { main: 56, labs: 32, gap: 12 },
-    xl: { main: 78, labs: 44, gap: 14 },
-  };
-  const s = sizes[size];
-  return h('div', { style: { display: 'flex', alignItems: 'baseline' } },
-    h('span', { style: { color: BRAND.text,      fontSize: s.main, fontWeight: 700, letterSpacing: '-0.02em' } }, 'bits'),
-    h('span', { style: { color: BRAND.primary,   fontSize: s.main, fontWeight: 700, letterSpacing: '-0.02em' } }, 'ARK'),
-    h('span', { style: { color: BRAND.textMuted, fontSize: s.labs, fontWeight: 500, marginLeft: s.gap, letterSpacing: '-0.005em' } }, 'Labs'),
+  // height in px → width = height * (800/202)
+  const heights = { sm: 22, md: 28, lg: 40, xl: 56 };
+  const h_ = heights[size] ?? 28;
+  const w  = Math.round(h_ * (800 / 202));
+  return h('div', { style: { display: 'flex', alignItems: 'center' } },
+    h('img', { src: BITSARK_LOGO_URL_LG, width: w, height: h_, style: { display: 'flex' } }),
   );
 }
 
 // ── Faint endorser wordmark (for "by bitsARK Labs") ─────────────────────
+// Rendered at reduced opacity to match the previous text-faint treatment.
 function EndorserWordmark({ size = 24 } = {}) {
-  return h('div', { style: { display: 'flex', alignItems: 'baseline' } },
-    h('span', { style: { color: BRAND.textFaint, fontSize: size, fontWeight: 700, letterSpacing: '-0.02em' } }, 'bits'),
-    h('span', { style: { color: BRAND.textFaint, fontSize: size, fontWeight: 700, letterSpacing: '-0.02em' } }, 'ARK'),
-    h('span', { style: { color: BRAND.textFaint, fontSize: Math.round(size * 0.7), fontWeight: 500, marginLeft: 7, opacity: 0.85 } }, 'Labs'),
+  const h_ = Math.round(size * 0.75);
+  const w  = Math.round(h_ * (800 / 202));
+  return h('div', { style: { display: 'flex', alignItems: 'center', opacity: 0.45 } },
+    h('img', { src: BITSARK_LOGO_URL_SM, width: w, height: h_, style: { display: 'flex' } }),
   );
 }
 
