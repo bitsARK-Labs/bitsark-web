@@ -485,7 +485,7 @@ const schema = {
                     <div class="exch-name-row">
                       <a href={`/pt/exchanges/${ex.slug}/`} class="exch-name-link" aria-label={`Impostos da ${ex.name} no Brasil`}>
                         {ex.logo_url && (
-                          <img src={ex.logo_url} alt={ex.name} class="exch-logo" width="20" height="20" loading="lazy" />
+                          <img src={ex.logo_url} alt="" class="exch-logo" width="20" height="20" loading="lazy" aria-hidden="true" />
                         )}
                         <span class="exch-name-text">{ex.name}</span>
                       </a>
