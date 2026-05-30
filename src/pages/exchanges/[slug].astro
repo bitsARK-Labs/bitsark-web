@@ -267,6 +267,7 @@ const schema = {
     {
       "@type": "BreadcrumbList",
       "@id": `${pageUrl}#breadcrumb`,
+      "name": `${ex.name} Navigation`,
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": t.breadcrumbHome,      "item": "https://bitsark.com/" },
         { "@type": "ListItem", "position": 2, "name": t.breadcrumbExchanges, "item": "https://bitsark.com/exchanges/" },
@@ -276,6 +277,7 @@ const schema = {
     {
       "@type": "FAQPage",
       "@id": `${pageUrl}#faq`,
+      "name": `${t.faq.title} - ${ex.name}`,
       "mainEntity": [
         { "@type": "Question", "name": fillName(t.faqQuestions.rfbReport), "acceptedAnswer": { "@type": "Answer", "text": txtRfbReport } },
         { "@type": "Question", "name": fillName(t.faqQuestions.irpf),      "acceptedAnswer": { "@type": "Answer", "text": txtIRPF } },
