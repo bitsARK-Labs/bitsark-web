@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@lhci/cli": "^0.14.0",
+    "@playform/compress": "^0.2.3",
     "@resvg/resvg-js": "^2.6.2",
     "geist": "^1.7.0",
     "satori": "^0.26.0"

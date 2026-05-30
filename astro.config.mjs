@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config';
 import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 import sitemap from '@astrojs/sitemap';
+import compress from '@playform/compress';
 
 /**
  * Sitemap "gold standard" 2025 - helpers para o serialize().
@@ -191,6 +192,35 @@ export default defineConfig({
 
         return item;
       },
+    }),
+    /**
+     * Remove comentários HTML (<!-- -->) do output do build.
+     *
+     * Motivo: comentários de markup viajam no HTML servido ao cliente e contam
+     * como payload inútil. Auditorias (SiteChecker etc.) sinalizam "comments in
+     * code". No baseline mediam ~452 KiB (3,7% do HTML) distribuídos pelas
+     * páginas - a maioria vinda dos blocos de documentação repetidos via layout.
+     *
+     * IMPORTANTE: isto NÃO afeta comentários no frontmatter `---` (JS/TS) nem em
+     * <style> - esses já não chegam ao cliente. Só limpa os <!-- --> do HTML
+     * final. Documentação de engenharia nos .astro permanece intacta no source.
+     *
+     * Escopo deliberadamente mínimo: só HTML. CSS/JS já são minificados pelo
+     * Vite; imagens pelo Sharp. Ligar os outros aqui seria redundante e
+     * arriscaria conflito. O default do html-minifier-terser neste pacote é
+     * apenas { removeComments: true, removeAttributeQuotes: false } - sem
+     * collapseWhitespace (o Astro já trata via compressHTML).
+     *
+     * Deve ser o ÚLTIMO integration: roda sobre o dist/ já gerado (inclusive o
+     * HTML emitido pelo sitemap não é afetado; só *.html de páginas).
+     */
+    compress({
+      HTML: true,
+      CSS: false,
+      JavaScript: false,
+      Image: false,
+      SVG: false,
+      Logger: 0,
     }),
   ],
 });

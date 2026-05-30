@@ -22,10 +22,10 @@ function fmtCnpj(c: string | null | undefined): string | null {
 }
 
 const countryNames: Record<string, string> = {
-  BR: 'Brasil', US: 'Estados Unidos', GB: 'Reino Unido', KY: 'Ilhas Cayman',
-  SC: 'Seychelles', VG: 'Ilhas Virgens Britânicas', SG: 'Singapura',
-  MT: 'Malta', LT: 'Lituânia', HK: 'Hong Kong', AU: 'Austrália',
-  EU: 'União Europeia', PA: 'Panamá', BZ: 'Belize',
+  BR: 'Brazil', US: 'United States', GB: 'United Kingdom', KY: 'Cayman Islands',
+  SC: 'Seychelles', VG: 'British Virgin Islands', SG: 'Singapore',
+  MT: 'Malta', LT: 'Lithuania', HK: 'Hong Kong', AU: 'Australia',
+  EU: 'European Union', PA: 'Panama', BZ: 'Belize',
 };
 
 const exchangesData = exchanges.map((ex: any) => {
@@ -49,7 +49,7 @@ const exchangesData = exchanges.map((ex: any) => {
     pix: op.accepts_pix ?? false,
     iso: isoCode,
     flagEmoji: isoFlag(isoCode),
-    countryName: isoCode ? (countryNames[isoCode] ?? isoCode) : 'Desconhecido',
+    countryName: isoCode ? (countryNames[isoCode] ?? isoCode) : 'Unknown',
     taxRegime: fd.tax_regime ?? '',
     regimeLabel: taxRegimeLabel(fd.tax_regime ?? ''),
     exemption: fd.monthly_brl_trade_exemption ?? 0,
@@ -171,7 +171,7 @@ const schema = {
       ],
       "description": datasetDescription,
       "url": PAGE_URL,
-      "license": "https://bitsark.com/terms",
+      "license": "https://bitsark.com/terms/",
       "isAccessibleForFree": true,
       "datePublished": PUBLISHED_AT_ISO,
       "dateModified": updatedAtISO,
@@ -218,7 +218,7 @@ const schema = {
         "description": `Tax regime, BCB authorization, IN 1888 reporting status, Pix support, maker/taker fees, and Receita Federal obligations for ${ex.name} - verified by bitsARK Labs.`,
         "url": `https://bitsark.com/exchanges/${ex.slug}/`,
         "creator": { "@id": "https://bitsark.com/#organization" },
-        "license": "https://bitsark.com/terms",
+        "license": "https://bitsark.com/terms/",
       })),
     },
     {
@@ -244,7 +244,7 @@ const schema = {
         "name": "Ricardo Delfino",
         "url": "https://bitsark.com/about/",
       },
-      "license": "https://bitsark.com/terms",
+      "license": "https://bitsark.com/terms/",
       "datePublished": PUBLISHED_AT_ISO,
       "dateModified": updatedAtISO,
       "publisher": { "@id": "https://bitsark.com/#organization" },

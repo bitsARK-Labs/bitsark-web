@@ -905,7 +905,8 @@
       ]
     },
     "table": {
-      "title": "IN 1.888/2019 × DeCripto (IN 2.291/2025)",
+      "eyebrow": "Side-by-Side Comparison",
+      "title": "Old Rule vs. DeCripto: IN 1.888/2019 × IN 2.291/2025",
       "headers": [
         "Aspect",
         "IN 1.888/2019",
@@ -950,6 +951,7 @@
       ]
     },
     "checklist": {
+      "eyebrow": "Practical Checklist",
       "title": "Checklist: What to do before July 2026",
       "users": {
         "title": "For Users",
@@ -975,6 +977,7 @@
       }
     },
     "faq": {
+      "eyebrow": "Knowledge Base",
       "title": "FAQ by Topic",
       "searchPlaceholder": "Search FAQ (ex: Binance, DEX, Tax...)",
       "noResults": "No results found for your search.",
@@ -1155,6 +1158,7 @@
       ]
     },
     "cta": {
+      "eyebrow": "Ready to begin?",
       "title": "See which exchange you use and how it reports",
       "sub": "Check our complete table with every domestic and offshore exchange - tax regime, who reports under IN 1.888, and fees.",
       "btn": "View Exchange Table →"
