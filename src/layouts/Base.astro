@@ -216,9 +216,14 @@ const mobileLinks = isDolarMap ? [
     <meta name="author"       content="Ricardo Delfino" />
     <meta name="publisher"    content="bitsARK Labs" />
 
-    <!-- 
+    <!--
       Fontes self-hosted (MIT - Geist by Vercel).
-      Preload antecipado com fetchpriority="high" para eliminar FOUT/CLS.
+      Preload antecipado com fetchpriority="high": garante que o arquivo já
+      esteja em cache quando o @font-face (global.css) é avaliado. Combinado com
+      `font-display: optional`, o browser aplica Geist dentro da janela ~100ms
+      sem repaint tardio - elimina FOUT/CLS e o warning "preloaded but not used".
+      NÃO trocar para `swap` no CSS: reintroduz o repaint que o Lighthouse
+      throttle exagera (flash "desconfigurado"). Ver nota em global.css.
     -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/GeistVF.woff2"     crossorigin fetchpriority="high" />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/GeistMonoVF.woff2" crossorigin fetchpriority="high" />

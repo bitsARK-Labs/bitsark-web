@@ -271,13 +271,14 @@ const schema = {
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": t.breadcrumbHome,      "item": "https://bitsark.com/pt/" },
         { "@type": "ListItem", "position": 2, "name": t.breadcrumbExchanges, "item": "https://bitsark.com/pt/exchanges/" },
-        { "@type": "ListItem", "position": 3, "name": ex.name,      "item": pageUrl },
+        { "@type": "ListItem", "position": 3, "name": ex.name },
       ],
     },
     {
       "@type": "FAQPage",
       "@id": `${pageUrl}#faq`,
       "name": `${t.faq.title} - ${ex.name}`,
+      "inLanguage": lang,
       "mainEntity": [
         { "@type": "Question", "name": fillName(t.faqQuestions.rfbReport), "acceptedAnswer": { "@type": "Answer", "text": txtRfbReport } },
         { "@type": "Question", "name": fillName(t.faqQuestions.irpf),      "acceptedAnswer": { "@type": "Answer", "text": txtIRPF } },

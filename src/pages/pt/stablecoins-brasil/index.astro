@@ -70,6 +70,9 @@ const heroKpis = [
 const chartMarket = JSON.stringify(marketData.monthly ?? []);
 const chartBrazil = JSON.stringify(brazilData.monthly ?? []);
 
+/* Idioma do schema (fonte única para todos os nós desta página) */
+const lang = "pt-BR";
+
 /*  Schema.org  */
 const schema = {
   "@context": "https://schema.org",
@@ -79,7 +82,7 @@ const schema = {
       "@id": "https://bitsark.com/pt/stablecoins-brasil/#article",
       "headline": t.stablecoins_page.meta.title,
       "description": t.stablecoins_page.meta.description,
-      "inLanguage": "pt-BR",
+      "inLanguage": lang,
       "image": "https://bitsark.com/og/stablecoins-brasil.png",
       "author": {
         "@type": "Person",
@@ -117,7 +120,7 @@ const schema = {
       "@id": "https://bitsark.com/pt/stablecoins-brasil/#breadcrumb",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": t.stablecoins_page.hero.breadcrumbHome,    "item": "https://bitsark.com/pt/" },
-        { "@type": "ListItem", "position": 2, "name": t.stablecoins_page.hero.breadcrumbCurrent, "item": "https://bitsark.com/pt/stablecoins-brasil/" }
+        { "@type": "ListItem", "position": 2, "name": t.stablecoins_page.hero.breadcrumbCurrent }
       ]
     },
     {

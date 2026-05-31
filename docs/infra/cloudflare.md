@@ -1,6 +1,6 @@
 # Cloudflare - Configuração Padrão-Ouro (bitsark.com)
 
-> **Última revisão:** 2026-05-19
+> **Última revisão:** 2026-05-31 (canonicalização de URL: 5 Redirect Rules nomeadas, Always-Use-HTTPS OFF, matriz medida em produção - ver §5.2c)
 > **Plano que originou este doc:** `~/.claude/plans/quero-um-planejamento-de-dreamy-ullman.md`
 > **Por que existe:** se algum comportamento estranho aparecer (cache servindo versão velha, redirect quebrado, latência alta, bot bloqueando crawler de IA, TLS handshake falhando), comece olhando aqui antes de mexer em código.
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | **Site estático** | Cloudflare Pages | Astro build, output static, sem adapter |
 | **Domínio raiz** | `bitsark.com` (proxied) | apex via Pages |
-| **www** | `www.bitsark.com` → `bitsark.com` 301 | Pages → Custom domains → adicionar `www.bitsark.com` (Cloudflare cria CNAME + SSL). Redirect: [`public/_redirects`](../../public/_redirects) |
+| **www** | `www.bitsark.com` → `bitsark.com` 301 | Pages → Custom domains → adicionar `www.bitsark.com` (Cloudflare cria CNAME + SSL). Redirect real: **Redirect Rules §5.2c regras 2 e 4** (`[www] path-ok` e `[www] no-slash`; não `_redirects` - ignorado em custom domain) |
 | **CDN de assets** | `assets.bitsark.com` | logos SVG |
 | **API pública** | `api.bitsark.com` | usado pelo site e pela função `feedback` |
 | **API do app DolarMap** | `apidolarmap.bitsark.com` | uso exclusivo do app mobile |
@@ -119,24 +119,81 @@ Action - Add directive; Directive - max-age; Duration (seconds) - 31536000; Clou
 Action - Add directive; Directive - public; Cloudflare only -> OFF
 ```
 
-### 5.2c `www.bitsark.com` - redireciona para apex
-Redirect Rule (Rules → Redirect Rules, não `_redirects`):
-```
-Name: Redirect from WWW to root [Template]
-Expression (Wildcard): URI Full wildcard  r"https://www.*"
-Action: Dynamic 301 redirect
-URL: wildcard_replace(http.request.full_uri, r"https://www.*", r"https://${1}")
-```
-> **Por que Redirect Rule e não `_redirects`:** quando `www` é Custom Domain no Pages, o Pages serve `200 OK` direto em qualquer path real, ignorando o `_redirects`. A Redirect Rule intercepta no edge, antes do Pages, e funciona para qualquer path. O `_redirects` ficou com a linha `www → apex` mas ela nunca é atingida - a Redirect Rule é a fonte de verdade.
+### 5.2c Canonicalização de URL - 5 Redirect Rules (HTTPS + www + trailing slash + assets)
 
-### 5.2d `assets.bitsark.com` - raiz redireciona para bitsark.com
-Redirect Rule (Rules → Redirect Rules, não Cache Rule):
+> **Última revisão desta seção:** 2026-05-31 (matriz medida em produção, 5 regras nomeadas)
+> **Objetivo:** toda variante de URL (`http`, `www`, sem barra final) converge para a forma canônica **`https://bitsark.com/<path>/`** com o **mínimo de hops possível**, casando com `<link rel="canonical">`, sitemap, hreflang e `og:url` (todos com barra final, porque `astro.config.mjs` é `trailingSlash: 'always'`).
+
+**Padrão de nome das regras:** `[host-alvo] condição-de-entrada → resultado (Nhop)`. O prefixo `[host]` agrupa visualmente no painel; o sufixo `(Nhop)` documenta o custo direto no nome - se alguém quebrar uma regra e ela virar 2hop, o nome passa a mentir e chama atenção em revisão.
+
+**Decisão estruturante:** o toggle nativo **"Always Use HTTPS" foi DESLIGADO** (SSL/TLS → Edge Certificates). Ele é uma redireção isolada `http→https` que roda *antes* das Redirect Rules e não combina com elas - some um hop. Substituímos por Redirect Rules que hardcodam `https://` no `concat()` de saída, fazendo o upgrade de scheme **junto** com a mudança de host/path. **Não religar** - o toggle reintroduz um hop em todo tráfego `http`.
+
+**Técnica anti-hop (a sacada das 5 regras):** o tráfego de cada host é **particionado em dois casos mutuamente exclusivos** pelo formato do path - (a) já-correto (`termina com /` OU `contém .`) vs. (b) precisa-de-barra (`não termina com /` E `não contém .`). Cada metade aponta direto para o destino final. Isso permite que `www` + sem-barra resolva **host + scheme + barra num único 301** (Regra 4), em vez de cair em www→apex e depois apex→barra. As partições são complementares, então não há gap nem sobreposição - não é lógica duplicada, é divisão de domínio.
+
+As 5 regras vivem em **Rules → Redirect Rules**, nesta ordem. Todas: **Dynamic 301 redirect, Preserve query string ON**.
+
+**Regra 1 - `[apex] http → https (1hop)`** (substitui o toggle nativo Always Use HTTPS)
 ```
-Name: assets.bitsark.com -> root redirect to bitsark.com
+Expression: (http.host eq "bitsark.com" and not ssl)
+            [UI: Hostname equals bitsark.com  AND  SSL/HTTPS does not equal "true"]
+URL: concat("https://bitsark.com", http.request.uri.path)
+```
+> Só faz o upgrade de scheme no **apex**. Não adiciona barra - se o path vier sem barra, a Regra 3 termina o serviço no hop seguinte (ver matriz: este é o único caso residual de 2 hops, coberto por HSTS na prática).
+
+**Regra 2 - `[www] path-ok → apex (1hop)`**
+```
+Expression: (http.host eq "www.bitsark.com"
+             and (ends_with(http.request.uri.path, "/") or http.request.uri.path contains "."))
+URL: concat("https://bitsark.com", http.request.uri.path)
+```
+> Metade (a) do tráfego www: path **já correto** (com barra, ex `/exchanges/`, ou arquivo, ex `/style.css`). Faz scheme + host num único 301; não mexe no path porque já está bom.
+
+**Regra 3 - `[apex] add-trailing-slash (1hop)`**
+```
+Expression: (http.host eq "bitsark.com"
+             and not ends_with(http.request.uri.path, "/")
+             and not http.request.uri.path contains ".")
+URL: concat("https://bitsark.com", http.request.uri.path, "/")
+```
+> **CRÍTICO - deve ser Redirect Rule (301), NÃO URL Rewrite Rule.** Uma versão anterior usou *URL Rewrite* (reescrita interna): o path sem barra retornava `200 OK` servindo conteúdo idêntico ao da versão com barra - criando uma **URL duplicada indexável** (`/exchanges` e `/exchanges/` ambas 200, mesmo md5). Com `trailingSlash: 'always'` o canônico é a barra, então a duplicata só não vira penalidade graças à tag canonical - mas desperdiça crawl budget e dilui link equity. A Redirect Rule 301 elimina a duplicata. O `not contains "."` evita reescrever assets reais (`/og/exchanges.png`, `/fonts/x.woff2`).
+
+**Regra 4 - `[www] no-slash → apex+slash (1hop)`**  ⭐ otimização que zera o pior caso www
+```
+Expression: (http.host eq "www.bitsark.com"
+             and not ends_with(http.request.uri.path, "/")
+             and not http.request.uri.path contains ".")
+URL: concat("https://bitsark.com", http.request.uri.path, "/")
+```
+> Metade (b) do tráfego www: path **sem barra**. Resolve **scheme + host + barra num único 301** (`https://www.bitsark.com/exchanges` → `https://bitsark.com/exchanges/`). Sem esta regra, esse caso cairia na Regra 2... mas a Regra 2 não pega path sem-barra (a condição é complementar), então cairia em www→apex genérico e depois apex→barra = 2 hops. A Regra 4 colapsa em 1. Verificado em produção.
+
+**Regra 5 - `[assets] root → apex (1hop)`**
+```
 Expression: (http.host eq "assets.bitsark.com" and http.request.uri.path eq "/")
-Action: 301 redirect → https://bitsark.com/
+URL: https://bitsark.com/   (destino fixo, não concat)
 ```
-> **Por que existe:** o GSC reportou 404 na raiz do subdomínio (sem conteúdo configurado). O redirect elimina o erro de cobertura sem afetar `/logos/*.svg`. Regra de redirect, não de cache - não interferir com §5.2b.
+> **Por que existe:** o GSC reportou 404 na raiz do subdomínio (sem conteúdo configurado). O redirect elimina o erro de cobertura sem afetar `/logos/*.svg` (esses são servidos normalmente, ver §5.2b). Regra de redirect, não de cache - não interferir com §5.2b.
+
+#### Matriz de hops (MEDIDA em produção, 2026-05-31)
+
+Toda variante de `https://bitsark.com/exchanges/` (exemplo) converge para o canônico. Valores abaixo são `curl --max-redirs` medido, não teórico:
+
+| URL de entrada | Hops | Regra(s) | Final |
+|---|---|---|---|
+| `https://bitsark.com/exchanges/` (canônico) | **0** | nenhuma | servido direto (200) |
+| `https://bitsark.com/exchanges` | **1** | R3 | `/exchanges/` |
+| `https://www.bitsark.com/exchanges/` | **1** | R2 | `/exchanges/` |
+| `https://www.bitsark.com/exchanges` | **1** ⭐ | R4 (host+scheme+slash juntos) | `/exchanges/` |
+| `https://www.bitsark.com/style.css` | **1** | R2 (path ok, só dropa www) | `/style.css` |
+| `http://www.bitsark.com/exchanges` (era pior caso) | **1** ⭐ | R4 (http→https+host+slash juntos) | `/exchanges/` |
+| `http://bitsark.com/exchanges` | **2** | R1 → R3 | `/exchanges/` |
+
+**6 dos 7 cenários são 0-1 hop.** O `www` + sem-barra (que já foi 2 hops) hoje é 1 hop graças à Regra 4.
+
+> **O único caso de 2 hops residual (`http://bitsark.com/exchanges`) e por que NÃO o fechamos:** é apex + `http` + sem-barra. A Regra 1 faz só o upgrade `https` (sem barra), e a Regra 3 adiciona a barra no 2º hop. Dava para zerar dividindo a Regra 1 em duas (igual fizemos com www → R2/R4), virando 6 regras. **Decisão deliberada de parar em 5:** o HSTS preload (`_headers`, 2 anos, na preload list) faz o browser fazer upgrade `http→https` **antes de enviar a request** - então qualquer browser moderno começa em `https://bitsark.com/exchanges` e cai direto na R3 = **1 hop efetivo**. Os únicos que veriam 2 hops: browser sem HSTS preload, digitando `http://` explícito, no apex, sem barra. Conjunto microscópico. A 6ª regra aumentaria a superfície de manutenção sem ganho real.
+
+> **Por que a ordem importa e está correta:** as condições são mutuamente exclusivas por host e por formato de path, então não há ambiguidade de qual regra dispara. R1 (apex http) e R3 (apex add-slash) podem ambas casar `http://bitsark.com/sem-barra` - R1 vem primeiro e faz o https; R3 termina. Inverter não ajuda (ver caso residual acima). **NÃO reordenar.**
+
+> **Por que Redirect Rule e não `_redirects`:** quando `www` é Custom Domain no Pages, o Pages serve `200 OK` direto em qualquer path real, ignorando o `_redirects`. A Redirect Rule intercepta no edge, antes do Pages, e funciona para qualquer path. O `_redirects` mantém a linha `www → apex` como fallback documental, mas ela nunca é atingida - as Redirect Rules são a fonte de verdade.
 
 ### 5.3 Site - sitemap/robots (TTL curto)
 ```
@@ -192,7 +249,8 @@ Browser TTL: respect origin
 | SSL/TLS Mode | **Full (Strict) por padrão** | Padrão correto para Pages - TLS end-to-end com validação. |
 | SSL/TLS Mode | **Full (sem Strict)** | `status.bitsark.com` apenas - BetterStack origin cert não faz match com hostname. Config Rule: `(http.host eq "status.bitsark.com")`. Sem afetar outros subdomínios. |
 | Minimum TLS Version | **1.2** | TLS 1.3-mínimo bloqueia silenciosamente Android antigo e algumas integrações de pagamento. TLS 1.2 com ciphers modernas continua seguro; browsers negociam 1.3 mesmo assim. |
-| Automatic HTTPS Rewrites | ON | |
+| **Always Use HTTPS** | **OFF (deliberado)** | Desligado em 2026-05-31. O toggle nativo é uma redireção `http→https` isolada que não combina com www/trailing-slash. Substituído pela Redirect Rule 1 (§5.2c), que vive na mesma lista das outras e permite minimizar hops. **Não religar** - reintroduz hop extra em `http://www`. |
+| Automatic HTTPS Rewrites | ON | Reescreve `http://` → `https://` em links *dentro* do HTML (subrecursos), independente do redirect de navegação. Mantém. |
 | Opportunistic Encryption | ON | |
 | **HSTS (Edge)** | **ON - 12 meses, includeSubDomains, preload** | Cobre respostas geradas pelo edge antes do Pages |
 | **HSTS (`_headers`)** | **2 anos, includeSubDomains, preload** | Cobre respostas do Pages (maioria do tráfego) |
@@ -252,9 +310,16 @@ Action: Block
 | SVGs de `assets.bitsark.com` sem cache (PSI reclama) | Cache Rule §5.2b ausente ou Transform Rule recriada no lugar errado | Confirmar §5.2b existe; deletar qualquer Transform Rule "Modify Response Header" para `/logos/` |
 | HSTS reclamando no hstspreload.org | `_headers` diz 2 anos, painel diz 12 meses - preload list lê do header que chega | Garantir `_headers` permanece em 63072000 |
 | Cache Rule "expressão inválida" ao salvar | Tentativa de usar brace `{a,b}` em wildcard | Usar `http.request.uri.path.extension in {...}` |
-| GSC reporta 404 em `assets.bitsark.com/` | Raiz do subdomínio sem conteúdo - Redirect Rule §5.2c ausente | Rules → Redirect Rules → confirmar §5.2c existe e está ativa |
+| Site "desconfigurado" (sem CSS) **só ao rodar Lighthouse** em aba anônima; reabre normal | **NÃO é Cloudflare.** CSS é inline (`inlineStylesheets: 'always'`), não há como faltar. É o `font-display` sob CPU throttle do Lighthouse esticando o repaint da fonte. | [`src/styles/global.css`](../../src/styles/global.css) - confirmar `font-display: optional` (não `swap`). Ver nota no `@font-face` |
+| Warning `GeistVF.woff2 preloaded but not used within a few seconds` | `font-display: swap` adiando aplicação da fonte além da janela pós-`load` | Mesmo arquivo - `optional` + preload (Base.astro) resolve. NÃO remover preload |
+| GSC reporta 404 em `assets.bitsark.com/` | Raiz do subdomínio sem conteúdo - Regra 5 `[assets] root → apex` ausente | Rules → Redirect Rules → confirmar a regra 5 de §5.2c existe e está ativa |
 | `www.bitsark.com` não resolve (ERR_NAME_NOT_RESOLVED) | Custom domain não cadastrado no Pages | Pages → bitsark-web → Custom domains → adicionar `www.bitsark.com` |
-| `www.bitsark.com` serve `200 OK` em vez de redirecionar | Pages serve o site no custom domain, `_redirects` é ignorado para paths reais | Rules → Redirect Rules → confirmar regra §5.2c existe com `concat("https://bitsark.com", http.request.uri.path)` |
+| `www.bitsark.com` serve `200 OK` em vez de redirecionar | Pages serve o site no custom domain, `_redirects` é ignorado para paths reais | Rules → Redirect Rules → confirmar regras `[www] path-ok` (R2) e `[www] no-slash` (R4) existem com `concat("https://bitsark.com", ...)` |
+| GSC: "Página com redirecionamento" / duplicatas sem-barra indexadas | Regra 3 `[apex] add-trailing-slash` virou **URL Rewrite** em vez de **Redirect**, servindo `/path` como 200 alias de `/path/` | Rules → confirmar `[apex] add-trailing-slash` é **Redirect Rule 301**, não Rewrite. Testar: `curl -sI https://bitsark.com/exchanges --max-redirs 0` deve dar **301**, não 200 |
+| URL sem-barra retorna `200` em vez de `301` | Mesmo problema acima (rewrite no lugar de redirect) | Regra 3 `[apex] add-trailing-slash` - trocar para Dynamic 301 com `concat(..., path, "/")` |
+| `www` + sem-barra voltou a dar 2 hops (era 1) | Regra 4 `[www] no-slash → apex+slash` apagada ou desativada - tráfego caiu no fallback www→apex e depois apex→barra | Rules → confirmar R4 ativa. Testar: `curl -sILo NUL -w "%{num_redirects}" https://www.bitsark.com/exchanges` deve dar **1** |
+| Pior caso (`http://www...`) com 3 hops | "Always Use HTTPS" nativo religado, somando hop isolado de https antes da R4 | SSL/TLS → Edge Certificates → confirmar **Always Use HTTPS = OFF** (substituído pela R1 `[apex] http → https`) |
+| `http://www.../path` redireciona para `http://...` (sem upgrade https) | R2/R4 de §5.2c usando host relativo em vez de `concat("https://...")` | §5.2c R2/R4 - garantir prefixo literal `https://` no `concat` |
 
 ---
 
@@ -284,12 +349,40 @@ curl -I https://bitsark.com/sitemap-index.xml
 
 # 6. /_astro/ imutável
 curl -I https://bitsark.com/_astro/[hash].css
-# Esperado: cache-control: public, max-age=31536000, immutable
-```
+# Esperado: cache-control: public, max-age=63072000, immutable
 
-# 7. www redireciona para apex
-curl -I https://www.bitsark.com/ --max-redirs 0
-# Esperado: HTTP/1.1 301, Location: https://bitsark.com/
+# 7. Canonicalização de URL (§5.2c) - matriz de hops
+#    Toda variante deve convergir para https://bitsark.com/<path>/ com o
+#    mínimo de hops. Use /exchanges como path de teste.
+
+#  7a. Canônico: ZERO hops (servido direto)
+curl -sILo NUL -w "hops=%{num_redirects} final=%{url_effective}`n" https://bitsark.com/exchanges/
+# Esperado: hops=0  final=.../exchanges/
+
+#  7b. Sem barra (apex+https): 1 hop, R3 [apex] add-trailing-slash
+curl -sI https://bitsark.com/exchanges --max-redirs 0 | findstr /I "HTTP location"
+# Esperado: 301 -> https://bitsark.com/exchanges/   (NUNCA 200 - se 200, R3 virou Rewrite!)
+
+#  7c. www com barra: 1 hop, R2 [www] path-ok derruba www
+curl -sI https://www.bitsark.com/exchanges/ --max-redirs 0 | findstr /I "HTTP location"
+# Esperado: 301 -> https://bitsark.com/exchanges/
+
+#  7d. www SEM barra: 1 hop, R4 [www] no-slash resolve host+scheme+barra junto
+curl -sILo NUL -w "hops=%{num_redirects} final=%{url_effective}`n" https://www.bitsark.com/exchanges
+# Esperado: hops=1  final=https://bitsark.com/exchanges/   (se hops=2 -> R4 sumiu!)
+
+#  7e. http+www+sem barra (era pior caso): 1 hop via R4 (HSTS pré-upgrade ajuda mais ainda)
+curl -sILo NUL -w "hops=%{num_redirects} final=%{url_effective}`n" http://www.bitsark.com/exchanges
+# Esperado: hops=1  final=https://bitsark.com/exchanges/
+
+#  7f. apex http sem barra: ÚNICO caso de 2 hops residual (R1 -> R3), coberto por HSTS na prática
+curl -sILo NUL -w "hops=%{num_redirects} final=%{url_effective}`n" http://bitsark.com/exchanges
+# Esperado: hops=2  final=https://bitsark.com/exchanges/   (aceitável - ver §5.2c)
+
+#  7g. "Add trailing slash" é REDIRECT, não Rewrite (regressão crítica)
+curl -sI https://bitsark.com/exchanges --max-redirs 0 | findstr /I "HTTP"
+# Esperado: HTTP/1.1 301   (se HTTP/1.1 200 -> duplicata indexável, corrigir já)
+```
 
 **Visual:**
 - Chrome DevTools → Network → header `103 Early Hints` deve aparecer antes do `200` em navegações cold.
@@ -308,6 +401,10 @@ curl -I https://www.bitsark.com/ --max-redirs 0
 - **Cloudflare Fonts** - já self-hostamos com preload.
 - **Rocket Loader** - quebra hidratação Astro.
 - **Hotlink Protection** - bloqueia uso legítimo de `assets.bitsark.com`.
+- **Always Use HTTPS (toggle nativo)** - substituído pela R1 `[apex] http → https` (§5.2c) para combinar redireções e minimizar hops. Religar adiciona hop isolado.
+- **URL Rewrite Rule para trailing slash** - DEVE ser Redirect Rule 301 (R3 `[apex] add-trailing-slash`, §5.2c). Rewrite cria duplicata 200 indexável.
+- **6ª regra para zerar o último 2-hop (`http://bitsark.com/sem-barra`)** - decisão deliberada de parar em 5 regras: HSTS preload já cobre esse resíduo. Ver §5.2c.
+- **`font-display: swap` nas fontes Geist** - usar `optional` (§9 / global.css). `swap` reintroduz o flash sob throttle do Lighthouse e o warning "preloaded but not used".
 
 ---
 

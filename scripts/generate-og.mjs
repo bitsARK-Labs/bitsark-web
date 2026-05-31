@@ -484,7 +484,7 @@ function EndorserWordmark({ size = 24 } = {}) {
   );
 }
 
-// ── Editorial "- by —" separator ────────────────────────────────────────
+// ── Editorial "- by -" separator ────────────────────────────────────────
 function BySeparator({ color = BRAND.textFaint } = {}) {
   return h('div', {
     style: {

@@ -8,13 +8,29 @@
 /* ── Fonts (self-hosted - Geist by Vercel, MIT License) ──── */
 /* Arquivos em /public/fonts/                                  */
 /* preload declarado no Base.astro                             */
+/*
+   font-display: optional (não swap).
+   Como AMBAS as fontes são preloaded com fetchpriority="high" no <head>
+   (Base.astro), o arquivo já está em cache quando o @font-face é avaliado,
+   então o browser aplica Geist dentro da janela de ~100ms do `optional` na
+   esmagadora maioria dos loads. O `optional` elimina o repaint tardio do
+   `swap`: o browser decide a fonte UMA vez e não troca depois do paint.
+   Isso mata dois sintomas: (1) o flash "desconfigurado" que o throttle de CPU
+   do Lighthouse esticava o suficiente para ficar visível, e (2) o warning
+   "preloaded but not used within a few seconds" - que era o `swap` adiando a
+   aplicação da fonte para além da janela pós-load.
+   Trade-off: em conexão fria sem cache, o usuário pode ver a fonte fallback na
+   primeira pintura (sem FOUT, sem CLS). Para site marketing first-visit, vale.
+   NÃO remover o preload - preload + optional se reforçam; sem preload, o
+   optional cairia para fallback com frequência.
+*/
 
 @font-face {
   font-family: 'Geist';
   src: url('/fonts/GeistVF.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -22,7 +38,7 @@
   src: url('/fonts/GeistMonoVF.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 

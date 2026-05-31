@@ -88,13 +88,15 @@ const icons: Record<string, string> = {
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://bitsark.com/pt/' },
             { '@type': 'ListItem', position: 2, name: 'Exchanges', item: 'https://bitsark.com/pt/exchanges/' },
-            { '@type': 'ListItem', position: 3, name: 'DeCripto 2026', item: canonical },
+            { '@type': 'ListItem', position: 3, name: 'DeCripto 2026' },
           ],
         },
       },
       {
         '@type': 'FAQPage',
         '@id': `${canonical}#faq`,
+        name: `${t.decripto.faq.title} - ${t.decripto.meta.title}`,
+        inLanguage: 'pt-BR',
         mainEntity: allFaqs.map((faq) => ({
           '@type': 'Question',
           name: faq.q,
